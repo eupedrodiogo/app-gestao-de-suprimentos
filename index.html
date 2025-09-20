@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Suprimentos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-boxes"></i>
+                <h1>SupplyManager</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="dashboard">
+                    <i class="fas fa-chart-dashboard"></i>
+                    Dashboard
+                </button>
+                <button class="nav-btn" data-section="products">
+                    <i class="fas fa-box"></i>
+                    Produtos
+                </button>
+                <button class="nav-btn" data-section="suppliers">
+                    <i class="fas fa-truck"></i>
+                    Fornecedores
+                </button>
+                <button class="nav-btn" data-section="quotes">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    Cotações
+                </button>
+                <button class="nav-btn" data-section="orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    Pedidos
+                </button>
+                <button class="nav-btn" data-section="inventory">
+                    <i class="fas fa-warehouse"></i>
+                    Estoque
+                </button>
+                <button class="nav-btn" data-section="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    Relatórios
+                </button>
+            </nav>
+            <div class="user-menu">
+                <i class="fas fa-user-circle"></i>
+                <span>Admin</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="section-header">
+                <h2>Dashboard</h2>
+                <p>Visão geral do sistema de suprimentos</p>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Produtos</h3>
+                        <p class="card-number" id="total-products">0</p>
+                        <span class="card-label">Total de produtos</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Fornecedores</h3>
+                        <p class="card-number" id="total-suppliers">0</p>
+                        <span class="card-label">Fornecedores ativos</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Cotações</h3>
+                        <p class="card-number" id="total-quotes">0</p>
+                        <span class="card-label">Cotações pendentes</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Pedidos</h3>
+                        <p class="card-number" id="total-orders">0</p>
+                        <span class="card-label">Pedidos em andamento</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-charts">
+                <div class="chart-container">
+                    <h3>Pedidos por Status</h3>
+                    <canvas id="ordersChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Gastos Mensais</h3>
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-activities">
+                <h3>Atividades Recentes</h3>
+                <div class="activity-list" id="activity-list">
+                    <!-- Activities will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="section">
+            <div class="section-header">
+                <h2>Gestão de Produtos</h2>
+                <button class="btn btn-primary" onclick="openModal('productModal')">
+                    <i class="fas fa-plus"></i>
+                    Novo Produto
+                </button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="product-search" placeholder="Buscar produtos...">
+                <select id="product-category">
+                    <option value="">Todas as categorias</option>
+                    <option value="eletrônicos">Eletrônicos</option>
+                    <option value="escritório">Escritório</option>
+                    <option value="limpeza">Limpeza</option>
+                    <option value="alimentação">Alimentação</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table">
+                        <!-- Products will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Suppliers Section -->
+        <section id="suppliers" class="section">
+            <div class="section-header">
+                <h2>Gestão de Fornecedores</h2>
+                <button class="btn btn-primary" onclick="openModal('supplierModal')">
+                    <i class="fas fa-plus"></i>
+                    Novo Fornecedor
+                </button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="supplier-search" placeholder="Buscar fornecedores...">
+                <select id="supplier-status">
+                    <option value="">Todos os status</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>CNPJ</th>
+                            <th>Nome</th>
+                            <th>Contato</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="suppliers-table">
+                        <!-- Suppliers will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Quotes Section -->
+        <section id="quotes" class="section">
+            <div class="section-header">
+                <h2>Gestão de Cotações</h2>
+                <button class="btn btn-primary" onclick="openModal('quoteModal')">
+                    <i class="fas fa-plus"></i>
+                    Nova Cotação
+                </button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="quote-search" placeholder="Buscar cotações...">
+                <select id="quote-status">
+                    <option value="">Todos os status</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="aprovada">Aprovada</option>
+                    <option value="rejeitada">Rejeitada</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Fornecedor</th>
+                            <th>Data Solicitação</th>
+                            <th>Prazo Entrega</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotes-table">
+                        <!-- Quotes will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="section">
+            <div class="section-header">
+                <h2>Gestão de Pedidos</h2>
+                <button class="btn btn-primary" onclick="openModal('orderModal')">
+                    <i class="fas fa-plus"></i>
+                    Novo Pedido
+                </button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="order-search" placeholder="Buscar pedidos...">
+                <select id="order-status">
+                    <option value="">Todos os status</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="aprovado">Aprovado</option>
+                    <option value="em_transito">Em Trânsito</option>
+                    <option value="entregue">Entregue</option>
+                    <option value="cancelado">Cancelado</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Fornecedor</th>
+                            <th>Data Pedido</th>
+                            <th>Prazo Entrega</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table">
+                        <!-- Orders will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <section id="inventory" class="section">
+            <div class="section-header">
+                <h2>Controle de Estoque</h2>
+                <button class="btn btn-primary" onclick="openModal('inventoryModal')">
+                    <i class="fas fa-plus"></i>
+                    Ajustar Estoque
+                </button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="inventory-search" placeholder="Buscar produtos...">
+                <select id="inventory-status">
+                    <option value="">Todos os status</option>
+                    <option value="baixo">Estoque Baixo</option>
+                    <option value="normal">Normal</option>
+                    <option value="alto">Estoque Alto</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Produto</th>
+                            <th>Estoque Atual</th>
+                            <th>Estoque Mínimo</th>
+                            <th>Estoque Máximo</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table">
+                        <!-- Inventory will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="section">
+            <div class="section-header">
+                <h2>Relatórios</h2>
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="fas fa-file-pdf"></i>
+                    Gerar Relatório
+                </button>
+            </div>
+            
+            <div class="report-filters">
+                <div class="filter-group">
+                    <label>Tipo de Relatório:</label>
+                    <select id="report-type">
+                        <option value="products">Produtos</option>
+                        <option value="suppliers">Fornecedores</option>
+                        <option value="orders">Pedidos</option>
+                        <option value="inventory">Estoque</option>
+                        <option value="financial">Financeiro</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Período:</label>
+                    <input type="date" id="report-start-date">
+                    <input type="date" id="report-end-date">
+                </div>
+            </div>
+
+            <div class="report-preview" id="report-preview">
+                <!-- Report preview will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cadastro de Produto</h3>
+                <span class="close" onclick="closeModal('productModal')">&times;</span>
+            </div>
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="product-code">Código:</label>
+                    <input type="text" id="product-code" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-name">Nome:</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Descrição:</label>
+                    <textarea id="product-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Categoria:</label>
+                    <select id="product-category-select" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="eletrônicos">Eletrônicos</option>
+                        <option value="escritório">Escritório</option>
+                        <option value="limpeza">Limpeza</option>
+                        <option value="alimentação">Alimentação</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Preço:</label>
+                    <input type="number" id="product-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-stock">Estoque Inicial:</label>
+                    <input type="number" id="product-stock" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-min-stock">Estoque Mínimo:</label>
+                    <input type="number" id="product-min-stock" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('productModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supplier Modal -->
+    <div id="supplierModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cadastro de Fornecedor</h3>
+                <span class="close" onclick="closeModal('supplierModal')">&times;</span>
+            </div>
+            <form id="supplierForm">
+                <div class="form-group">
+                    <label for="supplier-cnpj">CNPJ:</label>
+                    <input type="text" id="supplier-cnpj" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplier-name">Nome:</label>
+                    <input type="text" id="supplier-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplier-contact">Contato:</label>
+                    <input type="text" id="supplier-contact" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplier-email">Email:</label>
+                    <input type="email" id="supplier-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplier-phone">Telefone:</label>
+                    <input type="tel" id="supplier-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplier-address">Endereço:</label>
+                    <textarea id="supplier-address"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('supplierModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quote Modal -->
+    <div id="quoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Cotação</h3>
+                <span class="close" onclick="closeModal('quoteModal')">&times;</span>
+            </div>
+            <form id="quoteForm">
+                <div class="form-group">
+                    <label for="quote-supplier">Fornecedor:</label>
+                    <select id="quote-supplier" required>
+                        <option value="">Selecione um fornecedor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quote-delivery-date">Prazo de Entrega:</label>
+                    <input type="date" id="quote-delivery-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Produtos:</label>
+                    <div id="quote-products">
+                        <div class="product-item">
+                            <select class="quote-product" required>
+                                <option value="">Selecione um produto</option>
+                            </select>
+                            <input type="number" class="quote-quantity" placeholder="Quantidade" required>
+                            <input type="number" class="quote-unit-price" placeholder="Preço unitário" step="0.01" required>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeProductItem(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addProductItem()">
+                        <i class="fas fa-plus"></i> Adicionar Produto
+                    </button>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('quoteModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Pedido</h3>
+                <span class="close" onclick="closeModal('orderModal')">&times;</span>
+            </div>
+            <form id="orderForm">
+                <div class="form-group">
+                    <label for="order-quote">Cotação Base:</label>
+                    <select id="order-quote">
+                        <option value="">Selecione uma cotação (opcional)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="order-supplier">Fornecedor:</label>
+                    <select id="order-supplier" required>
+                        <option value="">Selecione um fornecedor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="order-delivery-date">Prazo de Entrega:</label>
+                    <input type="date" id="order-delivery-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Produtos:</label>
+                    <div id="order-products">
+                        <div class="product-item">
+                            <select class="order-product" required>
+                                <option value="">Selecione um produto</option>
+                            </select>
+                            <input type="number" class="order-quantity" placeholder="Quantidade" required>
+                            <input type="number" class="order-unit-price" placeholder="Preço unitário" step="0.01" required>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeProductItem(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addOrderProductItem()">
+                        <i class="fas fa-plus"></i> Adicionar Produto
+                    </button>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('orderModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div id="inventoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajuste de Estoque</h3>
+                <span class="close" onclick="closeModal('inventoryModal')">&times;</span>
+            </div>
+            <form id="inventoryForm">
+                <div class="form-group">
+                    <label for="inventory-product">Produto:</label>
+                    <select id="inventory-product" required>
+                        <option value="">Selecione um produto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inventory-type">Tipo de Ajuste:</label>
+                    <select id="inventory-type" required>
+                        <option value="">Selecione o tipo</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                        <option value="ajuste">Ajuste</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inventory-quantity">Quantidade:</label>
+                    <input type="number" id="inventory-quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="inventory-reason">Motivo:</label>
+                    <textarea id="inventory-reason" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('inventoryModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
