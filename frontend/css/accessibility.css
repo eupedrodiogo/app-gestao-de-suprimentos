@@ -1,0 +1,531 @@
+/**
+ * Estilos de Acessibilidade
+ * Implementa estilos para melhorar a acessibilidade e experiência do usuário
+ */
+
+/* ==========================================================================
+   Classes utilitárias para leitores de tela
+   ========================================================================== */
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: inherit !important;
+    margin: inherit !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: inherit !important;
+}
+
+/* ==========================================================================
+   Indicadores de foco para navegação por teclado
+   ========================================================================== */
+
+/* Remove outline padrão */
+*:focus {
+    outline: none;
+}
+
+/* Adiciona outline personalizado apenas para usuários de teclado */
+.keyboard-navigation *:focus {
+    outline: 2px solid var(--color-primary-500, #3b82f6);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Foco especial para elementos interativos */
+.keyboard-navigation button:focus,
+.keyboard-navigation a:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus {
+    outline: 3px solid var(--color-primary-500, #3b82f6);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+/* Foco para elementos customizados */
+.keyboard-navigation [tabindex]:focus,
+.keyboard-navigation [role="button"]:focus,
+.keyboard-navigation [role="menuitem"]:focus,
+.keyboard-navigation [role="tab"]:focus {
+    outline: 2px solid var(--color-primary-500, #3b82f6);
+    outline-offset: 1px;
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* ==========================================================================
+   Movimento reduzido
+   ========================================================================== */
+
+/* Respeita preferência do sistema */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Classe para controle manual */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* Pausa todas as animações */
+.animations-paused *,
+.animations-paused *::before,
+.animations-paused *::after {
+    animation-play-state: paused !important;
+}
+
+/* ==========================================================================
+   Alto contraste
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+    :root {
+        --color-text: #000000;
+        --color-background: #ffffff;
+        --color-border: #000000;
+        --color-primary: #0000ff;
+        --color-secondary: #800080;
+        --color-success: #008000;
+        --color-warning: #ff8c00;
+        --color-error: #ff0000;
+    }
+}
+
+.high-contrast {
+    --color-text: #000000;
+    --color-background: #ffffff;
+    --color-border: #000000;
+    --color-primary: #0000ff;
+    --color-secondary: #800080;
+    --color-success: #008000;
+    --color-warning: #ff8c00;
+    --color-error: #ff0000;
+}
+
+.high-contrast * {
+    color: var(--color-text) !important;
+    background-color: var(--color-background) !important;
+    border-color: var(--color-border) !important;
+}
+
+.high-contrast a {
+    color: var(--color-primary) !important;
+    text-decoration: underline !important;
+}
+
+.high-contrast button {
+    background-color: var(--color-background) !important;
+    color: var(--color-text) !important;
+    border: 2px solid var(--color-border) !important;
+}
+
+.high-contrast .btn-primary {
+    background-color: var(--color-primary) !important;
+    color: var(--color-background) !important;
+}
+
+.high-contrast .btn-success {
+    background-color: var(--color-success) !important;
+    color: var(--color-background) !important;
+}
+
+.high-contrast .btn-warning {
+    background-color: var(--color-warning) !important;
+    color: var(--color-background) !important;
+}
+
+.high-contrast .btn-danger {
+    background-color: var(--color-error) !important;
+    color: var(--color-background) !important;
+}
+
+/* ==========================================================================
+   Texto grande
+   ========================================================================== */
+
+.large-text {
+    font-size: 120% !important;
+    line-height: 1.6 !important;
+}
+
+.large-text h1 { font-size: 2.4rem !important; }
+.large-text h2 { font-size: 2.1rem !important; }
+.large-text h3 { font-size: 1.8rem !important; }
+.large-text h4 { font-size: 1.5rem !important; }
+.large-text h5 { font-size: 1.3rem !important; }
+.large-text h6 { font-size: 1.1rem !important; }
+
+.large-text button,
+.large-text input,
+.large-text select,
+.large-text textarea {
+    font-size: 1.1rem !important;
+    padding: 0.75rem 1rem !important;
+}
+
+/* ==========================================================================
+   Melhorias para leitores de tela
+   ========================================================================== */
+
+.screen-reader-active .decorative {
+    display: none !important;
+}
+
+.screen-reader-active .icon-only {
+    position: relative;
+}
+
+.screen-reader-active .icon-only::after {
+    content: attr(aria-label);
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Estados de elementos interativos
+   ========================================================================== */
+
+/* Estados de loading */
+[aria-busy="true"] {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+[aria-busy="true"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid var(--color-primary-500, #3b82f6);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estados desabilitados */
+[aria-disabled="true"],
+[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Estados expandidos */
+[aria-expanded="true"] {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Estados selecionados */
+[aria-selected="true"] {
+    background-color: var(--color-primary-100, rgba(59, 130, 246, 0.1));
+    color: var(--color-primary-900, #1e3a8a);
+}
+
+/* Estados pressionados */
+[aria-pressed="true"] {
+    background-color: var(--color-primary-200, rgba(59, 130, 246, 0.2));
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Melhorias de navegação
+   ========================================================================== */
+
+/* Skip links */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-primary-600, #2563eb);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 9999;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Breadcrumbs acessíveis */
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb li:not(:last-child)::after {
+    content: "/";
+    margin: 0 0.5rem;
+    color: var(--color-gray-500, #6b7280);
+}
+
+.breadcrumb [aria-current="page"] {
+    color: var(--color-gray-600, #4b5563);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Componentes acessíveis
+   ========================================================================== */
+
+/* Modais */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal[aria-hidden="true"] {
+    display: none;
+}
+
+.modal__content {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+/* Tooltips */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip__content {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-gray-900, #111827);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.tooltip:hover .tooltip__content,
+.tooltip:focus .tooltip__content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tooltip__content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--color-gray-900, #111827);
+}
+
+/* Alertas */
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    margin-bottom: 1rem;
+}
+
+.alert[role="alert"] {
+    border-left: 4px solid currentColor;
+}
+
+.alert--success {
+    background-color: var(--color-success-50, #f0fdf4);
+    color: var(--color-success-800, #166534);
+    border-color: var(--color-success-200, #bbf7d0);
+}
+
+.alert--warning {
+    background-color: var(--color-warning-50, #fffbeb);
+    color: var(--color-warning-800, #92400e);
+    border-color: var(--color-warning-200, #fed7aa);
+}
+
+.alert--error {
+    background-color: var(--color-error-50, #fef2f2);
+    color: var(--color-error-800, #991b1b);
+    border-color: var(--color-error-200, #fecaca);
+}
+
+.alert--info {
+    background-color: var(--color-info-50, #eff6ff);
+    color: var(--color-info-800, #1e40af);
+    border-color: var(--color-info-200, #bfdbfe);
+}
+
+/* ==========================================================================
+   Controles de acessibilidade
+   ========================================================================== */
+
+.accessibility-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border: 1px solid var(--color-gray-300, #d1d5db);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.accessibility-panel h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: var(--color-gray-900, #111827);
+}
+
+.accessibility-panel button {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: var(--color-gray-100, #f3f4f6);
+    border: 1px solid var(--color-gray-300, #d1d5db);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.accessibility-panel button:hover,
+.accessibility-panel button:focus {
+    background: var(--color-gray-200, #e5e7eb);
+}
+
+.accessibility-panel button:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Responsividade para acessibilidade
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .accessibility-panel {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 1rem;
+        max-width: none;
+    }
+    
+    .modal__content {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+    }
+    
+    .keyboard-navigation *:focus {
+        outline-width: 3px;
+        outline-offset: 3px;
+    }
+}
+
+/* ==========================================================================
+   Impressão acessível
+   ========================================================================== */
+
+@media print {
+    .sr-only {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        clip: auto !important;
+        white-space: normal !important;
+        border: 0 !important;
+    }
+    
+    .accessibility-panel,
+    .modal,
+    .tooltip__content {
+        display: none !important;
+    }
+    
+    a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+}

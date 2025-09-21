@@ -3,19 +3,47 @@ const cors = require('cors');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const { body, validationResult } = require('express-validator');
 require('dotenv').config();
 
-const Database = require('./database/database');
-const ProductController = require('./controllers/productController');
-const SupplierController = require('./controllers/supplierController');
-const QuoteController = require('./controllers/quoteController');
-const OrderController = require('./controllers/orderController');
+const Database = require('./backend/database/database');
+const ProductController = require('./backend/controllers/ProductController');
+const SupplierController = require('./backend/controllers/SupplierController');
+const QuoteController = require('./backend/controllers/QuoteController');
+const OrderController = require('./backend/controllers/OrderController');
+const InventoryController = require('./backend/controllers/InventoryController');
+
+// Adicionar o ReportController que estava faltando
+class ReportController {
+    static async getDashboardData(db) {
+        // Implementação básica do dashboard
+        return {
+            totalProducts: 0,
+            totalSuppliers: 0,
+            pendingQuotes: 0,
+            pendingOrders: 0
+        };
+    }
+    
+    static async generateReport(db, type, startDate, endDate) {
+        // Implementação básica de relatórios
+        return {
+            type,
+            startDate,
+            endDate,
+            data: []
+        };
+    }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware de segurança
-app.use(helmet());
+// Middleware de segurança - configurado para desenvolvimento
+app.use(helmet({
+    contentSecurityPolicy: false,
+    hsts: false
+}));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -32,7 +60,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Middleware de logging
 app.use((req, res, next) => {
@@ -40,11 +68,15 @@ app.use((req, res, next) => {
     next();
 });
 
+// Inicializar database
+const db = new Database();
+
 // Inicializar controllers
 const productController = new ProductController();
 const supplierController = new SupplierController();
 const quoteController = new QuoteController();
 const orderController = new OrderController();
+const inventoryController = new InventoryController();
 
 // Middleware de autenticação simulado (para desenvolvimento)
 app.use((req, res, next) => {
@@ -89,17 +121,10 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
-app.post('/api/products', [
-    body('code').notEmpty().withMessage('Product code is required'),
-    body('name').notEmpty().withMessage('Product name is required'),
-    body('category').notEmpty().withMessage('Category is required'),
-    body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-    body('stock').isInt({ min: 0 }).withMessage('Stock must be a non-negative integer'),
-    body('minStock').isInt({ min: 0 }).withMessage('Minimum stock must be a non-negative integer')
-], handleValidationErrors, async (req, res) => {
+app.post('/api/products', async (req, res) => {
     try {
-        const productId = await ProductController.create(db, req.body);
-        res.status(201).json({ success: true, data: { id: productId } });
+        const productController = new ProductController();
+        await productController.createProduct(req, res);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -142,7 +167,7 @@ app.get('/api/suppliers', async (req, res) => {
 
 app.get('/api/suppliers/:id', async (req, res) => {
     try {
-        const supplier = await SupplierController.getById(db, req.params.id);
+        const supplier = await supplierController.getById(db, req.params.id);
         if (!supplier) {
             return res.status(404).json({ success: false, message: 'Supplier not found' });
         }
@@ -152,16 +177,9 @@ app.get('/api/suppliers/:id', async (req, res) => {
     }
 });
 
-app.post('/api/suppliers', [
-    body('cnpj').notEmpty().withMessage('CNPJ is required'),
-    body('name').notEmpty().withMessage('Supplier name is required'),
-    body('contact').notEmpty().withMessage('Contact is required'),
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('phone').notEmpty().withMessage('Phone is required')
-], handleValidationErrors, async (req, res) => {
+app.post('/api/suppliers', async (req, res) => {
     try {
-        const supplierId = await SupplierController.create(db, req.body);
-        res.status(201).json({ success: true, data: { id: supplierId } });
+        await supplierController.createSupplier(req, res);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -175,7 +193,7 @@ app.put('/api/suppliers/:id', [
     body('phone').notEmpty().withMessage('Phone is required')
 ], handleValidationErrors, async (req, res) => {
     try {
-        await SupplierController.update(db, req.params.id, req.body);
+        await supplierController.update(db, req.params.id, req.body);
         res.json({ success: true, message: 'Supplier updated successfully' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -184,7 +202,7 @@ app.put('/api/suppliers/:id', [
 
 app.delete('/api/suppliers/:id', async (req, res) => {
     try {
-        await SupplierController.delete(db, req.params.id);
+        await supplierController.delete(db, req.params.id);
         res.json({ success: true, message: 'Supplier deleted successfully' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -220,7 +238,15 @@ app.post('/api/quotes', [
     body('totalValue').isFloat({ min: 0 }).withMessage('Total value must be a positive number')
 ], handleValidationErrors, async (req, res) => {
     try {
-        const quoteId = await QuoteController.create(db, req.body);
+        // Ajustar os nomes dos campos para corresponder ao que o QuoteController espera
+        const quoteData = {
+            supplier_id: req.body.supplierId,
+            delivery_date: req.body.deliveryDate,
+            items: req.body.items,
+            notes: req.body.notes || '',
+            status: req.body.status || 'pendente'
+        };
+        const quoteId = await QuoteController.create(db, quoteData);
         res.status(201).json({ success: true, data: { id: quoteId } });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -270,7 +296,7 @@ app.get('/api/orders/:id', async (req, res) => {
 });
 
 app.post('/api/orders', [
-    body('supplierId').notEmpty().withMessage('Supplier ID is required'),
+    body('supplier_id').notEmpty().withMessage('Supplier ID is required'),
     body('deliveryDate').isISO8601().withMessage('Valid delivery date is required'),
     body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
     body('totalValue').isFloat({ min: 0 }).withMessage('Total value must be a positive number')
@@ -359,7 +385,7 @@ app.get('/api/health', (req, res) => {
 
 // Serve the main application
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // 404 handler for API routes
@@ -383,14 +409,35 @@ app.use((error, req, res, next) => {
 // Initialize database and start server
 async function startServer() {
     try {
-        await db.initialize();
-        console.log('Database initialized successfully');
+        // Inicializar banco SQLite
+        await db.connect();
+        console.log('✅ Banco SQLite inicializado com sucesso!');
         
-        app.listen(PORT, () => {
+        app.listen(PORT, '0.0.0.0', () => {
+            const os = require('os');
+            const networkInterfaces = os.networkInterfaces();
+            let localIP = 'localhost';
+            
+            // Encontrar IP local (ignorar VirtualBox)
+            for (const interfaceName in networkInterfaces) {
+                const interfaces = networkInterfaces[interfaceName];
+                for (const iface of interfaces) {
+                    if (iface.family === 'IPv4' && !iface.internal && 
+                        !iface.address.startsWith('192.168.56.') && // Ignorar VirtualBox
+                        !interfaceName.toLowerCase().includes('virtualbox')) {
+                        localIP = iface.address;
+                        break;
+                    }
+                }
+                if (localIP !== 'localhost') break;
+            }
+            
             console.log(`Supply Management Server running on port ${PORT}`);
-            console.log(`Frontend: http://localhost:${PORT}`);
-            console.log(`API: http://localhost:${PORT}/api`);
-            console.log(`Health Check: http://localhost:${PORT}/api/health`);
+            console.log(`Frontend (Local): http://localhost:${PORT}`);
+            console.log(`Frontend (Mobile): http://${localIP}:${PORT}`);
+            console.log(`API: http://${localIP}:${PORT}/api`);
+            console.log(`Health Check: http://${localIP}:${PORT}/api/health`);
+            console.log(`\n📱 Para acessar no celular, use: http://${localIP}:${PORT}`);
         });
     } catch (error) {
         console.error('Failed to start server:', error);

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Gestão de Suprimentos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Global Styles -->
+    <link href="css/global-styles.css" rel="stylesheet">
+    
+    <!-- Custom CSS for Navigation -->
+    <style>
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Custom Navigation Styles */
+        .custom-navbar {
+            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+        
+        .nav-brand .brand-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+        
+        .nav-brand .brand-link:hover {
+            opacity: 0.9;
+            color: white;
+        }
+        
+        .nav-brand i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        .brand-text {
+            display: none;
+        }
+        
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .mobile-menu-btn:hover,
+        .mobile-menu-btn:focus,
+        .mobile-menu-btn:active {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            outline: none;
+        }
+        
+        .mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .hamburger-line {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .mobile-menu-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .mobile-menu-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            z-index: 999;
+            transition: right 0.3s ease;
+        }
+        
+        .nav-menu.active {
+            right: 0;
+        }
+        
+        .nav-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .nav-content {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-menu.active .nav-content {
+            transform: translateX(0);
+        }
+        
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+            color: white;
+            height: 70px;
+        }
+        
+        .nav-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .nav-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .nav-close:hover,
+        .nav-close:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            outline: none;
+        }
+        
+        .nav-close:active {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+        
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-item {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .nav-item:last-child {
+            border-bottom: none;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s ease;
+            position: relative;
+            min-height: 48px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .nav-link:hover,
+        .nav-link:focus {
+            background-color: #f8f9fa;
+            color: #0d6efd;
+            text-decoration: none;
+            outline: none;
+        }
+        
+        .nav-link:active {
+            background-color: #e3f2fd;
+            transform: scale(0.98);
+        }
+        
+        .nav-link.active {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            border-right: 4px solid #0d6efd;
+        }
+        
+        .nav-link i {
+            font-size: 1.25rem;
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-link span {
+            font-weight: 500;
+        }
+        
+        /* Desktop Styles - Usando uma abordagem mais robusta */
+        @media (min-width: 992px) and (pointer: fine) {
+            .brand-text {
+                display: inline;
+            }
+            
+            .mobile-menu-btn {
+                display: none;
+            }
+            
+            .nav-menu {
+                position: static;
+                width: auto;
+                height: auto;
+                background: none;
+            }
+            
+            .nav-overlay {
+                display: none;
+            }
+            
+            .nav-content {
+                position: static;
+                width: auto;
+                height: auto;
+                background: none;
+                box-shadow: none;
+                transform: none;
+            }
+            
+            .nav-header {
+                display: none;
+            }
+            
+            .nav-links {
+                display: flex;
+                align-items: center;
+            }
+            
+            .nav-item {
+                border-bottom: none;
+                margin-left: 0.5rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                color: rgba(255, 255, 255, 0.9);
+                border-right: none;
+            }
+            
+            .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+            
+            .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: white;
+                border-right: none;
+            }
+            
+            .nav-link i {
+                margin-right: 0.5rem;
+            }
+        }
+        
+        /* Adjust body padding for fixed navbar */
+        body {
+            padding-top: 70px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="custom-navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="brand-link">
+                    <i class="bi bi-boxes"></i>
+                    <span class="brand-text">Gestão de Suprimentos</span>
+                </a>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <!-- Navigation Menu -->
+            <div class="nav-menu" id="navMenu">
+                <div class="nav-overlay" id="navOverlay"></div>
+                <div class="nav-content">
+                    <div class="nav-header">
+                        <span class="nav-title">Menu</span>
+                        <button class="nav-close" id="navClose">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <ul class="nav-links">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="dashboard.html">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="products.html">
+                                <i class="bi bi-box"></i>
+                                <span>Produtos</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="suppliers.html">
+                                <i class="bi bi-building"></i>
+                                <span>Fornecedores</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quotes.html">
+                                <i class="bi bi-file-text"></i>
+                                <span>Cotações</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="orders.html">
+                                <i class="bi bi-cart"></i>
+                                <span>Pedidos</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="reports.html">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Relatórios</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row">
+            <div class="col-12">
+                <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+                <p class="text-muted">Visão geral do sistema de gestão de suprimentos</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="total-products">0</h4>
+                                <p class="mb-1">Produtos</p>
+                                <small class="d-flex align-items-center">
+                                    <i id="products-trend" class="bi bi-arrow-up me-1"></i>
+                                    <span id="products-change">+0%</span> este mês
+                                </small>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-box fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="total-suppliers">0</h4>
+                                <p class="mb-1">Fornecedores</p>
+                                <small class="d-flex align-items-center">
+                                    <i id="suppliers-trend" class="bi bi-arrow-up me-1"></i>
+                                    <span id="suppliers-change">+0%</span> este mês
+                                </small>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-building fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="total-quotes">0</h4>
+                                <p class="mb-1">Cotações</p>
+                                <small class="d-flex align-items-center">
+                                    <i id="quotes-trend" class="bi bi-arrow-up me-1"></i>
+                                    <span id="quotes-change">+0%</span> este mês
+                                </small>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-file-text fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="total-orders">0</h4>
+                                <p class="mb-1">Pedidos</p>
+                                <small class="d-flex align-items-center">
+                                    <i id="orders-trend" class="bi bi-arrow-up me-1"></i>
+                                    <span id="orders-change">+0%</span> este mês
+                                </small>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-cart fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mt-4">
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-graph-up"></i> Vendas e Produtos - Últimos 6 Meses</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="salesChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-pie-chart"></i> Estoque por Categoria</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional KPIs -->
+        <div class="row mt-4">
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="bi bi-exclamation-triangle"></i> Alertas de Estoque</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 text-center">
+                                <h4 id="low-stock-count" class="text-danger">0</h4>
+                                <small class="text-muted">Estoque Baixo</small>
+                            </div>
+                            <div class="col-6 text-center">
+                                <h4 id="out-of-stock-count" class="text-warning">0</h4>
+                                <small class="text-muted">Sem Estoque</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="bi bi-currency-dollar"></i> Métricas Financeiras</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 text-center">
+                                <h4 id="total-value" class="text-success">R$ 0</h4>
+                                <small class="text-muted">Valor Total</small>
+                            </div>
+                            <div class="col-6 text-center">
+                                <h4 id="avg-order-value" class="text-info">R$ 0</h4>
+                                <small class="text-muted">Ticket Médio</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-lightning"></i> Ações Rápidas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <a href="products.html" class="btn btn-outline-primary w-100 mb-2">
+                                    <i class="bi bi-plus-circle"></i><br>
+                                    Novo Produto
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="suppliers.html" class="btn btn-outline-success w-100 mb-2">
+                                    <i class="bi bi-plus-circle"></i><br>
+                                    Novo Fornecedor
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="quotes.html" class="btn btn-outline-warning w-100 mb-2">
+                                    <i class="bi bi-plus-circle"></i><br>
+                                    Nova Cotação
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="orders.html" class="btn btn-outline-info w-100 mb-2">
+                                    <i class="bi bi-plus-circle"></i><br>
+                                    Novo Pedido
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 bg-light">
+                    <div class="card-body py-2">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <small class="text-muted">
+                                    <i class="bi bi-activity"></i> <strong>Status do Sistema:</strong>
+                                    API: <span id="api-status" class="badge bg-secondary">Verificando...</span>
+                                    | BD: <span id="db-status" class="badge bg-secondary">Verificando...</span>
+                                    | Última Atualização: <span id="last-update">-</span>
+                                </small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="checkSystemHealth()">
+                                    <i class="bi bi-arrow-clockwise"></i> <small>Atualizar</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Notificação</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                Mensagem
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Global Functions JS -->
+    <script src="js/global-functions.js"></script>
+    
+    <!-- Performance Optimizer JS -->
+    <script src="js/performance-optimizer.js"></script>
+    
+    <!-- Mobile Menu JS -->
+    <script src="js/mobile-menu.js"></script>
+    
+    <!-- Dashboard JS -->
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
