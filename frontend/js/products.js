@@ -196,12 +196,86 @@ function hideLoadingState() {
 
 function editProduct(id) {
     console.log('Editando produto:', id);
-    // Implement edit functionality
+    
+    // Fetch product data from API
+    fetch(`/api/products/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const product = data.data || data;
+            
+            // Populate form with product data
+            document.getElementById('productId').value = product.id || id;
+            document.getElementById('productCode').value = product.code || '';
+            document.getElementById('productName').value = product.name || '';
+            document.getElementById('productDescription').value = product.description || '';
+            document.getElementById('productCategory').value = product.category || '';
+            document.getElementById('productUnit').value = product.unit || '';
+            document.getElementById('productPrice').value = product.price || '';
+            document.getElementById('productStock').value = product.stock || 0;
+            document.getElementById('productMinStock').value = product.min_stock || 0;
+            
+            // Update modal title
+            const modalTitle = document.getElementById('productModalTitle');
+            if (modalTitle) modalTitle.textContent = 'Editar Produto';
+            
+            // Show modal
+            const modal = document.getElementById('productModal');
+            if (modal && typeof bootstrap !== 'undefined') {
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar produto:', error);
+            showToast('Erro', 'Erro ao carregar dados do produto.', 'error');
+        });
 }
 
 function deleteProduct(id) {
     console.log('Excluindo produto:', id);
-    // Implement delete functionality
+    
+    // Show confirmation dialog
+    if (!confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
+        return;
+    }
+    
+    // Make API call to delete product
+    fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Produto excluído com sucesso:', data);
+        showToast('Sucesso', 'Produto excluído com sucesso!', 'success');
+        
+        // Reload products list
+        loadProducts();
+    })
+    .catch(error => {
+        console.error('Erro ao excluir produto:', error);
+        
+        let errorMessage = 'Erro interno do servidor.';
+        if (error.message) {
+            errorMessage = error.message;
+        } else if (error.error) {
+            errorMessage = error.error;
+        }
+        
+        showToast('Erro', `Erro ao excluir produto: ${errorMessage}`, 'error');
+    });
 }
 
 function saveProduct() {

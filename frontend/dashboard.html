@@ -564,6 +564,26 @@
             </div>
         </div>
 
+        <!-- Recent Suppliers Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6><i class="bi bi-building"></i> Fornecedores Recentes</h6>
+                        <a href="suppliers.html" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+                    </div>
+                    <div class="card-body">
+                        <div id="recent-suppliers-list">
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-hourglass-split"></i>
+                                <p class="mb-0">Carregando fornecedores...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Quick Actions -->
         <div class="row mt-4">
             <div class="col-12">
@@ -574,22 +594,22 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <a href="products.html" class="btn btn-outline-primary w-100 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="openNewProductModal()">
                                     <i class="bi bi-plus-circle"></i><br>
                                     Novo Produto
-                                </a>
+                                </button>
                             </div>
                             <div class="col-md-3">
-                                <a href="suppliers.html" class="btn btn-outline-success w-100 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100 mb-2" onclick="openNewSupplierModal()">
                                     <i class="bi bi-plus-circle"></i><br>
                                     Novo Fornecedor
-                                </a>
+                                </button>
                             </div>
                             <div class="col-md-3">
-                                <a href="quotes.html" class="btn btn-outline-warning w-100 mb-2">
+                                <button type="button" class="btn btn-outline-warning w-100 mb-2" onclick="openNewQuoteModal()">
                                     <i class="bi bi-plus-circle"></i><br>
                                     Nova Cotação
-                                </a>
+                                </button>
                             </div>
                             <div class="col-md-3">
                                 <a href="orders.html" class="btn btn-outline-info w-100 mb-2">
@@ -642,6 +662,248 @@
         </div>
     </div>
 
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Novo Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId" name="id">
+                        <div class="mb-3">
+                            <label for="productCode" class="form-label">Código *</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="productCode" name="code" required placeholder="Ex: PROD001">
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateProductCode()" title="Gerar novo código">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="productName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Categoria *</label>
+                            <input type="text" class="form-control" id="productCategory" name="category" required placeholder="Ex: Eletrônicos" onchange="generateCodeFromCategory()">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productUnit" class="form-label">Unidade *</label>
+                            <select class="form-control" id="productUnit" name="unit" required>
+                                <option value="">Selecione...</option>
+                                <option value="UN">Unidade</option>
+                                <option value="KG">Quilograma</option>
+                                <option value="L">Litro</option>
+                                <option value="M">Metro</option>
+                                <option value="CX">Caixa</option>
+                                <option value="PC">Peça</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productPrice" class="form-label">Preço *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" class="form-control" id="productPrice" name="price" required step="0.01" min="0" placeholder="0.00" oninput="validatePrice(this)">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="productStock" class="form-label">Estoque Inicial</label>
+                                    <input type="number" class="form-control" id="productStock" name="stock" min="0" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="productMinStock" class="form-label">Estoque Mínimo</label>
+                                    <input type="number" class="form-control" id="productMinStock" name="minStock" min="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveProduct()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier Modal -->
+    <div class="modal fade" id="supplierModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supplierModalTitle">Novo Fornecedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="supplierForm">
+                        <input type="hidden" id="supplierId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="supplierName" class="form-label">Nome *</label>
+                                    <input type="text" class="form-control" id="supplierName" name="name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="supplierCnpj" class="form-label">CNPJ *</label>
+                                    <input type="text" class="form-control" id="supplierCnpj" name="cnpj" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="supplierContact" class="form-label">Contato</label>
+                                    <input type="text" class="form-control" id="supplierContact" name="contact">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="supplierPhone" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" id="supplierPhone" name="phone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="supplierEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="supplierEmail" name="email">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="supplierStatus" class="form-label">Status *</label>
+                                    <select class="form-control" id="supplierStatus" name="status" required>
+                                        <option value="ativo">Ativo</option>
+                                        <option value="inativo">Inativo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="supplierAddress" class="form-label">Endereço</label>
+                            <textarea class="form-control" id="supplierAddress" name="address" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="supplierNotes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="supplierNotes" name="notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSupplier()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote Modal -->
+    <div class="modal fade" id="quoteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quoteModalTitle">Nova Cotação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quoteForm">
+                        <input type="hidden" id="quoteId" name="id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quoteSupplier" class="form-label">Fornecedor *</label>
+                                    <select class="form-control" id="quoteSupplier" name="supplier" required>
+                                        <option value="">Selecione um fornecedor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="quoteDate" class="form-label">Data *</label>
+                                    <input type="date" class="form-control" id="quoteDate" name="date" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="quoteValidUntil" class="form-label">Válida até *</label>
+                                    <input type="date" class="form-control" id="quoteValidUntil" name="validUntil" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quoteProduct" class="form-label">Produto *</label>
+                                    <select class="form-control" id="quoteProduct" name="product" required>
+                                        <option value="">Selecione um produto</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="quoteQuantity" class="form-label">Quantidade *</label>
+                                    <input type="number" class="form-control" id="quoteQuantity" name="quantity" min="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="quotePrice" class="form-label">Preço Unitário *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="number" class="form-control" id="quotePrice" name="price" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quoteStatus" class="form-label">Status *</label>
+                                    <select class="form-control" id="quoteStatus" name="status" required>
+                                        <option value="pendente">Pendente</option>
+                                        <option value="aprovada">Aprovada</option>
+                                        <option value="rejeitada">Rejeitada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Total</label>
+                                    <div class="form-control-plaintext fw-bold" id="quoteTotal">R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quoteNotes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="quoteNotes" name="notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveQuote()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     

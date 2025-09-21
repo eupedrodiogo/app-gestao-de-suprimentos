@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Relatório Financeiro</title>
+</head>
+<body>
+    <h1>Teste Relatório Financeiro</h1>
+    <button onclick="testFinancialReport()">Testar Requisição</button>
+    <div id="result"></div>
+
+    <script>
+        // Adicionar logs de carregamento
+        console.log('Script carregado!');
+        
+        // Verificar se há erros no console
+        window.addEventListener('error', function(e) {
+            console.error('Erro JavaScript:', e.error);
+            document.getElementById('result').innerHTML += '<p style="color: red;">Erro JS: ' + e.error.message + '</p>';
+        });
+        
+        async function testFinancialReport() {
+            console.log('🚀 Iniciando teste da requisição...');
+            document.getElementById('result').innerHTML = '<p style="color: blue;">Enviando requisição...</p>';
+            
+            const data = {
+                startDate: '2021-01-01T00:00:00.000Z',
+                endDate: '2025-12-31T23:59:59.999Z',
+                analysisType: 'Todos',
+                category: 'Todos',
+                supplier: 'Todos'
+            };
+            
+            console.log('📊 Dados a serem enviados:', data);
+            console.log('🌐 URL do endpoint:', '/api/reports/financial');
+            
+            try {
+                console.log('📤 Enviando requisição...');
+                const response = await fetch('/api/reports/financial', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('📥 Resposta recebida!');
+                console.log('📊 Status da resposta:', response.status);
+                console.log('📋 Headers da resposta:', [...response.headers.entries()]);
+                
+                if (response.ok) {
+                    console.log('✅ Resposta OK, processando blob...');
+                    const blob = await response.blob();
+                    console.log('📄 Blob recebido:', blob.size, 'bytes, tipo:', blob.type);
+                    document.getElementById('result').innerHTML = '<p style="color: green;">✅ Sucesso! PDF gerado (' + blob.size + ' bytes)</p>';
+                    
+                    // Tentar fazer download do PDF
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'teste-relatorio-financeiro.pdf';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    console.error('❌ Erro na resposta:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.error('📄 Texto do erro:', errorText);
+                    document.getElementById('result').innerHTML = '<p style="color: red;">❌ Erro ' + response.status + ': ' + errorText + '</p>';
+                }
+            } catch (error) {
+                console.error('💥 Erro na requisição:', error);
+                document.getElementById('result').innerHTML = '<p style="color: red;">💥 Erro: ' + error.message + '</p>';
+            }
+        }
+        
+        // Testar automaticamente quando a página carregar
+        window.addEventListener('load', function() {
+            console.log('📄 Página carregada, aguardando 2 segundos para teste automático...');
+            setTimeout(() => {
+                console.log('🤖 Executando teste automático...');
+                testFinancialReport();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

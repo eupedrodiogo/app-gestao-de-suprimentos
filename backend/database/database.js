@@ -189,9 +189,11 @@ class Database {
                 price REAL DEFAULT 0,
                 stock INTEGER DEFAULT 0,
                 min_stock INTEGER DEFAULT 0,
+                supplier_id INTEGER,
                 status TEXT DEFAULT 'ativo',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
             )`,
 
             // Tabela de fornecedores (suppliers)
@@ -278,12 +280,33 @@ class Database {
         }
 
         console.log('✅ Tabelas inicializadas com sucesso!');
+        
+        // Executar migrações se necessário
+        await this.runMigrations();
+    }
+
+    async runMigrations() {
+        try {
+            // Verificar se a coluna supplier_id existe na tabela products
+            const tableInfo = await this.query("PRAGMA table_info(products)");
+            const hasSupplierIdColumn = Array.isArray(tableInfo) && tableInfo.some(column => column.name === 'supplier_id');
+            
+            if (!hasSupplierIdColumn) {
+                console.log('🔄 Executando migração: adicionando coluna supplier_id na tabela products...');
+                await this.query("ALTER TABLE products ADD COLUMN supplier_id INTEGER");
+                console.log('✅ Migração concluída: coluna supplier_id adicionada');
+            } else {
+                console.log('✅ Coluna supplier_id já existe na tabela products');
+            }
+        } catch (error) {
+            console.error('❌ Erro durante migração:', error.message);
+        }
     }
 
     // Métodos específicos para produtos
     async adicionarProduto(produto) {
-        const sql = `INSERT INTO products (code, name, description, category, unit, price, stock, min_stock)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO products (code, name, description, category, unit, price, stock, min_stock, supplier_id)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const params = [
             produto.code,
             produto.name,
@@ -292,7 +315,8 @@ class Database {
             produto.unit || 'UN',
             produto.price || 0,
             produto.stock || 0,
-            produto.min_stock || 0
+            produto.min_stock || 0,
+            produto.supplier_id || null
         ];
         return await this.query(sql, params);
     }

@@ -583,6 +583,197 @@
         </div>
     </div>
 
+    <!-- Products Report Modal -->
+    <div class="modal fade" id="productsReportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Relatório de Produtos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productsReportForm">
+                        <div class="mb-3">
+                            <label for="productsStartDate" class="form-label">Data Inicial *</label>
+                            <input type="date" class="form-control" id="productsStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productsEndDate" class="form-label">Data Final *</label>
+                            <input type="date" class="form-control" id="productsEndDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productsCategory" class="form-label">Categoria</label>
+                            <select class="form-control" id="productsCategory">
+                                <option value="">Todas</option>
+                                <option value="eletrônicos">Eletrônicos</option>
+                                <option value="escritório">Escritório</option>
+                                <option value="limpeza">Limpeza</option>
+                                <option value="alimentação">Alimentação</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-info" onclick="generateProductsReport()">
+                        <i class="bi bi-download"></i> Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quotes Report Modal -->
+    <div class="modal fade" id="quotesReportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Relatório de Cotações</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quotesReportForm">
+                        <div class="mb-3">
+                            <label for="quotesStartDate" class="form-label">Data Inicial *</label>
+                            <input type="date" class="form-control" id="quotesStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quotesEndDate" class="form-label">Data Final *</label>
+                            <input type="date" class="form-control" id="quotesEndDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quotesStatus" class="form-label">Status</label>
+                            <select class="form-control" id="quotesStatus">
+                                <option value="">Todos</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="aprovada">Aprovada</option>
+                                <option value="rejeitada">Rejeitada</option>
+                                <option value="expirada">Expirada</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quotesSupplier" class="form-label">Fornecedor</label>
+                            <select class="form-control" id="quotesSupplier">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" onclick="generateQuotesReport()">
+                        <i class="bi bi-download"></i> Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Report Modal -->
+    <div class="modal fade" id="financialReportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Relatório Financeiro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="financialReportForm">
+                        <div class="mb-3">
+                            <label for="financialStartDate" class="form-label">Data Inicial *</label>
+                            <input type="date" class="form-control" id="financialStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="financialEndDate" class="form-label">Data Final *</label>
+                            <input type="date" class="form-control" id="financialEndDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="financialType" class="form-label">Tipo de Análise</label>
+                            <select class="form-control" id="financialType">
+                                <option value="">Todos</option>
+                                <option value="gastos">Gastos</option>
+                                <option value="economia">Economia</option>
+                                <option value="orcamento">Orçamento</option>
+                                <option value="comparativo">Comparativo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="financialCategory" class="form-label">Categoria</label>
+                            <select class="form-control" id="financialCategory">
+                                <option value="">Todas</option>
+                                <option value="eletrônicos">Eletrônicos</option>
+                                <option value="escritório">Escritório</option>
+                                <option value="limpeza">Limpeza</option>
+                                <option value="alimentação">Alimentação</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="financialSupplier" class="form-label">Fornecedor</label>
+                            <select class="form-control" id="financialSupplier">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" onclick="generateFinancialReport()">
+                        <i class="bi bi-download"></i> Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deadlines Report Modal -->
+    <div class="modal fade" id="deadlinesReportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Relatório de Prazos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deadlinesReportForm">
+                        <div class="mb-3">
+                            <label for="deadlinesStartDate" class="form-label">Data Inicial *</label>
+                            <input type="date" class="form-control" id="deadlinesStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deadlinesEndDate" class="form-label">Data Final *</label>
+                            <input type="date" class="form-control" id="deadlinesEndDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deadlinesType" class="form-label">Tipo de Prazo</label>
+                            <select class="form-control" id="deadlinesType">
+                                <option value="">Todos</option>
+                                <option value="entrega">Entrega</option>
+                                <option value="pagamento">Pagamento</option>
+                                <option value="cotacao">Cotação</option>
+                                <option value="aprovacao">Aprovação</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deadlinesStatus" class="form-label">Status</label>
+                            <select class="form-control" id="deadlinesStatus">
+                                <option value="">Todos</option>
+                                <option value="cumprido">Cumprido</option>
+                                <option value="atrasado">Atrasado</option>
+                                <option value="pendente">Pendente</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="generateDeadlinesReport()">
+                        <i class="bi bi-download"></i> Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="toast" class="toast" role="alert">
@@ -596,6 +787,9 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <!-- Global Functions JS -->
     <script src="js/global-functions.js"></script>
     
