@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - SupplyChain Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .debug-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+        
+        .test-results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔧 Diagnóstico do Sistema</h1>
+        <p>Esta página ajuda a identificar problemas no sistema SupplyChain Pro.</p>
+        
+        <div id="results">
+            <div class="status warning">
+                <strong>⏳ Executando testes...</strong>
+            </div>
+        </div>
+        
+        <div class="test-results">
+            <h3>Testes Disponíveis:</h3>
+            <button class="btn" onclick="testAPI()">Testar API</button>
+            <button class="btn" onclick="testDatabase()">Testar Banco de Dados</button>
+            <button class="btn" onclick="testDependencies()">Testar Dependências</button>
+            <a href="index.html" class="btn">Voltar ao Sistema</a>
+        </div>
+        
+        <div id="console-output">
+            <h3>Console Output:</h3>
+            <pre id="console-log"></pre>
+        </div>
+    </div>
+
+    <script>
+        let consoleLog = document.getElementById('console-log');
+        let results = document.getElementById('results');
+        
+        // Capturar logs do console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            consoleLog.textContent += `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            addToConsole('log', args.join(' '));
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            addToConsole('error', args.join(' '));
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            addToConsole('warn', args.join(' '));
+            originalWarn.apply(console, args);
+        };
+        
+        // Testes automáticos
+        async function runDiagnostics() {
+            results.innerHTML = '';
+            
+            // Teste 1: Verificar se o servidor está respondendo
+            try {
+                const response = await fetch('/api/health');
+                if (response.ok) {
+                    results.innerHTML += '<div class="status success"><strong>✅ Servidor:</strong> Online e respondendo</div>';
+                } else {
+                    results.innerHTML += '<div class="status error"><strong>❌ Servidor:</strong> Respondendo com erro ' + response.status + '</div>';
+                }
+            } catch (error) {
+                results.innerHTML += '<div class="status error"><strong>❌ Servidor:</strong> Não está respondendo - ' + error.message + '</div>';
+            }
+            
+            // Teste 2: Verificar dependências externas
+            const dependencies = [
+                { name: 'Font Awesome', test: () => document.querySelector('link[href*="font-awesome"]') },
+                { name: 'Chart.js', test: () => typeof Chart !== 'undefined' }
+            ];
+            
+            dependencies.forEach(dep => {
+                try {
+                    if (dep.test()) {
+                        results.innerHTML += `<div class="status success"><strong>✅ ${dep.name}:</strong> Carregado</div>`;
+                    } else {
+                        results.innerHTML += `<div class="status error"><strong>❌ ${dep.name}:</strong> Não carregado</div>`;
+                    }
+                } catch (error) {
+                    results.innerHTML += `<div class="status error"><strong>❌ ${dep.name}:</strong> Erro - ${error.message}</div>`;
+                }
+            });
+            
+            // Teste 3: Verificar elementos da página principal
+            const elements = ['welcomeSection', 'dashboardContent'];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    results.innerHTML += `<div class="status success"><strong>✅ Elemento ${id}:</strong> Encontrado</div>`;
+                } else {
+                    results.innerHTML += `<div class="status warning"><strong>⚠️ Elemento ${id}:</strong> Não encontrado (normal nesta página)</div>`;
+                }
+            });
+        }
+        
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/suppliers');
+                const data = await response.json();
+                console.log('API Suppliers Response:', data);
+                results.innerHTML += '<div class="status success"><strong>✅ API Suppliers:</strong> Funcionando</div>';
+            } catch (error) {
+                console.error('API Error:', error);
+                results.innerHTML += '<div class="status error"><strong>❌ API Suppliers:</strong> ' + error.message + '</div>';
+            }
+        }
+        
+        async function testDatabase() {
+            try {
+                const response = await fetch('/api/health/database');
+                const data = await response.json();
+                console.log('Database Health:', data);
+                results.innerHTML += '<div class="status success"><strong>✅ Database:</strong> Conectado</div>';
+            } catch (error) {
+                console.error('Database Error:', error);
+                results.innerHTML += '<div class="status error"><strong>❌ Database:</strong> ' + error.message + '</div>';
+            }
+        }
+        
+        function testDependencies() {
+            // Testar Chart.js
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js version:', Chart.version);
+                results.innerHTML += '<div class="status success"><strong>✅ Chart.js:</strong> Disponível</div>';
+            } else {
+                results.innerHTML += '<div class="status error"><strong>❌ Chart.js:</strong> Não carregado</div>';
+            }
+            
+            // Testar Font Awesome
+            const faLink = document.querySelector('link[href*="font-awesome"]');
+            if (faLink) {
+                results.innerHTML += '<div class="status success"><strong>✅ Font Awesome:</strong> Link encontrado</div>';
+            } else {
+                results.innerHTML += '<div class="status error"><strong>❌ Font Awesome:</strong> Link não encontrado</div>';
+            }
+        }
+        
+        // Executar diagnósticos automaticamente
+        document.addEventListener('DOMContentLoaded', runDiagnostics);
+        
+        // Capturar erros globais
+        window.addEventListener('error', function(event) {
+            console.error('Global Error:', event.error);
+        });
+        
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled Promise Rejection:', event.reason);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Simples - SupplyChain Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2563eb 0%, #667eea 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            background: #f59e0b;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SupplyChain Pro</h1>
+        <p>Sistema de Gestão de Suprimentos</p>
+        <p>Teste de Conectividade - Servidor Funcionando!</p>
+        
+        <a href="index.html" class="btn">Acessar Sistema Completo</a>
+        
+        <div class="status">
+            <strong>✅ Status:</strong> Servidor Online<br>
+            <strong>🌐 URL:</strong> http://localhost:3000<br>
+            <strong>⏰ Timestamp:</strong> <span id="timestamp"></span>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar timestamp atual
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('pt-BR');
+        
+        // Teste de conectividade com a API
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Health Check:', data);
+            })
+            .catch(error => {
+                console.error('Erro na API:', error);
+            });
+    </script>
+</body>
+</html>

@@ -5,23 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SupplyChain Pro - Sistema ERP</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --accent-color: #3b82f6;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1f2937;
-            --light-color: #f8fafc;
-            --border-color: #e5e7eb;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --sidebar-width: 280px;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -30,503 +14,170 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--light-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        /* Layout Principal */
-        .app-container {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            min-height: 100vh;
-            transition: grid-template-columns 0.3s ease;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #667eea 100%);
             color: white;
-            overflow-y: auto;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .logo-container {
-            padding: 2rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .logo {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            text-decoration: none;
         }
 
-        .logo i {
-            font-size: 2rem;
-            background: linear-gradient(45deg, #60a5fa, #34d399);
+        .welcome-container {
+            text-align: center;
+            max-width: 800px;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f9ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .nav-menu {
-            padding: 1rem 0;
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-section-title {
-            padding: 0 1.5rem 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-right: 3px solid var(--accent-color);
-        }
-
-        .nav-item i {
-            width: 20px;
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            overflow-x: auto;
-            min-width: 0;
-        }
-
-        /* Header */
-        .header {
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-
-        .breadcrumb {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--light-color);
-            border-radius: 0.5rem;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        /* Dashboard Content */
-        .dashboard {
-            padding: clamp(1rem, 4vw, 2rem);
-            container-type: inline-size;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            gap: clamp(1rem, 3vw, 2rem);
-            margin-bottom: clamp(1rem, 3vw, 2rem);
-        }
-
-        /* KPI Cards */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 25vw, 300px), 1fr));
-            gap: clamp(1rem, 2vw, 1.5rem);
-            margin-bottom: clamp(1rem, 3vw, 2rem);
-        }
-
-        .kpi-card {
-            background: white;
-            border-radius: clamp(0.5rem, 2vw, 1rem);
-            padding: clamp(1rem, 3vw, 1.5rem);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .kpi-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .kpi-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .kpi-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .subtitle {
             font-size: 1.25rem;
-            color: white;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            line-height: 1.6;
         }
 
-        .kpi-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #f59e0b;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
 
-        .kpi-change {
+        .feature-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .actions {
             display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .kpi-change.positive {
-            color: var(--success-color);
-        }
-
-        .kpi-change.negative {
-            color: var(--danger-color);
-        }
-
-        /* Charts Section */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(clamp(300px, 40vw, 500px), 1fr));
-            gap: clamp(1rem, 3vw, 2rem);
-            margin-bottom: clamp(1rem, 3vw, 2rem);
-        }
-
-        .chart-card {
-            background: white;
-            border-radius: clamp(0.5rem, 2vw, 1rem);
-            padding: clamp(1rem, 3vw, 1.5rem);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
-            height: clamp(300px, 40vh, 400px);
-        }
-
-        .chart-card canvas {
-            max-width: 100%;
-            max-height: 250px;
-        }
-
-        /* Container Queries para ajustes dinâmicos */
-        @container (max-width: 600px) {
-            .kpi-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-            
-            .charts-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-        }
-
-        @container (min-width: 900px) {
-            .kpi-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .chart-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .chart-period {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .period-btn {
-            padding: 0.25rem 0.75rem;
-            border: 1px solid var(--border-color);
-            background: white;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .period-btn.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        /* Data Tables */
-        .data-section {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .view-all-btn {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        /* Table Container with Responsive Scroll */
-        .table-container {
-            overflow-x: auto;
-            margin: 0 -1.5rem;
-            padding: 0 1.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-color) transparent;
-        }
-
-        .table-container::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .table-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 3px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: var(--text-secondary);
-        }
-
-        .data-table {
-            width: 100%;
-            min-width: 600px; /* Largura mínima para manter legibilidade */
-            border-collapse: collapse;
-            table-layout: auto;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.5rem, 1vw, 1rem);
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: clamp(0.75rem, 2vw, 0.875rem);
-            white-space: nowrap;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
-
-        .data-table td {
-            padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.5rem, 1vw, 1rem);
-            border-bottom: 1px solid var(--border-color);
-            font-size: clamp(0.75rem, 2vw, 0.875rem);
-            vertical-align: middle;
-        }
-
-        /* Larguras específicas para colunas importantes */
-        .data-table th:nth-child(1),
-        .data-table td:nth-child(1) {
-            min-width: clamp(80px, 15vw, 120px); /* Código/Número */
-        }
-
-        .data-table th:nth-child(2),
-        .data-table td:nth-child(2) {
-            min-width: clamp(150px, 25vw, 200px); /* Nome/Descrição */
-        }
-
-        /* Colunas de Categoria - ajuste baseado na posição comum */
-        .data-table th:nth-child(3),
-        .data-table td:nth-child(3) {
-            min-width: clamp(100px, 18vw, 140px);
-            max-width: 160px;
-        }
-
-        /* Colunas de Status - geralmente nas posições 6 ou 7 */
-        .data-table th:nth-child(6),
-        .data-table td:nth-child(6),
-        .data-table th:nth-child(7),
-        .data-table td:nth-child(7) {
-            min-width: clamp(90px, 15vw, 120px);
-            max-width: 140px;
-        }
-
-        /* Coluna de Ações - sempre última */
-        .data-table th:last-child,
-        .data-table td:last-child {
-            min-width: clamp(80px, 12vw, 100px);
-            text-align: center;
-            position: sticky;
-            right: 0;
-            background: white;
-            box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Colunas de valores monetários */
-        .data-table td:nth-child(5),
-        .data-table td:nth-child(6) {
-            text-align: right;
-            font-weight: 500;
-        }
-
-        /* Melhor controle de texto longo */
-        .data-table td {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .data-table td:nth-child(2) {
-            max-width: 250px; /* Nome/Descrição pode ser maior */
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .status-badge.ativo {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .status-badge.pendente {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-color);
-        }
-
-        .status-badge.aprovado {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-color);
-        }
-
-        /* Loading States */
-        .loading {
-            display: flex;
-            align-items: center;
+            gap: 1rem;
             justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
             padding: 2rem;
-            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f59e0b;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
         }
 
         .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color);
-            border-top: 2px solid var(--primary-color);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
+            border-top: 3px solid #f59e0b;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
+            margin: 0 auto 1rem;
         }
 
         @keyframes spin {
@@ -534,2322 +185,208 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive Design */
-        @media (max-width: 1440px) {
-            :root {
-                --sidebar-width: 260px;
-            }
-            
-            .kpi-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            :root {
-                --sidebar-width: 240px;
-            }
-            
-            .charts-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .kpi-grid {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            }
-            
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .header {
-                padding: 1rem;
-            }
-        }
-
-        /* Breakpoint intermediário para tablets grandes */
-        @media (max-width: 1200px) {
-            :root {
-                --sidebar-width: clamp(200px, 20vw, 250px);
-            }
-        }
-
-        @media (max-width: 1024px) {
-            :root {
-                --sidebar-width: 200px;
-            }
-            
-            .app-container {
-                grid-template-columns: var(--sidebar-width) 1fr;
-            }
-            
-            .data-table-container {
-                overflow-x: auto;
-                margin: 0 -1rem;
-                padding: 0 1rem;
-            }
-            
-            .data-table {
-                min-width: 600px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .app-container {
-                grid-template-columns: 1fr;
-                position: relative;
-            }
-
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: min(280px, 80vw);
-                transform: translateX(-100%);
-                z-index: 1000;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                padding: 0.5rem;
-            }
-            
-            .header {
-                padding: 0.5rem;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            
-            .breadcrumb {
-                order: 3;
-                width: 100%;
-                margin-top: 0.5rem;
-            }
-            
-            .kpi-grid {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            
-            .kpi-card {
-                padding: 0.75rem;
-            }
-            
-            .charts-grid {
-                gap: 0.75rem;
-            }
-            
-            .chart-card {
-                padding: 0.75rem;
-            }
-            
-            .data-table {
-                font-size: 0.75rem;
-                min-width: 500px;
-            }
-            
-            .data-table th,
-            .data-table td {
-                padding: 0.5rem 0.25rem;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .section-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .filters {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .filter-group {
-                width: 100%;
-            }
-            
-            .overlay-mobile {
-                display: block;
-            }
-        }
-
-        /* Breakpoint intermediário para smartphones grandes */
-        @media (max-width: 640px) {
-            .sidebar {
-                width: min(260px, 75vw);
-            }
-            
-            .header {
-                padding: clamp(0.5rem, 2vw, 1rem);
-            }
-            
-            .main-content {
-                padding: clamp(0.5rem, 2vw, 1rem);
-            }
-            
-            /* Ajustes específicos para tabelas em smartphones grandes */
-            .table-container {
-                margin: 0 -1rem;
-                padding: 0 1rem;
-            }
-            
-            .data-table {
-                min-width: 500px;
-                font-size: 0.8rem;
-            }
-            
-            .data-table th,
-            .data-table td {
-                padding: 0.5rem 0.5rem;
-            }
-            
-            .data-table th:last-child,
-            .data-table td:last-child {
-                min-width: 70px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 0.25rem;
-            }
-            
-            .header {
-                padding: 0.25rem 0.5rem;
-            }
-            
-            .kpi-card {
-                padding: 0.75rem;
-            }
-            
-            .kpi-card .value {
-                font-size: 1.25rem;
-            }
-            
-            .chart-card {
-                padding: 0.75rem;
-            }
-            
-            .data-table {
-                font-size: 0.7rem;
-                min-width: 450px;
-            }
-            
-            .data-table th,
-            .data-table td {
-                padding: 0.375rem 0.125rem;
-            }
-            
-            .btn {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.75rem;
-            }
-            
-            .btn-icon {
-                width: 28px;
-                height: 28px;
-            }
-            
-            .section-title {
-                font-size: 1rem;
-            }
-            
-            .user-info .user-name {
-                display: none;
-            }
-            
-            /* Layout de cards para tabelas em smartphones pequenos */
-            .table-container {
-                margin: 0;
-                padding: 0;
-                overflow: visible;
-            }
-            
-            /* Esconde tabela tradicional e mostra cards */
-            .data-table {
-                display: none;
-            }
-            
-            /* Cards responsivos para dados da tabela */
-            .table-cards {
-                display: grid;
-                gap: 0.75rem;
-                margin-top: 1rem;
-            }
-            
-            .table-card {
-                background: white;
-                border: 1px solid var(--border-color);
-                border-radius: 0.5rem;
-                padding: 1rem;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            }
-            
-            .table-card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 0.75rem;
-                padding-bottom: 0.5rem;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .table-card-title {
-                font-weight: 600;
-                color: var(--text-primary);
-                font-size: 0.9rem;
-            }
-            
-            .table-card-status {
-                font-size: 0.75rem;
-            }
-            
-            .table-card-body {
-                display: grid;
-                gap: 0.5rem;
-            }
-            
-            .table-card-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-size: 0.8rem;
-            }
-            
-            .table-card-label {
-                color: var(--text-secondary);
-                font-weight: 500;
-                min-width: 80px;
-            }
-            
-            .table-card-value {
-                color: var(--text-primary);
-                text-align: right;
-                flex: 1;
-            }
-            
-            .table-card-actions {
-                margin-top: 0.75rem;
-                padding-top: 0.5rem;
-                border-top: 1px solid var(--border-color);
-                display: flex;
-                gap: 0.5rem;
-                justify-content: flex-end;
-            }
-        }
-
-        /* Landscape orientation for tablets */
-        @media (max-width: 1024px) and (orientation: landscape) {
-            .kpi-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .charts-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* High resolution displays */
-        @media (min-width: 1920px) {
-            .app-container {
-                max-width: 1500px;
-                margin: 0 auto;
-            }
-            
-            .main-content {
+            .welcome-container {
+                margin: 1rem;
                 padding: 2rem;
             }
-            
-            .kpi-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 2rem;
-            }
-            
-            .charts-grid {
-                gap: 2rem;
-            }
-        }
 
-        /* Additional responsive improvements */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .mobile-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .action-buttons {
-                display: flex;
-                gap: 0.25rem;
-                justify-content: center;
-            }
-            
-            .btn-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 0.75rem;
-            }
-            
-            .badge {
-                font-size: 0.625rem;
-                padding: 0.125rem 0.5rem;
-            }
-            
-            .pagination {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 0.25rem;
-            }
-            
-            .pagination button {
-                min-width: 36px;
-                height: 36px;
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .data-table th:nth-child(n+4),
-            .data-table td:nth-child(n+4) {
-                display: none;
-            }
-            
-            .mobile-only {
-                display: block !important;
-            }
-            
-            .desktop-only {
-                display: none !important;
-            }
-        }
-
-        /* Utility classes for responsive design */
-        .hidden-mobile {
-            display: block;
-        }
-
-        .visible-mobile {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .hidden-mobile {
-                display: none;
-            }
-            
-            .visible-mobile {
-                display: block;
-            }
-        }
-
-            .menu-toggle {
-                display: block;
+            .title {
+                font-size: 2rem;
             }
 
-            .kpi-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
             }
 
-            .header {
-                padding: 1rem;
-            }
-
-            .dashboard {
-                padding: 1rem;
-            }
-
-            .user-info span {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header-right {
-                gap: 0.5rem;
-            }
-
-            .chart-period {
+            .actions {
                 flex-direction: column;
-                gap: 0.25rem;
+                align-items: center;
             }
-        }
 
-        /* Overlay for mobile */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        /* Section Styles */
-        .section {
-            display: none;
-            padding: 2rem;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .section-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary-color);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--light-color);
-        }
-
-        .filters-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .filter-input {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-        }
-
-        .data-grid {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .data-grid-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .data-grid-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .data-grid-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 1rem 1.5rem;
-            background: var(--light-color);
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .data-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.875rem;
-        }
-
-        .data-table tr:hover {
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-edit {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary-color);
-        }
-
-        .btn-edit:hover {
-            background: rgba(59, 130, 246, 0.2);
-        }
-
-        .btn-delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
-        .btn-delete:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        .btn-view {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .btn-view:hover {
-            background: rgba(16, 185, 129, 0.2);
-        }
-
-        .status-badge.inativo {
-            background: rgba(107, 114, 128, 0.1);
-            color: var(--text-secondary);
-        }
-
-        .status-badge.confirmado {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .status-badge.producao {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary-color);
-        }
-
-        .status-badge.enviado {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
-        }
-
-        .status-badge.entregue {
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
-        }
-
-        .status-badge.cancelado {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
-        .status-badge.rejeitado {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .pagination-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--border-color);
-            background: white;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pagination-btn:hover {
-            background: var(--light-color);
-        }
-
-        .pagination-btn.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="logo-container">
-                <a href="#" class="logo">
-                    <i class="fas fa-cube"></i>
-                    <span>SupplyChain Pro</span>
-                </a>
+    <div class="welcome-container">
+        <div class="logo">🚀</div>
+        <h1 class="title">SupplyChain Pro</h1>
+        <p class="subtitle">Sistema Completo de Gestão de Suprimentos e ERP</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-boxes"></i></div>
+                <div class="feature-title">Gestão de Produtos</div>
+                <div class="feature-desc">Controle completo do seu estoque</div>
             </div>
-            
-            <div class="nav-menu">
-                <div class="nav-section">
-                    <div class="nav-section-title">Principal</div>
-                    <a href="#" class="nav-item active" data-section="dashboard">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Gestão</div>
-                    <a href="#" class="nav-item" data-section="products">
-                        <i class="fas fa-box"></i>
-                        <span>Produtos</span>
-                    </a>
-                    <a href="#" class="nav-item" data-section="suppliers">
-                        <i class="fas fa-truck"></i>
-                        <span>Fornecedores</span>
-                    </a>
-                    <a href="#" class="nav-item" data-section="quotes">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <span>Cotações</span>
-                    </a>
-                    <a href="#" class="nav-item" data-section="orders">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Pedidos</span>
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Controle</div>
-                    <a href="#" class="nav-item" data-section="inventory">
-                        <i class="fas fa-warehouse"></i>
-                        <span>Estoque</span>
-                    </a>
-                    <a href="#" class="nav-item" data-section="reports">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Relatórios</span>
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Sistema</div>
-                    <a href="#" class="nav-item" data-section="settings">
-                        <i class="fas fa-cog"></i>
-                        <span>Configurações</span>
-                    </a>
-                </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-truck"></i></div>
+                <div class="feature-title">Fornecedores</div>
+                <div class="feature-desc">Gerencie sua rede de fornecedores</div>
             </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content" id="mainContent">
-            <!-- Header -->
-            <header class="header">
-                <div class="header-left">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1 class="breadcrumb" id="breadcrumb">Dashboard</h1>
-                </div>
-                <div class="header-right">
-                    <div class="user-info">
-                        <div class="user-avatar">A</div>
-                        <span>Administrador</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Dashboard Content -->
-            <div class="dashboard" id="dashboardContent">
-                <!-- KPI Cards -->
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-title">Total de Produtos</div>
-                            <div class="kpi-icon" style="background: var(--primary-color);">
-                                <i class="fas fa-box"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="totalProducts">-</div>
-                        <div class="kpi-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>+12% vs mês anterior</span>
-                        </div>
-                    </div>
-
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-title">Fornecedores Ativos</div>
-                            <div class="kpi-icon" style="background: var(--success-color);">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="totalSuppliers">-</div>
-                        <div class="kpi-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>+5% vs mês anterior</span>
-                        </div>
-                    </div>
-
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-title">Cotações Pendentes</div>
-                            <div class="kpi-icon" style="background: var(--warning-color);">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="pendingQuotes">-</div>
-                        <div class="kpi-change negative">
-                            <i class="fas fa-arrow-down"></i>
-                            <span>-8% vs mês anterior</span>
-                        </div>
-                    </div>
-
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-title">Valor Total Pedidos</div>
-                            <div class="kpi-icon" style="background: var(--accent-color);">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                        </div>
-                        <div class="kpi-value" id="totalOrderValue">R$ -</div>
-                        <div class="kpi-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>+15% vs mês anterior</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="charts-grid">
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Custo de Compras - Últimos 6 Meses</h3>
-                            <div class="chart-period">
-                                <button class="period-btn active">6M</button>
-                                <button class="period-btn">3M</button>
-                                <button class="period-btn">1M</button>
-                            </div>
-                        </div>
-                        <canvas id="purchaseCostChart" width="300" height="150"></canvas>
-                    </div>
-
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Status das Cotações</h3>
-                        </div>
-                        <canvas id="quotesStatusChart" width="200" height="150"></canvas>
-                    </div>
-                </div>
-
-                <!-- Recent Activities -->
-                <div class="data-section">
-                    <div class="section-header">
-                        <h3 class="section-title">Atividades Recentes</h3>
-                        <a href="#" class="view-all-btn">Ver todas</a>
-                    </div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Descrição</th>
-                                <th>Status</th>
-                                <th>Data</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recentActivities">
-                            <tr>
-                                <td colspan="5" class="loading">
-                                    <div class="spinner"></div>
-                                    Carregando atividades...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="feature-title">Pedidos</div>
+                <div class="feature-desc">Controle de pedidos e compras</div>
             </div>
-
-            <!-- Products Section -->
-            <div class="section" id="productsSection">
-                <div class="section-header">
-                    <h2 class="section-title">Produtos</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Novo Produto
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label class="filter-label">Buscar</label>
-                        <input type="text" class="filter-input" placeholder="Nome do produto...">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Categoria</label>
-                        <select class="filter-input">
-                            <option value="">Todas</option>
-                            <option value="eletronicos">Eletrônicos</option>
-                            <option value="escritorio">Material de Escritório</option>
-                            <option value="moveis">Móveis</option>
-                            <option value="limpeza">Limpeza</option>
-                            <option value="ferramentas">Ferramentas</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-grid-header">
-                        <h3 class="data-grid-title">Lista de Produtos</h3>
-                        <div class="data-grid-actions">
-                            <button class="btn btn-secondary">
-                                <i class="fas fa-download"></i>
-                                Exportar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Nome</th>
-                                    <th>Categoria</th>
-                                    <th>Estoque</th>
-                                    <th>Estoque Mín.</th>
-                                    <th>Preço</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <tr>
-                                    <td colspan="8" class="loading">
-                                        <div class="spinner"></div>
-                                        Carregando produtos...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination">
-                        <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn">3</button>
-                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="feature-title">Relatórios</div>
+                <div class="feature-desc">Análises e insights detalhados</div>
             </div>
+        </div>
 
-            <!-- Suppliers Section -->
-            <div class="section" id="suppliersSection">
-                <div class="section-header">
-                    <h2 class="section-title">Fornecedores</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Novo Fornecedor
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label class="filter-label">Buscar</label>
-                        <input type="text" class="filter-input" placeholder="Nome ou CNPJ...">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Cidade</label>
-                        <input type="text" class="filter-input" placeholder="Cidade...">
-                    </div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-grid-header">
-                        <h3 class="data-grid-title">Lista de Fornecedores</h3>
-                        <div class="data-grid-actions">
-                            <button class="btn btn-secondary">
-                                <i class="fas fa-download"></i>
-                                Exportar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>CNPJ</th>
-                                    <th>Contato</th>
-                                    <th>Telefone</th>
-                                    <th>Cidade</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="suppliersTableBody">
-                                <tr>
-                                    <td colspan="7" class="loading">
-                                        <div class="spinner"></div>
-                                        Carregando fornecedores...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination">
-                        <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="productCount">-</span>
+                <div class="stat-label">Produtos</div>
             </div>
-
-            <!-- Quotes Section -->
-            <div class="section" id="quotesSection">
-                <div class="section-header">
-                    <h2 class="section-title">Cotações</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Nova Cotação
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label class="filter-label">Buscar</label>
-                        <input type="text" class="filter-input" placeholder="Número da cotação...">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="aprovado">Aprovado</option>
-                            <option value="rejeitado">Rejeitado</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Fornecedor</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Data</label>
-                        <input type="date" class="filter-input">
-                    </div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-grid-header">
-                        <h3 class="data-grid-title">Lista de Cotações</h3>
-                        <div class="data-grid-actions">
-                            <button class="btn btn-secondary">
-                                <i class="fas fa-download"></i>
-                                Exportar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Número</th>
-                                    <th>Fornecedor</th>
-                                    <th>Data Solicitação</th>
-                                    <th>Data Resposta</th>
-                                    <th>Valor Total</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="quotesTableBody">
-                                <tr>
-                                    <td colspan="7" class="loading">
-                                        <div class="spinner"></div>
-                                        Carregando cotações...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination">
-                        <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn">3</button>
-                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
+            <div class="stat-item">
+                <span class="stat-number" id="supplierCount">-</span>
+                <div class="stat-label">Fornecedores</div>
             </div>
-
-            <!-- Orders Section -->
-            <div class="section" id="ordersSection">
-                <div class="section-header">
-                    <h2 class="section-title">Pedidos</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Novo Pedido
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label class="filter-label">Buscar</label>
-                        <input type="text" class="filter-input" placeholder="Número do pedido...">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="confirmado">Confirmado</option>
-                            <option value="producao">Em Produção</option>
-                            <option value="enviado">Enviado</option>
-                            <option value="entregue">Entregue</option>
-                            <option value="cancelado">Cancelado</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Fornecedor</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Data</label>
-                        <input type="date" class="filter-input">
-                    </div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-grid-header">
-                        <h3 class="data-grid-title">Lista de Pedidos</h3>
-                        <div class="data-grid-actions">
-                            <button class="btn btn-secondary">
-                                <i class="fas fa-download"></i>
-                                Exportar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Número</th>
-                                    <th>Fornecedor</th>
-                                    <th>Data Pedido</th>
-                                    <th>Data Entrega</th>
-                                    <th>Valor Total</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <tr>
-                                    <td colspan="7" class="loading">
-                                        <div class="spinner"></div>
-                                        Carregando pedidos...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination">
-                        <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn">3</button>
-                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
+            <div class="stat-item">
+                <span class="stat-number" id="orderCount">-</span>
+                <div class="stat-label">Pedidos</div>
             </div>
-
-            <!-- Inventory Section -->
-            <div class="section" id="inventorySection">
-                <div class="section-header">
-                    <h2 class="section-title">Controle de Estoque</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Ajustar Estoque
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label class="filter-label">Buscar</label>
-                        <input type="text" class="filter-input" placeholder="Nome do produto...">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Categoria</label>
-                        <select class="filter-input">
-                            <option value="">Todas</option>
-                            <option value="eletronicos">Eletrônicos</option>
-                            <option value="escritorio">Material de Escritório</option>
-                            <option value="moveis">Móveis</option>
-                            <option value="limpeza">Limpeza</option>
-                            <option value="ferramentas">Ferramentas</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Nível</label>
-                        <select class="filter-input">
-                            <option value="">Todos</option>
-                            <option value="baixo">Estoque Baixo</option>
-                            <option value="normal">Normal</option>
-                            <option value="alto">Alto</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-grid-header">
-                        <h3 class="data-grid-title">Níveis de Estoque</h3>
-                        <div class="data-grid-actions">
-                            <button class="btn btn-secondary">
-                                <i class="fas fa-download"></i>
-                                Relatório
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th>Categoria</th>
-                                    <th>Estoque Atual</th>
-                                    <th>Estoque Mínimo</th>
-                                    <th>Última Movimentação</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventoryTableBody">
-                                <tr>
-                                    <td colspan="7" class="loading">
-                                        <div class="spinner"></div>
-                                        Carregando estoque...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination">
-                        <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
+            <div class="stat-item">
+                <span class="stat-number">99%</span>
+                <div class="stat-label">Uptime</div>
             </div>
+        </div>
 
-            <!-- Reports Section -->
-            <div class="section" id="reportsSection">
-                <div class="section-header">
-                    <h2 class="section-title">Relatórios</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Novo Relatório
-                        </button>
-                    </div>
-                </div>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="accessSystem()">
+                <i class="fas fa-sign-in-alt"></i>
+                Acessar Sistema
+            </button>
+            <a href="debug.html" class="btn btn-secondary">
+                <i class="fas fa-tools"></i>
+                Diagnóstico
+            </a>
+        </div>
 
-                <div class="dashboard-grid">
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Compras por Categoria - Últimos 6 Meses</h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="categoryChart" width="300" height="150"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Performance de Fornecedores</h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="suppliersChart" width="200" height="150"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-grid-header">
-                        <h3 class="data-grid-title">Relatórios Disponíveis</h3>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Relatório</th>
-                                    <th>Descrição</th>
-                                    <th>Última Atualização</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Compras por Período</td>
-                                    <td>Análise de compras realizadas por período</td>
-                                    <td>Hoje</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon btn-view" title="Visualizar">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn-icon btn-edit" title="Exportar">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Performance de Fornecedores</td>
-                                    <td>Avaliação de desempenho dos fornecedores</td>
-                                    <td>Ontem</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon btn-view" title="Visualizar">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn-icon btn-edit" title="Exportar">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Análise de Estoque</td>
-                                    <td>Relatório detalhado dos níveis de estoque</td>
-                                    <td>2 dias atrás</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon btn-view" title="Visualizar">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn-icon btn-edit" title="Exportar">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Section -->
-            <div class="section" id="settingsSection">
-                <div class="section-header">
-                    <h2 class="section-title">Configurações</h2>
-                </div>
-
-                <div class="dashboard-grid">
-                    <div class="data-grid">
-                        <div class="data-grid-header">
-                            <h3 class="data-grid-title">Configurações Gerais</h3>
-                        </div>
-                        <div style="padding: 2rem;">
-                            <div style="margin-bottom: 2rem;">
-                                <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Sistema</h4>
-                                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>Notificações por Email</span>
-                                        <input type="checkbox" checked>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>Backup Automático</span>
-                                        <input type="checkbox" checked>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>Modo Escuro</span>
-                                        <input type="checkbox">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 2rem;">
-                                <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Estoque</h4>
-                                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>Alerta de Estoque Baixo</span>
-                                        <input type="number" value="10" style="width: 80px; padding: 0.25rem;">
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>Atualização Automática de Preços</span>
-                                        <input type="checkbox">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Relatórios</h4>
-                                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>Relatórios Automáticos</span>
-                                        <select style="padding: 0.25rem;">
-                                            <option>Semanal</option>
-                                            <option>Mensal</option>
-                                            <option>Trimestral</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-                                <button class="btn btn-primary">Salvar Configurações</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Carregando sistema...</p>
+        </div>
     </div>
 
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay"></div>
-
     <script>
-        // Global variables
-        let dashboardData = {
-            products: [],
-            suppliers: [],
-            quotes: [],
-            orders: []
-        };
-
-        // Mobile menu functionality
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const mainContent = document.getElementById('mainContent');
-
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        });
-
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        });
-
-        // Navigation functionality
-        const navItems = document.querySelectorAll('.nav-item');
-        const breadcrumb = document.getElementById('breadcrumb');
-
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Update active state
-                navItems.forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
-                
-                // Update breadcrumb
-                const section = item.dataset.section;
-                const sectionName = item.querySelector('span').textContent;
-                breadcrumb.textContent = sectionName;
-                
-                // Close mobile menu
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                
-                // Load section content (placeholder for now)
-                if (section !== 'dashboard') {
-                    loadSectionContent(section);
-                } else {
-                    loadDashboard();
-                }
-            });
-        });
-
-        // API functions
-        async function fetchData(endpoint) {
+        // Função para carregar estatísticas
+        async function loadStats() {
             try {
-                const response = await fetch(`/api/${endpoint}`);
-                if (!response.ok) {
-                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error(`Erro ao buscar ${endpoint}:`, error);
-                throw error;
-            }
-        }
+                // Configurar timeout para requisições
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
 
-        // Load dashboard data
-        async function loadDashboard() {
-            try {
-                // Load all data
-                const [products, suppliers, quotes, orders] = await Promise.all([
-                    fetchData('products'),
-                    fetchData('suppliers'),
-                    fetchData('quotes'),
-                    fetchData('orders')
-                ]);
-
-                dashboardData = { products, suppliers, quotes, orders };
-
-                // Update KPIs
-                updateKPIs();
-                
-                // Update charts
-                updateCharts();
-                
-                // Update recent activities
-                updateRecentActivities();
-
-            } catch (error) {
-                console.error('Erro ao carregar dashboard:', error);
-            }
-        }
-
-        // Update KPI cards
-        function updateKPIs() {
-            const { products, suppliers, quotes, orders } = dashboardData;
-
-            document.getElementById('totalProducts').textContent = products.data?.length || 0;
-            document.getElementById('totalSuppliers').textContent = suppliers.data?.filter(s => s.status === 'ativo').length || 0;
-            document.getElementById('pendingQuotes').textContent = quotes.data?.filter(q => q.status === 'pendente').length || 0;
-            
-            const totalOrderValue = orders.data?.reduce((sum, order) => sum + (order.total_value || 0), 0) || 0;
-            document.getElementById('totalOrderValue').textContent = `R$ ${totalOrderValue.toLocaleString('pt-BR')}`;
-        }
-
-        // Update charts
-        function updateCharts() {
-            updatePurchaseCostChart();
-            updateQuotesStatusChart();
-        }
-
-        // Purchase cost chart
-        function updatePurchaseCostChart() {
-            const ctx = document.getElementById('purchaseCostChart').getContext('2d');
-            
-            // Sample data for demonstration
-            const data = {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                datasets: [{
-                    label: 'Custo de Compras',
-                    data: [65000, 78000, 82000, 71000, 89000, 95000],
-                    borderColor: 'rgb(37, 99, 235)',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            };
-
-            new Chart(ctx, {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR');
-                                }
-                            }
-                        }
+                // Carregar produtos
+                try {
+                    const productsResponse = await fetch('/api/products', { 
+                        signal: controller.signal,
+                        headers: { 'Cache-Control': 'no-cache' }
+                    });
+                    if (productsResponse.ok) {
+                        const products = await productsResponse.json();
+                        document.getElementById('productCount').textContent = products.length || 0;
+                    } else {
+                        document.getElementById('productCount').textContent = '0';
                     }
+                } catch (err) {
+                    document.getElementById('productCount').textContent = '0';
                 }
-            });
-        }
 
-        // Quotes status chart
-        function updateQuotesStatusChart() {
-            const ctx = document.getElementById('quotesStatusChart').getContext('2d');
-            const { quotes } = dashboardData;
-
-            const statusCounts = {
-                pendente: 0,
-                aprovado: 0,
-                rejeitado: 0
-            };
-
-            quotes.data?.forEach(quote => {
-                if (statusCounts.hasOwnProperty(quote.status)) {
-                    statusCounts[quote.status]++;
-                }
-            });
-
-            const data = {
-                labels: ['Pendente', 'Aprovado', 'Rejeitado'],
-                datasets: [{
-                    data: [statusCounts.pendente, statusCounts.aprovado, statusCounts.rejeitado],
-                    backgroundColor: [
-                        'rgb(245, 158, 11)',
-                        'rgb(16, 185, 129)',
-                        'rgb(239, 68, 68)'
-                    ]
-                }]
-            };
-
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+                // Carregar fornecedores
+                try {
+                    const suppliersResponse = await fetch('/api/suppliers', { 
+                        signal: controller.signal,
+                        headers: { 'Cache-Control': 'no-cache' }
+                    });
+                    if (suppliersResponse.ok) {
+                        const suppliers = await suppliersResponse.json();
+                        document.getElementById('supplierCount').textContent = suppliers.length || 0;
+                    } else {
+                        document.getElementById('supplierCount').textContent = '0';
                     }
+                } catch (err) {
+                    document.getElementById('supplierCount').textContent = '0';
                 }
-            });
+
+                // Carregar pedidos
+                try {
+                    const ordersResponse = await fetch('/api/orders', { 
+                        signal: controller.signal,
+                        headers: { 'Cache-Control': 'no-cache' }
+                    });
+                    if (ordersResponse.ok) {
+                        const orders = await ordersResponse.json();
+                        document.getElementById('orderCount').textContent = orders.length || 0;
+                    } else {
+                        document.getElementById('orderCount').textContent = '0';
+                    }
+                } catch (err) {
+                    document.getElementById('orderCount').textContent = '0';
+                }
+
+                clearTimeout(timeoutId);
+            } catch (error) {
+                console.warn('Erro ao carregar estatísticas:', error);
+                // Definir valores padrão se houver erro
+                document.getElementById('productCount').textContent = '0';
+                document.getElementById('supplierCount').textContent = '0';
+                document.getElementById('orderCount').textContent = '0';
+            }
         }
 
-        // Update recent activities
-        function updateRecentActivities() {
-            const tbody = document.getElementById('recentActivities');
-            const { quotes, orders } = dashboardData;
-
-            // Combine and sort recent activities
-            const activities = [];
+        // Função para acessar o sistema
+        function accessSystem() {
+            const loading = document.getElementById('loading');
+            const container = document.querySelector('.welcome-container');
             
-            quotes.data?.slice(0, 3).forEach(quote => {
-                activities.push({
-                    type: 'Cotação',
-                    description: quote.number,
-                    status: quote.status,
-                    date: quote.request_date,
-                    value: quote.total_value
-                });
-            });
-
-            orders.data?.slice(0, 2).forEach(order => {
-                activities.push({
-                    type: 'Pedido',
-                    description: order.number,
-                    status: order.status,
-                    date: order.order_date,
-                    value: order.total_value
-                });
-            });
-
-            tbody.innerHTML = activities.map(activity => `
-                <tr>
-                    <td>${activity.type}</td>
-                    <td>${activity.description}</td>
-                    <td><span class="status-badge ${activity.status}">${activity.status}</span></td>
-                    <td>${activity.date}</td>
-                    <td>R$ ${activity.value?.toLocaleString('pt-BR') || '0'}</td>
-                </tr>
-            `).join('');
-        }
-
-        // Load section content
-        function loadSectionContent(section) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.section, .dashboard');
-            sections.forEach(s => s.style.display = 'none');
-
-            // Show the selected section
-            const targetSection = document.getElementById(section + 'Section');
-            if (targetSection) {
-                targetSection.style.display = 'block';
-                
-                // Load data for the section
-                switch(section) {
-                    case 'products':
-                        loadProductsData();
-                        break;
-                    case 'suppliers':
-                        loadSuppliersData();
-                        break;
-                    case 'quotes':
-                        loadQuotesData();
-                        break;
-                    case 'orders':
-                        loadOrdersData();
-                        break;
-                    case 'inventory':
-                        loadInventoryData();
-                        break;
-                    case 'reports':
-                        loadReportsData();
-                        break;
-                }
-            }
-        }
-
-        // Load products data
-        async function loadProductsData() {
-            try {
-                const products = await fetchData('products');
-                const tbody = document.getElementById('productsTableBody');
-                
-                tbody.innerHTML = products.data?.map(product => `
-                    <tr>
-                        <td>${product.codigo}</td>
-                        <td>${product.nome}</td>
-                        <td>${product.categoria}</td>
-                        <td>${product.estoque_atual}</td>
-                        <td>${product.estoque_minimo}</td>
-                        <td>R$ ${parseFloat(product.preco_unitario || 0).toFixed(2)}</td>
-                        <td><span class="badge ${product.ativo ? 'badge-success' : 'badge-danger'}">${product.ativo ? 'Ativo' : 'Inativo'}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-icon btn-view" title="Visualizar">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn-icon btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-icon btn-delete" title="Excluir">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="8" class="loading">Nenhum produto encontrado</td></tr>';
-                
-                // Update table display for current device
-                updateTablesForCurrentDevice();
-            } catch (error) {
-                console.error('Erro ao carregar produtos:', error);
-                document.getElementById('productsTableBody').innerHTML = `
-                    <tr><td colspan="8" class="error">Erro ao carregar produtos</td></tr>
-                `;
-            }
-        }
-
-        // Load suppliers data
-        async function loadSuppliersData() {
-            try {
-                const suppliers = await fetchData('suppliers');
-                const tbody = document.getElementById('suppliersTableBody');
-                
-                tbody.innerHTML = suppliers.data?.map(supplier => `
-                    <tr>
-                        <td>${supplier.nome}</td>
-                        <td>${supplier.cnpj}</td>
-                        <td>${supplier.contato}</td>
-                        <td>${supplier.telefone}</td>
-                        <td>${supplier.cidade}</td>
-                        <td><span class="badge ${supplier.ativo ? 'badge-success' : 'badge-danger'}">${supplier.ativo ? 'Ativo' : 'Inativo'}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-icon btn-view" title="Visualizar">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn-icon btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-icon btn-delete" title="Excluir">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" class="loading">Nenhum fornecedor encontrado</td></tr>';
-                
-                // Update table display for current device
-                updateTablesForCurrentDevice();
-            } catch (error) {
-                console.error('Erro ao carregar fornecedores:', error);
-                document.getElementById('suppliersTableBody').innerHTML = `
-                    <tr><td colspan="7" class="error">Erro ao carregar fornecedores</td></tr>
-                `;
-            }
-        }
-
-        // Load quotes data
-        async function loadQuotesData() {
-            try {
-                const quotes = await fetchData('quotes');
-                const tbody = document.getElementById('quotesTableBody');
-                
-                tbody.innerHTML = quotes.data?.map(quote => `
-                    <tr>
-                        <td>${quote.numero}</td>
-                        <td>${quote.fornecedor_nome}</td>
-                        <td>${new Date(quote.data_solicitacao).toLocaleDateString('pt-BR')}</td>
-                        <td>${quote.data_resposta ? new Date(quote.data_resposta).toLocaleDateString('pt-BR') : '-'}</td>
-                        <td>R$ ${parseFloat(quote.valor_total || 0).toFixed(2)}</td>
-                        <td><span class="badge badge-${quote.status === 'pendente' ? 'warning' : quote.status === 'aprovado' ? 'success' : 'danger'}">${quote.status}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-icon btn-view" title="Visualizar">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn-icon btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-icon btn-delete" title="Excluir">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" class="loading">Nenhuma cotação encontrada</td></tr>';
-                
-                // Update table display for current device
-                updateTablesForCurrentDevice();
-            } catch (error) {
-                console.error('Erro ao carregar cotações:', error);
-                document.getElementById('quotesTableBody').innerHTML = `
-                    <tr><td colspan="7" class="error">Erro ao carregar cotações</td></tr>
-                `;
-            }
-        }
-
-        // Load orders data
-        async function loadOrdersData() {
-            try {
-                const orders = await fetchData('orders');
-                const tbody = document.getElementById('ordersTableBody');
-                
-                tbody.innerHTML = orders.data?.map(order => `
-                    <tr>
-                        <td>${order.numero}</td>
-                        <td>${order.fornecedor_nome}</td>
-                        <td>${new Date(order.data_pedido).toLocaleDateString('pt-BR')}</td>
-                        <td>${order.data_entrega ? new Date(order.data_entrega).toLocaleDateString('pt-BR') : '-'}</td>
-                        <td>R$ ${parseFloat(order.valor_total || 0).toFixed(2)}</td>
-                        <td><span class="badge badge-${getOrderStatusClass(order.status)}">${order.status}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-icon btn-view" title="Visualizar">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn-icon btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-icon btn-delete" title="Excluir">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" class="loading">Nenhum pedido encontrado</td></tr>';
-                
-                // Update table display for current device
-                updateTablesForCurrentDevice();
-            } catch (error) {
-                console.error('Erro ao carregar pedidos:', error);
-                document.getElementById('ordersTableBody').innerHTML = `
-                    <tr><td colspan="7" class="error">Erro ao carregar pedidos</td></tr>
-                `;
-            }
-        }
-
-        // Load inventory data
-        async function loadInventoryData() {
-            try {
-                const products = await fetchData('products');
-                const tbody = document.getElementById('inventoryTableBody');
-                
-                tbody.innerHTML = products.data?.map(product => {
-                    const stockLevel = product.estoque_atual <= product.estoque_minimo ? 'baixo' : 'normal';
-                    return `
-                        <tr>
-                            <td>${product.nome}</td>
-                            <td>${product.categoria}</td>
-                            <td>${product.estoque_atual}</td>
-                            <td>${product.estoque_minimo}</td>
-                            <td>Hoje</td>
-                            <td><span class="badge badge-${stockLevel === 'baixo' ? 'danger' : 'success'}">${stockLevel === 'baixo' ? 'Estoque Baixo' : 'Normal'}</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon btn-edit" title="Ajustar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn-icon btn-view" title="Histórico">
-                                        <i class="fas fa-history"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('') || '<tr><td colspan="7" class="loading">Nenhum produto encontrado</td></tr>';
-                
-                // Update table display for current device
-                updateTablesForCurrentDevice();
-            } catch (error) {
-                console.error('Erro ao carregar estoque:', error);
-                document.getElementById('inventoryTableBody').innerHTML = `
-                    <tr><td colspan="7" class="error">Erro ao carregar estoque</td></tr>
-                `;
-            }
-        }
-
-        // Load reports data
-        function loadReportsData() {
-            // Initialize charts for reports section
+            loading.style.display = 'block';
+            container.style.opacity = '0.7';
+            
+            // Simular carregamento e redirecionar
             setTimeout(() => {
-                initCategoryChart();
-                initSuppliersChart();
-            }, 100);
+                window.location.href = 'frontend/dashboard.html';
+            }, 1500);
         }
 
-        // Helper function for order status classes
-        function getOrderStatusClass(status) {
-            const statusMap = {
-                'pendente': 'warning',
-                'confirmado': 'info',
-                'producao': 'primary',
-                'enviado': 'secondary',
-                'entregue': 'success',
-                'cancelado': 'danger'
-            };
-            return statusMap[status] || 'secondary';
-        }
+        // Variável para controlar se já foi carregado
+        let statsLoaded = false;
 
-        // Initialize category chart
-        function initCategoryChart() {
-            const ctx = document.getElementById('categoryChart');
-            if (!ctx) return;
-
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Eletrônicos', 'Material de Escritório', 'Móveis', 'Limpeza', 'Ferramentas'],
-                    datasets: [{
-                        data: [30, 25, 20, 15, 10],
-                        backgroundColor: [
-                            '#3b82f6',
-                            '#10b981',
-                            '#f59e0b',
-                            '#ef4444',
-                            '#8b5cf6'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialize suppliers chart
-        function initSuppliersChart() {
-            const ctx = document.getElementById('suppliersChart');
-            if (!ctx) return;
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['TechCorp', 'OfficeMax', 'MóvelBras', 'CleanPro', 'ToolMaster'],
-                    datasets: [{
-                        label: 'Avaliação',
-                        data: [4.8, 4.5, 4.2, 4.7, 4.3],
-                        backgroundColor: '#3b82f6'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 5
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialize responsive features
-        function initResponsiveFeatures() {
-            // Handle window resize for responsive adjustments
-            window.addEventListener('resize', handleResize);
-            
-            // Initial responsive setup
-            handleResize();
-            
-            // Add touch support for mobile
-            addTouchSupport();
-            
-            // Optimize tables for mobile
-            optimizeTablesForMobile();
-        }
-
-        // Handle window resize
-        function handleResize() {
-            const isMobile = window.innerWidth <= 480;
-            const isTablet = window.innerWidth <= 1024 && window.innerWidth > 768;
-            
-            // Adjust sidebar behavior
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            
-            if (isMobile) {
-                if (sidebar && !sidebar.classList.contains('open')) {
-                    sidebar.classList.add('collapsed');
-                }
-                if (mainContent) {
-                    mainContent.style.marginLeft = '0';
-                }
-            } else {
-                if (sidebar) {
-                    sidebar.classList.remove('collapsed');
-                }
-                if (mainContent) {
-                    mainContent.style.marginLeft = 'var(--sidebar-width)';
-                }
-            }
-            
-            // Adjust table display
-            adjustTableDisplay(isMobile);
-            
-            // Adjust grid layouts
-            adjustGridLayouts(isMobile, isTablet);
-        }
-
-        // Check if device is mobile
-        function isMobileDevice() {
-            return window.innerWidth <= 480 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // Update tables after data is loaded
-        function updateTablesForCurrentDevice() {
-            const isMobile = isMobileDevice();
-            adjustTableDisplay(isMobile);
-        }
-
-        // Add touch support for mobile devices
-        function addTouchSupport() {
-            // Add touch events for better mobile interaction
-            const buttons = document.querySelectorAll('.btn, .btn-icon');
-            buttons.forEach(button => {
-                button.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.95)';
-                });
-                
-                button.addEventListener('touchend', function() {
-                    this.style.transform = 'scale(1)';
-                });
-            });
-        }
-
-        // Optimize tables for mobile
-        function optimizeTablesForMobile() {
-            const tables = document.querySelectorAll('.data-table');
-            tables.forEach(table => {
-                // Add horizontal scroll wrapper if not exists
-                if (!table.parentElement.classList.contains('table-responsive')) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'table-responsive';
-                    table.parentElement.insertBefore(wrapper, table);
-                    wrapper.appendChild(table);
-                }
-            });
-        }
-
-        // Adjust table display for different screen sizes
-        function adjustTableDisplay(isMobile) {
-            const tables = document.querySelectorAll('.data-table');
-            tables.forEach(table => {
-                if (isMobile) {
-                    // Convert table to cards for mobile
-                    convertTableToCards(table);
-                } else {
-                    // Show table normally for desktop
-                    showTableNormally(table);
-                }
-            });
-        }
-
-        // Convert table to cards for mobile devices
-        function convertTableToCards(table) {
-            const container = table.closest('.table-container');
-            if (!container) return;
-
-            // Hide the table
-            table.style.display = 'none';
-
-            // Check if cards container already exists
-            let cardsContainer = container.querySelector('.table-cards');
-            if (!cardsContainer) {
-                cardsContainer = document.createElement('div');
-                cardsContainer.className = 'table-cards';
-                container.appendChild(cardsContainer);
-            }
-
-            // Clear existing cards
-            cardsContainer.innerHTML = '';
-
-            // Get table headers and rows
-            const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent.trim());
-            const rows = table.querySelectorAll('tbody tr');
-
-            // Convert each row to a card
-            rows.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('td'));
-                if (cells.length === 0) return;
-
-                const card = document.createElement('div');
-                card.className = 'table-card';
-
-                // Create card header with first column as title
-                const cardHeader = document.createElement('div');
-                cardHeader.className = 'table-card-header';
-                
-                const cardTitle = document.createElement('div');
-                cardTitle.className = 'table-card-title';
-                cardTitle.textContent = cells[0]?.textContent.trim() || 'Item';
-                
-                // Add status badge if available (usually last or second to last column)
-                const statusCell = cells.find(cell => cell.querySelector('.badge, .status-badge'));
-                if (statusCell) {
-                    const cardStatus = document.createElement('div');
-                    cardStatus.className = 'table-card-status';
-                    cardStatus.innerHTML = statusCell.innerHTML;
-                    cardHeader.appendChild(cardTitle);
-                    cardHeader.appendChild(cardStatus);
-                } else {
-                    cardHeader.appendChild(cardTitle);
-                }
-
-                card.appendChild(cardHeader);
-
-                // Create card body with other data
-                const cardBody = document.createElement('div');
-                cardBody.className = 'table-card-body';
-
-                cells.forEach((cell, index) => {
-                    if (index === 0) return; // Skip first column (already used as title)
-                    
-                    const cellContent = cell.textContent.trim();
-                    if (!cellContent || cellContent === '-') return;
-
-                    // Skip if this cell contains actions or status (will be handled separately)
-                    if (cell.querySelector('.action-buttons') || cell.querySelector('.badge, .status-badge')) return;
-
-                    const cardRow = document.createElement('div');
-                    cardRow.className = 'table-card-row';
-
-                    const label = document.createElement('div');
-                    label.className = 'table-card-label';
-                    label.textContent = headers[index] || `Campo ${index + 1}`;
-
-                    const value = document.createElement('div');
-                    value.className = 'table-card-value';
-                    value.textContent = cellContent;
-
-                    cardRow.appendChild(label);
-                    cardRow.appendChild(value);
-                    cardBody.appendChild(cardRow);
-                });
-
-                card.appendChild(cardBody);
-
-                // Add actions if available
-                const actionsCell = cells.find(cell => cell.querySelector('.action-buttons'));
-                if (actionsCell) {
-                    const cardActions = document.createElement('div');
-                    cardActions.className = 'table-card-actions';
-                    cardActions.innerHTML = actionsCell.innerHTML;
-                    card.appendChild(cardActions);
-                }
-
-                cardsContainer.appendChild(card);
-            });
-        }
-
-        // Show table normally for desktop
-        function showTableNormally(table) {
-            const container = table.closest('.table-container');
-            if (!container) return;
-
-            // Show the table
-            table.style.display = '';
-
-            // Hide cards container if it exists
-            const cardsContainer = container.querySelector('.table-cards');
-            if (cardsContainer) {
-                cardsContainer.style.display = 'none';
-            }
-
-            // Show all columns
-            const headers = table.querySelectorAll('th');
-            const rows = table.querySelectorAll('tbody tr');
-            
-            headers.forEach(header => {
-                header.style.display = '';
-            });
-            
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                cells.forEach(cell => {
-                    cell.style.display = '';
-                });
-            });
-        }
-
-        // Adjust grid layouts for different screen sizes
-        function adjustGridLayouts(isMobile, isTablet) {
-            const kpiGrid = document.querySelector('.kpi-grid');
-            const chartsGrid = document.querySelector('.charts-grid');
-            
-            if (kpiGrid) {
-                if (isMobile) {
-                    kpiGrid.style.gridTemplateColumns = '1fr';
-                } else if (isTablet) {
-                    kpiGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                } else {
-                    kpiGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
-                }
-            }
-            
-            if (chartsGrid) {
-                if (isMobile || isTablet) {
-                    chartsGrid.style.gridTemplateColumns = '1fr';
-                } else {
-                    chartsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                }
-            }
-        }
-
-        // Initialize dashboard
+        // Carregar estatísticas quando a página carregar
         document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard();
-            initResponsiveFeatures();
+            if (!statsLoaded) {
+                statsLoaded = true;
+                loadStats();
+                
+                // Verificar saúde da API uma única vez
+                fetch('/api/health', {
+                    headers: { 'Cache-Control': 'no-cache' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Sistema online:', data);
+                })
+                .catch(error => {
+                    console.warn('Sistema pode estar offline:', error);
+                });
+            }
         });
 
-        // Responsive chart resize
-        window.addEventListener('resize', () => {
-            Chart.helpers.each(Chart.instances, (instance) => {
-                instance.resize();
-            });
+        // Tratamento de erros globais
+        window.addEventListener('error', function(event) {
+            console.error('Erro na página:', event.error);
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Promise rejeitada:', event.reason);
         });
     </script>
 </body>

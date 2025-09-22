@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Básico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .timestamp {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ FUNCIONANDO!</h1>
+        <p>O servidor está online e servindo páginas corretamente.</p>
+        <p><strong>SupplyChain Pro</strong> - Sistema ERP</p>
+        
+        <a href="index.html" class="btn">Ir para Página Principal</a>
+        
+        <div class="status">
+            <strong>Status do Sistema:</strong> Online<br>
+            <strong>Servidor:</strong> Node.js<br>
+            <strong>Porta:</strong> 3000<br>
+            <div class="timestamp" id="timestamp"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar timestamp
+        document.getElementById('timestamp').textContent = 'Carregado em: ' + new Date().toLocaleString('pt-BR');
+        
+        // Teste simples da API
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ API funcionando:', data);
+            })
+            .catch(error => {
+                console.error('❌ Erro na API:', error);
+            });
+    </script>
+</body>
+</html>
