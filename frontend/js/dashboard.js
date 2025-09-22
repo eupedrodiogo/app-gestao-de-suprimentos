@@ -68,6 +68,9 @@ async function loadKPIData() {
         document.getElementById('total-value').textContent = `R$ ${mockData.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
         document.getElementById('avg-order-value').textContent = `R$ ${mockData.avgOrderValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
+        // Load operational metrics
+        loadOperationalMetrics();
+
     } catch (error) {
         console.error('Erro ao carregar KPIs:', error);
     }
@@ -82,6 +85,32 @@ function updateKPICard(elementId, value, change, trend) {
     if (changeElement) changeElement.textContent = `${change > 0 ? '+' : ''}${change.toFixed(1)}%`;
     if (trendElement) {
         trendElement.className = `bi ${trend === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'} me-1`;
+    }
+}
+
+function loadOperationalMetrics() {
+    try {
+        // Mock data for operational metrics
+        const operationalData = {
+            pendingDeliveries: Math.floor(Math.random() * 20) + 5,
+            completedOrders: Math.floor(Math.random() * 50) + 30,
+            processingOrders: Math.floor(Math.random() * 15) + 3,
+            topProducts: Math.floor(Math.random() * 25) + 10
+        };
+
+        // Update operational metrics
+        const pendingElement = document.getElementById('pending-deliveries');
+        const completedElement = document.getElementById('completed-orders');
+        const processingElement = document.getElementById('processing-orders');
+        const topProductsElement = document.getElementById('top-products');
+
+        if (pendingElement) pendingElement.textContent = operationalData.pendingDeliveries;
+        if (completedElement) completedElement.textContent = operationalData.completedOrders;
+        if (processingElement) processingElement.textContent = operationalData.processingOrders;
+        if (topProductsElement) topProductsElement.textContent = operationalData.topProducts;
+
+    } catch (error) {
+        console.error('Erro ao carregar métricas operacionais:', error);
     }
 }
 
@@ -180,7 +209,7 @@ function initializeCharts() {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -689,4 +718,103 @@ function calculateTotalPrice() {
     if (totalField) {
         totalField.textContent = `R$ ${totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
+}
+
+// ===== PYTHON API INTEGRATION FUNCTIONS =====
+
+// Analytics Functions
+function getAnalyticsSummary() {
+    window.location.href = 'analytics.html';
+}
+
+function getAnalyticsTrends() {
+    window.location.href = 'analytics.html';
+}
+
+function getPerformanceMetrics() {
+    window.location.href = 'analytics.html';
+}
+
+function getSupplierAnalysis() {
+    window.location.href = 'analytics.html';
+}
+
+// Predictions Functions
+function getDemandForecast() {
+    window.location.href = 'predictions.html';
+}
+
+function getStockOptimization() {
+    window.location.href = 'predictions.html';
+}
+
+function getPriceOptimization() {
+    window.location.href = 'predictions.html';
+}
+
+function getSupplierRecommendations() {
+    window.location.href = 'predictions.html';
+}
+
+// Visualization Functions
+function generateInventoryDashboard() {
+    window.location.href = 'visualizations.html';
+}
+
+function generateSalesDashboard() {
+    window.location.href = 'visualizations.html';
+}
+
+function openExportsFolder() {
+    window.location.href = 'visualizations.html';
+}
+
+// Automation Functions
+function runAutomatedReorder() {
+    window.location.href = 'automation.html';
+}
+
+function runPriceUpdate() {
+    window.location.href = 'automation.html';
+}
+
+function openPythonDocs() {
+    // Abrir a documentação da API Python
+    window.open('http://localhost:8000/docs', '_blank');
+}
+
+// Helper function to show analytics results in a modal
+function showAnalyticsModal(title, data) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('analyticsModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.id = 'analyticsModal';
+        modal.innerHTML = `
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="analyticsModalTitle">${title}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="analyticsModalBody">
+                        <pre id="analyticsData"></pre>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    // Update modal content
+    document.getElementById('analyticsModalTitle').textContent = title;
+    document.getElementById('analyticsData').textContent = JSON.stringify(data, null, 2);
+    
+    // Show modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
 }

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Inventário - 22/09/2025 19:50</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .metric-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .critical {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard de Inventário</h1>
+            <p>Gerado em: 22/09/2025 às 19:50:14</p>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value">23</div>
+                <div class="metric-label">Total de Produtos</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">R$ 0.00</div>
+                <div class="metric-label">Valor Total do Inventário</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Produtos com Estoque Baixo</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">23</div>
+                <div class="metric-label">Produtos sem Estoque</div>
+            </div>
+        </div>
+        
+        
+        <div class="alert critical">
+            <strong>ALERTA CRÍTICO:</strong> 23 produtos estão sem estoque e precisam de reposição imediata!
+        </div>
+
+        
+        <div class="charts">
+
+            <div class="chart-container">
+                <?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .chart-title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+        .axis-label { font-family: Arial, sans-serif; font-size: 12px; }
+        .bar { fill: #4CAF50; stroke: #45a049; stroke-width: 1; }
+        .line { fill: none; stroke: #2196F3; stroke-width: 2; }
+        .point { fill: #2196F3; }
+        .grid { stroke: #e0e0e0; stroke-width: 1; }
+        .legend { font-family: Arial, sans-serif; font-size: 11px; }
+    </style>
+    
+    <!-- Título -->
+    <text x="400" y="30" class="chart-title">Níveis de Estoque (Top 10)</text>
+    
+    <!-- Área do gráfico -->
+    <g transform="translate(80, 50)">
+<text x="50" y="50" class="axis-label">Sem dados para exibir</text>
+    </g>
+</svg>
+            </div>
+
+            <div class="chart-container">
+                <?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .chart-title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+        .axis-label { font-family: Arial, sans-serif; font-size: 12px; }
+        .bar { fill: #4CAF50; stroke: #45a049; stroke-width: 1; }
+        .line { fill: none; stroke: #2196F3; stroke-width: 2; }
+        .point { fill: #2196F3; }
+        .grid { stroke: #e0e0e0; stroke-width: 1; }
+        .legend { font-family: Arial, sans-serif; font-size: 11px; }
+    </style>
+    
+    <!-- Título -->
+    <text x="400" y="30" class="chart-title">Distribuição por Categoria</text>
+    
+    <!-- Área do gráfico -->
+    <g transform="translate(80, 50)">
+
+        <path d="M 320 140 L 413.0 140.0 A 93 93 0 0 1 362.786124723147 222.5732858203869 Z" 
+              fill="#FF6384" stroke="white" stroke-width="2"/>
+
+        <text x="416.54941980942664" y="198.71294179704418" text-anchor="middle" class="legend">
+            Ferramenta (17.4%)
+        </text>
+
+        <path d="M 320 140 L 362.786124723147 222.5732858203869 A 93 93 0 0 1 266.3688702973052 215.97829905185245 Z" 
+              fill="#36A2EB" stroke="white" stroke-width="2"/>
+
+        <text x="312.2887633715112" y="252.73658159470443" text-anchor="middle" class="legend">
+            Móveis (17.4%)
+        </text>
+
+        <path d="M 320 140 L 266.3688702973052 215.97829905185245 A 93 93 0 0 1 234.69923781721002 102.94895452169932 Z" 
+              fill="#FFCE56" stroke="white" stroke-width="2"/>
+
+        <text x="211.1904203953133" y="170.4872987693457" text-anchor="middle" class="legend">
+            Material d (21.7%)
+        </text>
+
+        <path d="M 320 140 L 234.69923781721002 102.94895452169932 A 93 93 0 0 1 313.653091596683 47.21682936157062 Z" 
+              fill="#4BC0C0" stroke="white" stroke-width="2"/>
+
+        <text x="254.83480407136398" y="47.682627639308976" text-anchor="middle" class="legend">
+            Limpeza (17.4%)
+        </text>
+
+        <path d="M 320 140 L 313.653091596683 47.21682936157062 A 93 93 0 0 1 409.55118034891365 114.90844568153778 Z" 
+              fill="#9966FF" stroke="white" stroke-width="2"/>
+
+        <text x="385.16446100926" y="47.682108877137836" text-anchor="middle" class="legend">
+            Eletrônico (21.7%)
+        </text>
+
+        <path d="M 320 140 L 409.55118034891365 114.90844568153778 A 93 93 0 0 1 412.99999999869027 139.99950643229843 Z" 
+              fill="#FF9F40" stroke="white" stroke-width="2"/>
+
+        <text x="431.9474320151515" y="124.61258744255431" text-anchor="middle" class="legend">
+            Descartáve (4.3%)
+        </text>
+
+    </g>
+</svg>
+            </div>
+
+            <div class="chart-container">
+                <?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .chart-title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+        .axis-label { font-family: Arial, sans-serif; font-size: 12px; }
+        .bar { fill: #4CAF50; stroke: #45a049; stroke-width: 1; }
+        .line { fill: none; stroke: #2196F3; stroke-width: 2; }
+        .point { fill: #2196F3; }
+        .grid { stroke: #e0e0e0; stroke-width: 1; }
+        .legend { font-family: Arial, sans-serif; font-size: 11px; }
+    </style>
+    
+    <!-- Título -->
+    <text x="400" y="30" class="chart-title">Valor por Produto (Top 10)</text>
+    
+    <!-- Área do gráfico -->
+    <g transform="translate(80, 50)">
+
+        <text x="320" y="140" text-anchor="middle" class="axis-label">
+            Dados não disponíveis
+        </text>
+
+    </g>
+</svg>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

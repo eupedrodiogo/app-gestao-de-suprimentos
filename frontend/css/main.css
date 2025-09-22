@@ -562,6 +562,139 @@ body {
     font-size: var(--font-size-base);
 }
 
+/* Altura fixa para os gráficos - FORÇAR TAMANHO */
+canvas#salesChart,
+#salesChart,
+canvas[id="salesChart"] {
+    height: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+/* Container do gráfico de vendas */
+#salesChart.chart-container,
+.chart-container #salesChart {
+    height: 300px !important;
+    min-height: 300px !important;
+    width: 100% !important;
+}
+
+/* Card-body que contém o gráfico de vendas */
+.col-md-8 .card-body {
+    height: auto !important;
+    min-height: 1100px !important;
+    padding: 50px !important;
+    overflow: visible !important;
+}
+
+/* Card completo do gráfico de vendas */
+.col-md-8 .card {
+    height: auto !important;
+    min-height: 1200px !important;
+    margin-bottom: 50px !important;
+    width: 100% !important;
+    overflow: visible !important;
+}
+
+/* Coluna do gráfico de vendas */
+.col-md-8 {
+    min-height: 900px !important;
+    width: 100% !important;
+    overflow: visible !important;
+}
+
+/* Sobrescrever regras anteriores para o container do gráfico de vendas */
+.row .col-md-8 {
+    display: block !important;
+    align-items: unset !important;
+    min-height: 450px !important;
+    width: 100% !important;
+    overflow: visible !important;
+}
+
+.row .col-md-8 .card {
+    height: auto !important;
+    min-height: 400px !important;
+    display: block !important;
+    flex-direction: unset !important;
+    margin-bottom: 25px !important;
+    width: 100% !important;
+    overflow: visible !important;
+}
+
+.row .col-md-8 .card-body {
+    flex: unset !important;
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+    min-height: 350px !important;
+    padding: 25px !important;
+    overflow: visible !important;
+}
+
+#stockChart {
+    height: 250px;
+}
+
+/* Alinhamento vertical dos gráficos */
+.row .col-md-8,
+.row .col-md-4 {
+    display: flex;
+    align-items: stretch;
+}
+
+/* Garantir que os cards dos gráficos tenham a mesma altura */
+.row .col-md-8 .card,
+.row .col-md-4 .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.row .col-md-8 .card-body,
+.row .col-md-4 .card-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Alinhamento específico para os canvas dos gráficos */
+#salesChart,
+#stockChart {
+    display: block;
+    margin: 0 auto;
+}
+
+/* ===== OPERATIONAL METRICS CARDS ===== */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%) !important;
+}
+
+.card.bg-gradient-primary:hover,
+.card.bg-gradient-success:hover,
+.card.bg-gradient-warning:hover,
+.card.bg-gradient-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
 /* ===== ACTIVITY SECTION ===== */
 .activity-section {
     margin-bottom: var(--spacing-xl);

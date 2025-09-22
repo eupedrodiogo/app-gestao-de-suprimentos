@@ -506,7 +506,7 @@
                         <h5><i class="bi bi-graph-up"></i> Vendas e Produtos - Últimos 6 Meses</h5>
                     </div>
                     <div class="card-body">
-                        <canvas id="salesChart" height="100"></canvas>
+                        <canvas id="salesChart" style="height: 300px !important; min-height: 300px !important; width: 100% !important; display: block !important;"></canvas>
                     </div>
                 </div>
             </div>
@@ -517,6 +517,46 @@
                     </div>
                     <div class="card-body">
                         <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operational Metrics Section -->
+        <div class="row mt-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-gradient-primary text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-truck fs-1 mb-2"></i>
+                        <h4 id="pending-deliveries">12</h4>
+                        <p class="mb-0">Entregas Pendentes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-gradient-success text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle fs-1 mb-2"></i>
+                        <h4 id="completed-orders">45</h4>
+                        <p class="mb-0">Pedidos Concluídos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-gradient-warning text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-clock fs-1 mb-2"></i>
+                        <h4 id="processing-orders">8</h4>
+                        <p class="mb-0">Em Processamento</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-gradient-info text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-star fs-1 mb-2"></i>
+                        <h4 id="top-products">15</h4>
+                        <p class="mb-0">Produtos Top</p>
                     </div>
                 </div>
             </div>
@@ -616,6 +656,131 @@
                                     <i class="bi bi-plus-circle"></i><br>
                                     Novo Pedido
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Analytics & AI Tools -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="bi bi-robot"></i> Ferramentas Avançadas de Analytics & IA</h5>
+                        <small>Acesse funcionalidades de análise preditiva e automação</small>
+                    </div>
+                    <div class="card-body">
+                        <!-- Analytics Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary"><i class="bi bi-graph-up-arrow"></i> Analytics Avançado</h6>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="getAnalyticsSummary()">
+                                    <i class="bi bi-speedometer2"></i><br>
+                                    <small>Resumo Geral</small>
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="getAnalyticsTrends()">
+                                    <i class="bi bi-graph-up"></i><br>
+                                    <small>Análise de Tendências</small>
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="getPerformanceMetrics()">
+                                    <i class="bi bi-bar-chart"></i><br>
+                                    <small>Métricas Performance</small>
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="getSupplierAnalysis()">
+                                    <i class="bi bi-building"></i><br>
+                                    <small>Análise Fornecedores</small>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Predictions Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-success"><i class="bi bi-crystal-ball"></i> Predições & Otimização</h6>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" onclick="getDemandForecast()">
+                                    <i class="bi bi-graph-up-arrow"></i><br>
+                                    <small>Previsão Demanda</small>
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" onclick="getStockOptimization()">
+                                    <i class="bi bi-boxes"></i><br>
+                                    <small>Otimização Estoque</small>
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" onclick="getPriceOptimization()">
+                                    <i class="bi bi-currency-dollar"></i><br>
+                                    <small>Otimização Preços</small>
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" onclick="getSupplierRecommendations()">
+                                    <i class="bi bi-award"></i><br>
+                                    <small>Recomendações</small>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Visualization Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-warning"><i class="bi bi-pie-chart"></i> Dashboards & Visualizações</h6>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-warning w-100" onclick="generateInventoryDashboard()">
+                                    <i class="bi bi-clipboard-data"></i><br>
+                                    <small>Dashboard Inventário</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-warning w-100" onclick="generateSalesDashboard()">
+                                    <i class="bi bi-graph-down"></i><br>
+                                    <small>Dashboard Vendas</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-warning w-100" onclick="openExportsFolder()">
+                                    <i class="bi bi-folder2-open"></i><br>
+                                    <small>Ver Relatórios</small>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Automation Section -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-info"><i class="bi bi-gear"></i> Automação & Controles</h6>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-info w-100" onclick="runAutomatedReorder()">
+                                    <i class="bi bi-arrow-repeat"></i><br>
+                                    <small>Reposição Automática</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-info w-100" onclick="runPriceUpdate()">
+                                    <i class="bi bi-arrow-up-circle"></i><br>
+                                    <small>Atualização Preços</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-info w-100" onclick="openPythonDocs()">
+                                    <i class="bi bi-book"></i><br>
+                                    <small>Documentação API</small>
+                                </button>
                             </div>
                         </div>
                     </div>

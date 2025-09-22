@@ -73,7 +73,8 @@
             padding: 2rem;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .feature-card:hover {
@@ -225,22 +226,22 @@
         <p class="subtitle">Sistema Completo de Gestão de Suprimentos e ERP</p>
 
         <div class="features-grid">
-            <div class="feature-card">
+            <div class="feature-card" onclick="navigateToSection('products')">
                 <div class="feature-icon"><i class="fas fa-boxes"></i></div>
                 <div class="feature-title">Gestão de Produtos</div>
                 <div class="feature-desc">Controle completo do seu estoque</div>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" onclick="navigateToSection('suppliers')">
                 <div class="feature-icon"><i class="fas fa-truck"></i></div>
                 <div class="feature-title">Fornecedores</div>
                 <div class="feature-desc">Gerencie sua rede de fornecedores</div>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" onclick="navigateToSection('orders')">
                 <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
                 <div class="feature-title">Pedidos</div>
                 <div class="feature-desc">Controle de pedidos e compras</div>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" onclick="navigateToSection('reports')">
                 <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="feature-title">Relatórios</div>
                 <div class="feature-desc">Análises e insights detalhados</div>
@@ -391,6 +392,21 @@
             }
         });
 
+        // Função para navegação entre seções
+        function navigateToSection(section) {
+            const sectionMap = {
+                'products': 'products.html',
+                'suppliers': 'suppliers.html',
+                'orders': 'orders.html',
+                'reports': 'reports.html'
+            };
+            
+            const targetPage = sectionMap[section];
+            if (targetPage) {
+                window.location.href = targetPage;
+            }
+        }
+
         // Tratamento de erros globais
         window.addEventListener('error', function(event) {
             console.error('Erro na página:', event.error);
@@ -400,5 +416,7 @@
             console.error('Promise rejeitada:', event.reason);
         });
     </script>
+    
+
 </body>
 </html>
