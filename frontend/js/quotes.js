@@ -1,4 +1,5 @@
 // Quotes Page JavaScript
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página de Cotações carregada');
     
@@ -68,21 +69,13 @@ function loadQuotes() {
             displayQuotes(quotes);
         })
         .catch(error => {
-            console.error('Erro ao carregar cotações:', error);
+            log.error('Erro ao carregar cotações', { 
+                error: error.message, 
+                stack: error.stack,
+                component: 'quotes-load'
+            });
             hideLoadingState();
-            
-            // Show error message in table
-            const tbody = document.querySelector('#quotes-table');
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center text-danger">
-                            <i class="bi bi-exclamation-triangle"></i> 
-                            Erro ao carregar cotações: ${error.message}
-                        </td>
-                    </tr>
-                `;
-            }
+            showErrorMessage('Erro ao carregar cotações');
         });
 }
 
@@ -129,20 +122,20 @@ function displayQuotes(quotes) {
             // Display quotes
             tbody.innerHTML = quotes.map(quote => `
                 <tr>
-                    <td>${quote.id}</td>
-                    <td>${quote.supplier}</td>
-                    <td>${quote.date}</td>
-                    <td>R$ ${quote.total}</td>
+                    <td>${quote.quote_number || quote.id}</td>
+                    <td>${quote.supplier_name || quote.supplier}</td>
+                    <td>${quote.request_date ? new Date(quote.request_date).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>R$ ${parseFloat(quote.total_value || quote.total).toFixed(2)}</td>
                     <td><span class="badge bg-${getStatusColor(quote.status)}">${quote.status}</span></td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="viewQuote(${quote.id})">
-                            <i class="bi bi-eye"></i>
+                            👁️
                         </button>
                         <button class="btn btn-sm btn-success" onclick="editQuote(${quote.id})">
-                            <i class="bi bi-pencil"></i>
+                            ✏️
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="deleteQuote(${quote.id})">
-                            <i class="bi bi-trash"></i>
+                            🗑️
                         </button>
                     </td>
                 </tr>
@@ -186,10 +179,15 @@ function viewQuote(id) {
             const quote = data.data || data;
             
             // Show quote details in a modal or redirect to details page
-            alert(`Detalhes da Cotação #${quote.id || id}\n\nFornecedor: ${quote.supplier || 'N/A'}\nData: ${quote.date || 'N/A'}\nTotal: R$ ${quote.total || '0,00'}\nStatus: ${quote.status || 'N/A'}\nDescrição: ${quote.description || 'N/A'}`);
+            alert(`Detalhes da Cotação #${quote.id || id}\n\nFornecedor: ${quote.supplier_name || 'N/A'}\nData: ${quote.request_date || 'N/A'}\nTotal: R$ ${quote.total_value || '0,00'}\nStatus: ${quote.status || 'N/A'}\nDescrição: ${quote.notes || 'N/A'}`);
         })
         .catch(error => {
-            console.error('Erro ao carregar cotação:', error);
+            log.error('Erro ao carregar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: id,
+                component: 'quotes-view'
+            });
             showToast('Erro', 'Erro ao carregar dados da cotação.', 'error');
         });
 }
@@ -211,7 +209,7 @@ function editQuote(id) {
             // Populate form with quote data
             document.getElementById('quoteId').value = quote.id || id;
             document.getElementById('quoteSupplier').value = quote.supplier_id || '';
-            document.getElementById('quoteDate').value = quote.date || '';
+            document.getElementById('quoteDate').value = quote.request_date || '';
             document.getElementById('quoteTotal').value = quote.total || '';
             document.getElementById('quoteStatus').value = quote.status || 'Pendente';
             document.getElementById('quoteDescription').value = quote.description || '';
@@ -228,7 +226,12 @@ function editQuote(id) {
             }
         })
         .catch(error => {
-            console.error('Erro ao carregar cotação:', error);
+            log.error('Erro ao carregar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: id,
+                component: 'quotes-edit'
+            });
             showToast('Erro', 'Erro ao carregar dados da cotação.', 'error');
         });
 }
@@ -262,16 +265,13 @@ function deleteQuote(id) {
         loadQuotes();
     })
     .catch(error => {
-        console.error('Erro ao excluir cotação:', error);
-        
-        let errorMessage = 'Erro interno do servidor.';
-        if (error.message) {
-            errorMessage = error.message;
-        } else if (error.error) {
-            errorMessage = error.error;
-        }
-        
-        showToast('Erro', `Erro ao excluir cotação: ${errorMessage}`, 'error');
+        log.error('Erro ao excluir cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: id,
+                component: 'quotes-delete'
+            });
+            showToast('Erro', `Erro ao excluir cotação: ${errorMessage}`, 'error');
     });
 }
 
@@ -345,16 +345,13 @@ function saveQuote() {
         loadQuotes();
     })
     .catch(error => {
-        console.error('Erro ao salvar cotação:', error);
-        
-        let errorMessage = 'Erro interno do servidor.';
-        if (error.message) {
-            errorMessage = error.message;
-        } else if (error.error) {
-            errorMessage = error.error;
-        }
-        
-        showToast('Erro', `Erro ao salvar cotação: ${errorMessage}`, 'error');
+        log.error('Erro ao salvar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteData: quoteData,
+                component: 'quotes-save'
+            });
+            showToast('Erro', `Erro ao salvar cotação: ${errorMessage}`, 'error');
     })
     .finally(() => {
         // Restore button state

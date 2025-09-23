@@ -1,5 +1,6 @@
 const Database = require('../database/database');
 const Joi = require('joi');
+const log = require('../utils/logger');
 
 class SupplierController {
     constructor() {
@@ -98,7 +99,12 @@ class SupplierController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching suppliers:', error);
+            log.error('Erro ao buscar fornecedores', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -137,7 +143,13 @@ class SupplierController {
 
             res.json(supplier);
         } catch (error) {
-            console.error('Error fetching supplier:', error);
+            log.error('Erro ao buscar fornecedor por ID', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -180,7 +192,7 @@ class SupplierController {
 
         const sql = `
             INSERT INTO suppliers (
-                cnpj, name, contact, email, phone, address, 
+                cnpj, name, contact_name, email, phone, address, 
                 city, state, zip_code, rating, status
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
@@ -216,9 +228,6 @@ class SupplierController {
             if (!name) {
                 return res.status(400).json({ error: 'Nome do fornecedor é obrigatório' });
             }
-            if (!email) {
-                return res.status(400).json({ error: 'Email é obrigatório' });
-            }
 
             const result = await this.db.run(`
                 INSERT INTO suppliers (
@@ -233,9 +242,19 @@ class SupplierController {
             const newSupplierId = result.lastID;
             const newSupplier = await this.db.get('SELECT * FROM suppliers WHERE id = ?', [newSupplierId]);
             
-            res.status(201).json(newSupplier);
+            res.status(201).json({
+                success: true,
+                data: newSupplier,
+                message: 'Fornecedor criado com sucesso'
+            });
         } catch (error) {
-            console.error('Error creating supplier:', error);
+            log.error('Erro ao criar fornecedor', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             if (error.message.includes('UNIQUE') || error.message.includes('duplicate')) {
                 res.status(400).json({ error: 'Email ou CNPJ já existe' });
             } else {
@@ -248,7 +267,7 @@ class SupplierController {
         const {
             cnpj,
             name,
-            contact,
+            contact_name,
             email,
             phone,
             address,
@@ -285,14 +304,14 @@ class SupplierController {
 
         const sql = `
             UPDATE suppliers SET 
-                cnpj = ?, name = ?, contact = ?, email = ?, phone = ?, 
+                cnpj = ?, name = ?, contact_name = ?, email = ?, phone = ?, 
                 address = ?, city = ?, state = ?, zip_code = ?, 
                 rating = ?, status = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
         `;
 
         await db.run(sql, [
-            cnpj, name, contact, email, phone, address,
+            cnpj, name, contact_name, email, phone, address,
             city, state, zip_code, rating, status, id
         ]);
 
@@ -374,7 +393,13 @@ class SupplierController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching supplier products:', error);
+            log.error('Erro ao buscar produtos do fornecedor', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -400,9 +425,8 @@ class SupplierController {
             }
 
             const {
-                name, contact_name, email, phone, mobile, address, city, state, 
-                zip_code, country, cnpj, ie, website, notes, status, 
-                payment_terms, credit_limit, discount_percentage
+                name, contact_name, email, phone, address, city, state, 
+                zip_code, cnpj, notes, status
             } = value;
 
             // Verificar se o email já existe em outro fornecedor
@@ -421,24 +445,34 @@ class SupplierController {
                 }
             }
 
-            await this.db.executeNonQuery(`
+            const updateResult = await this.db.executeNonQuery(`
                 UPDATE suppliers 
-                SET name = ?, contact_name = ?, email = ?, phone = ?, mobile = ?, 
-                    address = ?, city = ?, state = ?, zip_code = ?, country = ?, 
-                    cnpj = ?, ie = ?, website = ?, notes = ?, status = ?, 
-                    payment_terms = ?, credit_limit = ?, discount_percentage = ?, 
-                    updated_at = GETDATE()
+                SET name = ?, contact_name = ?, email = ?, phone = ?, 
+                    address = ?, city = ?, state = ?, zip_code = ?, 
+                    cnpj = ?, status = ?, updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
             `, [
-                name, contact_name, email, phone, mobile, address, city, state,
-                zip_code, country, cnpj, ie, website, notes, status,
-                payment_terms, credit_limit, discount_percentage, id
+                name, contact_name, email, phone, 
+                address, city, state, zip_code, 
+                cnpj, status, id
             ]);
 
             const updatedSupplier = await this.db.get('SELECT * FROM suppliers WHERE id = ?', [id]);
-            res.json(updatedSupplier);
+            
+            res.json({
+                success: true,
+                data: updatedSupplier,
+                message: 'Fornecedor atualizado com sucesso'
+            });
         } catch (error) {
-            console.error('Error updating supplier:', error);
+            log.error('Erro ao atualizar fornecedor', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierId: req.params.id,
+                supplierData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             if (error.message.includes('UNIQUE') || error.message.includes('duplicate')) {
                 res.status(400).json({ error: 'Email ou CNPJ já existe' });
             } else {
@@ -477,7 +511,13 @@ class SupplierController {
             await this.db.executeNonQuery('DELETE FROM suppliers WHERE id = ?', [id]);
             res.status(204).send();
         } catch (error) {
-            console.error('Error deleting supplier:', error);
+            log.error('Erro ao excluir fornecedor', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -534,7 +574,13 @@ class SupplierController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching supplier quotes:', error);
+            log.error('Erro ao buscar cotações do fornecedor', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -565,7 +611,13 @@ class SupplierController {
                 statistics: stats[0] || {}
             });
         } catch (error) {
-            console.error('Error fetching supplier statistics:', error);
+            log.error('Erro ao buscar estatísticas do fornecedor', { 
+                error: error.message, 
+                stack: error.stack,
+                supplierId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }

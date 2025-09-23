@@ -1,7 +1,7 @@
 /**
- * Custom Mobile Menu Controller
- * Funciona independentemente do Bootstrap
+ * Mobile Menu JavaScript
  */
+
 class MobileMenuController {
     constructor() {
         this.menuBtn = null;
@@ -40,7 +40,11 @@ class MobileMenuController {
             console.log('Mobile menu initialized successfully');
             
         } catch (error) {
-            console.error('Error initializing mobile menu:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'mobile-menu-init'
+            });
         }
     }
     
@@ -165,7 +169,11 @@ class MobileMenuController {
             console.log('Menu closed');
             
         } catch (error) {
-            console.error('Error closing menu:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'mobile-menu-toggle'
+            });
         }
     }
     

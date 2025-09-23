@@ -4,6 +4,7 @@
 
 import { ApiService } from '../services/ApiService.js';
 import { NotificationService } from '../services/NotificationService.js';
+import log from '../utils/logger.js';
 
 export class Dashboard {
     constructor(container, options = {}) {
@@ -45,7 +46,11 @@ export class Dashboard {
 
             this.emit('ready');
         } catch (error) {
-            console.error('Erro ao inicializar dashboard:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'dashboard-init'
+            });
             this.showError('Erro ao carregar dashboard');
         }
     }
@@ -186,14 +191,22 @@ export class Dashboard {
                 this.data.stats = statsResult.value;
                 this.renderStats();
             } else {
-                console.error('Erro ao carregar estatísticas:', statsResult.reason);
+                log.error({
+                    message: statsResult.reason?.message || 'Erro ao carregar estatísticas',
+                    stack: statsResult.reason?.stack,
+                    component: 'dashboard-stats'
+                });
             }
 
             if (healthResult.status === 'fulfilled') {
                 this.data.systemHealth = healthResult.value;
                 this.renderSystemHealth();
             } else {
-                console.error('Erro ao carregar status do sistema:', healthResult.reason);
+                log.error({
+                    message: healthResult.reason?.message || 'Erro ao carregar status do sistema',
+                    stack: healthResult.reason?.stack,
+                    component: 'dashboard-health'
+                });
             }
 
             // Carregar atividades recentes
@@ -203,7 +216,11 @@ export class Dashboard {
             this.emit('dataLoaded', this.data);
 
         } catch (error) {
-            console.error('Erro ao carregar dados do dashboard:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'dashboard-load-data'
+            });
             this.showError('Erro ao carregar dados do dashboard');
         } finally {
             this.isLoading = false;
@@ -218,7 +235,11 @@ export class Dashboard {
             const response = await this.apiService.getDashboardStats();
             return response.data;
         } catch (error) {
-            console.error('Erro ao carregar estatísticas:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'dashboard-stats-load'
+            });
             throw error;
         }
     }
@@ -231,7 +252,11 @@ export class Dashboard {
             const response = await this.apiService.getSystemHealth();
             return response.data;
         } catch (error) {
-            console.error('Erro ao carregar status do sistema:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'dashboard-health-load'
+            });
             throw error;
         }
     }
@@ -269,7 +294,11 @@ export class Dashboard {
             this.data.recentActivities = activities;
             this.renderRecentActivities();
         } catch (error) {
-            console.error('Erro ao carregar atividades recentes:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'dashboard-activities'
+            });
         }
     }
 

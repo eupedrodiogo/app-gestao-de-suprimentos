@@ -42,8 +42,8 @@ class App {
             console.log('✅ Aplicação inicializada com sucesso!');
             
         } catch (error) {
-            console.error('❌ Erro ao inicializar aplicação:', error);
-            this.showErrorPage(error);
+            console.error('Erro ao inicializar aplicação:', error);
+            this.showErrorPage('Erro ao inicializar aplicação');
         }
     }
 
@@ -75,7 +75,7 @@ class App {
             console.log('📦 Serviços registrados:', Array.from(this.services.keys()));
             
         } catch (error) {
-            console.error('❌ Erro ao registrar serviços:', error);
+            console.error('Erro ao registrar serviços:', error);
             throw error;
         }
     }
@@ -112,7 +112,11 @@ class App {
             console.log('🧩 Componentes registrados:', Array.from(this.components.keys()));
             
         } catch (error) {
-            console.error('❌ Erro ao registrar componentes:', error);
+            log.error('Erro ao registrar componentes', { 
+                error: error.message, 
+                stack: error.stack,
+                component: 'component-registration'
+            });
             throw error;
         }
     }
@@ -197,7 +201,11 @@ class App {
 
         const page = this.routes[route];
         if (!page) {
-            console.error('Rota não encontrada:', route);
+            log.error('Rota não encontrada', { 
+                route: route,
+                component: 'router'
+            });
+            this.showErrorPage('Página não encontrada');
             return;
         }
 
@@ -244,7 +252,13 @@ class App {
             console.log(`📄 Página carregada: ${pageName}`);
             
         } catch (error) {
-            console.error('❌ Erro ao carregar página:', error);
+            log.error('Erro ao carregar página', { 
+                error: error.message, 
+                stack: error.stack,
+                page: page,
+                component: 'page-loader'
+            });
+            this.showErrorPage('Erro ao carregar página');
             this.services.get('loading').hide();
             this.services.get('notification').show('Erro ao carregar página', 'error');
         }

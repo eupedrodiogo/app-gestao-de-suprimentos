@@ -2,6 +2,8 @@
  * ComponentRegistry - Sistema de registro e gerenciamento de componentes reutilizáveis
  */
 
+import log from './logger.js';
+
 export class ComponentRegistry {
     constructor() {
         this.components = new Map();
@@ -166,7 +168,12 @@ export class ComponentRegistry {
             return instance;
 
         } catch (error) {
-            console.error(`Erro ao criar instância de '${name}':`, error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'component-registry',
+                componentName: name
+            });
             element.classList.add('component-error');
             throw error;
         }
@@ -208,7 +215,12 @@ export class ComponentRegistry {
             this.emit('componentDestroyed', { name, instanceId, element });
 
         } catch (error) {
-            console.error(`Erro ao destruir instância '${instanceId}':`, error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'component-registry',
+                instanceId: instanceId
+            });
         }
 
         return this;
@@ -351,7 +363,12 @@ export class ComponentRegistry {
         this.components.forEach((config, name) => {
             if (config.autoInit) {
                 this.initializeComponent(name).catch(error => {
-                    console.error(`Erro ao inicializar componente '${name}':`, error);
+                    log.error({
+                        message: error.message,
+                        stack: error.stack,
+                        component: 'component-registry',
+                        componentName: name
+                    });
                 });
             }
         });
@@ -397,7 +414,12 @@ export class ComponentRegistry {
         this.components.forEach((config, name) => {
             if (config.autoInit && element.matches(config.selector)) {
                 this.createInstance(name, element, config).catch(error => {
-                    console.error(`Erro ao auto-inicializar componente '${name}':`, error);
+                    log.error({
+                        message: error.message,
+                        stack: error.stack,
+                        component: 'component-registry',
+                        componentName: name
+                    });
                 });
             }
         });
@@ -408,7 +430,12 @@ export class ComponentRegistry {
                 const childElements = element.querySelectorAll(config.selector);
                 childElements.forEach(childElement => {
                     this.createInstance(name, childElement, config).catch(error => {
-                        console.error(`Erro ao auto-inicializar componente '${name}':`, error);
+                        log.error({
+                            message: error.message,
+                            stack: error.stack,
+                            component: 'component-registry',
+                            componentName: name
+                        });
                     });
                 });
             }
@@ -440,7 +467,11 @@ export class ComponentRegistry {
         if (typeof module !== 'undefined' && module.hot) {
             module.hot.accept((error) => {
                 if (error) {
-                    console.error('Erro no hot reload:', error);
+                    log.error({
+                        message: error.message,
+                        stack: error.stack,
+                        component: 'component-registry-hot-reload'
+                    });
                 } else {
                     this.reloadAllComponents();
                 }

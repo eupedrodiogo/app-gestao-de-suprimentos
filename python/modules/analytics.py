@@ -65,7 +65,7 @@ class AnalyticsService:
             self.logger.error(f"Erro ao gerar resumo: {e}")
             return {"error": str(e)}
     
-    async def get_trends(self) -> Dict[str, Any]:
+    async def get_trends(self, period: str = "30d") -> Dict[str, Any]:
         """Análise de tendências simplificada"""
         try:
             data = await self._get_data_from_api("products")
@@ -144,3 +144,88 @@ class AnalyticsService:
         except Exception as e:
             self.logger.error(f"Erro ao analisar correlações: {e}")
             return {"error": str(e)}
+    
+    async def get_performance(self) -> Dict[str, Any]:
+        """Obter métricas de performance do sistema"""
+        try:
+            # Obter dados de diferentes endpoints
+            products_data = await self._get_data_from_api("products")
+            suppliers_data = await self._get_data_from_api("suppliers")
+            orders_data = await self._get_data_from_api("orders")
+            
+            products = products_data.get('data', [])
+            suppliers = suppliers_data.get('data', [])
+            orders = orders_data.get('data', [])
+            
+            performance = {
+                "system_health": {
+                    "products_loaded": len(products),
+                    "suppliers_loaded": len(suppliers),
+                    "orders_loaded": len(orders),
+                    "status": "healthy" if products and suppliers else "warning"
+                },
+                "inventory_performance": {
+                    "total_items": len(products),
+                    "low_stock_percentage": round((len([p for p in products if int(p.get('quantity', 0)) < 10]) / len(products) * 100), 2) if products else 0,
+                    "average_stock_value": round(sum([float(p.get('price', 0)) * int(p.get('quantity', 0)) for p in products]) / len(products), 2) if products else 0
+                },
+                "supplier_performance": {
+                    "total_suppliers": len(suppliers),
+                    "active_suppliers": len([s for s in suppliers if s.get('status') == 'active']),
+                    "supplier_efficiency": round((len([s for s in suppliers if s.get('status') == 'active']) / len(suppliers) * 100), 2) if suppliers else 0
+                },
+                "last_updated": datetime.now().isoformat()
+            }
+            
+            return performance
+            
+        except Exception as e:
+            self.logger.error(f"Erro ao obter performance: {e}")
+            return {"error": str(e)}
+    
+    async def get_supplier_analytics(self) -> Dict[str, Any]:
+        """Obter analytics específicos de fornecedores"""
+        try:
+            suppliers_data = await self._get_data_from_api("suppliers")
+            products_data = await self._get_data_from_api("products")
+            
+            suppliers = suppliers_data.get('data', [])
+            products = products_data.get('data', [])
+            
+            if not suppliers:
+                return {"error": "Nenhum fornecedor disponível"}
+            
+            # Análise por fornecedor
+            supplier_analysis = {}
+            for supplier in suppliers:
+                supplier_id = supplier.get('id')
+                supplier_products = [p for p in products if p.get('supplier_id') == supplier_id]
+                
+                supplier_analysis[supplier.get('name', f'Supplier {supplier_id}')] = {
+                    "total_products": len(supplier_products),
+                    "total_value": sum([float(p.get('price', 0)) * int(p.get('quantity', 0)) for p in supplier_products]),
+                    "average_price": round(statistics.mean([float(p.get('price', 0)) for p in supplier_products]), 2) if supplier_products else 0,
+                    "status": supplier.get('status', 'unknown'),
+                    "contact": supplier.get('email', 'N/A')
+                }
+            
+            analytics = {
+                "supplier_breakdown": supplier_analysis,
+                "summary": {
+                    "total_suppliers": len(suppliers),
+                    "active_suppliers": len([s for s in suppliers if s.get('status') == 'active']),
+                    "total_supplier_value": sum([data['total_value'] for data in supplier_analysis.values()]),
+                    "top_supplier": max(supplier_analysis.items(), key=lambda x: x[1]['total_value'])[0] if supplier_analysis else "N/A"
+                },
+                "last_updated": datetime.now().isoformat()
+            }
+            
+            return analytics
+            
+        except Exception as e:
+            self.logger.error(f"Erro ao obter analytics de fornecedores: {e}")
+            return {"error": str(e)}
+    
+    def get_current_timestamp(self) -> str:
+        """Obter timestamp atual"""
+        return datetime.now().isoformat()

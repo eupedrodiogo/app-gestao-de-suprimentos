@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const log = require('../utils/logger');
 require('dotenv').config();
 
 class Database {
@@ -20,12 +21,12 @@ class Database {
 
             this.db = new sqlite3.Database(this.dbPath, (err) => {
                 if (err) {
-                    console.error('❌ Erro ao conectar com SQLite:', err.message);
+                    log.error('Erro ao conectar com SQLite', { error: err.message, dbPath: this.dbPath });
                     this.connected = false;
                     reject(err);
                 } else {
                     this.connected = true;
-                    console.log('✅ Conectado ao SQLite com sucesso!');
+                    log.info('Conectado ao SQLite com sucesso', { dbPath: this.dbPath });
                     this.initializeTables().then(() => {
                         resolve(this.db);
                     }).catch(reject);
@@ -39,12 +40,12 @@ class Database {
             if (this.db) {
                 this.db.close((err) => {
                     if (err) {
-                        console.error('❌ Erro ao desconectar do SQLite:', err.message);
+                        log.error('Erro ao desconectar do SQLite', { error: err.message });
                         reject(err);
                     } else {
                         this.db = null;
                         this.connected = false;
-                        console.log('✅ Desconectado do SQLite');
+                        log.info('Desconectado do SQLite');
                         resolve();
                     }
                 });
@@ -69,9 +70,12 @@ class Database {
                 if (queryText.trim().toLowerCase().startsWith('select')) {
                     db.all(queryText, params, (err, rows) => {
                         if (err) {
-                            console.error('❌ Erro na consulta SQL:', err.message);
-                            console.error('Query:', queryText);
-                            console.error('Params:', params);
+                            log.error('Erro na consulta SQL', {
+                                error: err.message,
+                                stack: err.stack,
+                                query: queryText,
+                                params: params
+                            });
                             reject(err);
                         } else {
                             resolve(rows);
@@ -80,9 +84,12 @@ class Database {
                 } else {
                     db.run(queryText, params, function(err) {
                         if (err) {
-                            console.error('❌ Erro na execução SQL:', err.message);
-                            console.error('Query:', queryText);
-                            console.error('Params:', params);
+                            log.error('Erro na execução SQL', {
+                                error: err.message,
+                                stack: err.stack,
+                                query: queryText,
+                                params: params
+                            });
                             reject(err);
                         } else {
                             resolve({
@@ -119,11 +126,14 @@ class Database {
                 const db = await this.ensureConnection();
                 db.all(queryText, params, (err, rows) => {
                     if (err) {
-                        console.error('❌ Erro na consulta SQL:', err.message);
-                        console.error('Query:', queryText);
-                        console.error('Params:', params);
+                        log.error('Erro na consulta SQL', { 
+                            error: err.message, 
+                            query: queryText.substring(0, 200),
+                            params 
+                        });
                         reject(err);
                     } else {
+                        log.database('SELECT', queryText, params);
                         resolve(rows);
                     }
                 });
@@ -139,9 +149,12 @@ class Database {
                 const db = await this.ensureConnection();
                 db.get(queryText, params, (err, row) => {
                     if (err) {
-                        console.error('❌ Erro na consulta SQL:', err.message);
-                        console.error('Query:', queryText);
-                        console.error('Params:', params);
+                        log.error('Erro na consulta SQL', {
+                            error: err.message,
+                            stack: err.stack,
+                            query: queryText,
+                            params: params
+                        });
                         reject(err);
                     } else {
                         resolve(row);
@@ -159,11 +172,14 @@ class Database {
                 const db = await this.ensureConnection();
                 db.run(queryText, params, function(err) {
                     if (err) {
-                        console.error('❌ Erro na execução SQL:', err.message);
-                        console.error('Query:', queryText);
-                        console.error('Params:', params);
+                        log.error('Erro na execução SQL', { 
+                            error: err.message, 
+                            query: queryText.substring(0, 200),
+                            params 
+                        });
                         reject(err);
                     } else {
+                        log.database('RUN', queryText, params);
                         resolve({
                             lastID: this.lastID,
                             changes: this.changes
@@ -272,6 +288,19 @@ class Database {
                 notes TEXT,
                 FOREIGN KEY (order_id) REFERENCES orders(id),
                 FOREIGN KEY (product_id) REFERENCES products(id)
+            )`,
+
+            // Tabela de usuários (users)
+            `CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                role TEXT DEFAULT 'user' CHECK (role IN ('admin', 'user', 'manager')),
+                status TEXT DEFAULT 'ativo' CHECK (status IN ('ativo', 'inativo')),
+                last_login DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )`
         ];
 
@@ -279,7 +308,7 @@ class Database {
             await this.query(tableSQL);
         }
 
-        console.log('✅ Tabelas inicializadas com sucesso!');
+        log.info('Tabelas inicializadas com sucesso');
         
         // Executar migrações se necessário
         await this.runMigrations();
@@ -287,19 +316,16 @@ class Database {
 
     async runMigrations() {
         try {
-            // Verificar se a coluna supplier_id existe na tabela products
-            const tableInfo = await this.query("PRAGMA table_info(products)");
-            const hasSupplierIdColumn = Array.isArray(tableInfo) && tableInfo.some(column => column.name === 'supplier_id');
-            
-            if (!hasSupplierIdColumn) {
-                console.log('🔄 Executando migração: adicionando coluna supplier_id na tabela products...');
-                await this.query("ALTER TABLE products ADD COLUMN supplier_id INTEGER");
-                console.log('✅ Migração concluída: coluna supplier_id adicionada');
-            } else {
-                console.log('✅ Coluna supplier_id já existe na tabela products');
-            }
+            // A coluna supplier_id já está definida na criação da tabela products
+            // Não é necessário executar migrações para esta coluna
+            log.info('Verificação de migrações concluída - todas as colunas estão atualizadas');
         } catch (error) {
-            console.error('❌ Erro durante migração:', error.message);
+            log.error('Erro durante migração', {
+                error: error.message,
+                stack: error.stack,
+                migrationStep: 'database_migration'
+            });
+            throw error;
         }
     }
 

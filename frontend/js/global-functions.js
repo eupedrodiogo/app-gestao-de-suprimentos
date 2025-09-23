@@ -49,10 +49,10 @@ const Toast = {
         toast.className = `toast toast-${type}`;
         toast.innerHTML = `
             <div class="toast-content">
-                <i class="bi bi-${Toast.getIcon(type)}"></i>
+                ${Toast.getIcon(type)}
                 <span>${message}</span>
                 <button class="toast-close" onclick="Toast.close(this.parentElement.parentElement)">
-                    <i class="bi bi-x"></i>
+                    ✕
                 </button>
             </div>
         `;
@@ -82,10 +82,10 @@ const Toast = {
 
     getIcon: (type) => {
         const icons = {
-            success: 'check-circle',
-            error: 'exclamation-circle',
-            warning: 'exclamation-triangle',
-            info: 'info-circle'
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
         };
         return icons[type] || icons.info;
     },

@@ -1,5 +1,6 @@
 const Database = require('../database/database');
 const Joi = require('joi');
+const log = require('../utils/logger');
 
 class OrderController {
     constructor() {
@@ -97,7 +98,12 @@ class OrderController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching orders:', error);
+            log.error('Erro ao buscar pedidos', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }

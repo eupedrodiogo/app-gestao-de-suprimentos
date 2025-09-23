@@ -2,6 +2,8 @@
  * ModuleLoader - Sistema de carregamento dinâmico de módulos
  * Implementa code splitting e lazy loading para otimização de performance
  */
+import log from './logger.js';
+
 class ModuleLoader {
     constructor() {
         this.loadedModules = new Map();
@@ -58,6 +60,12 @@ class ModuleLoader {
             this.loadingPromises.delete(moduleName);
             return module;
         } catch (error) {
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'module-loader-load',
+                module: moduleName
+            });
             this.loadingPromises.delete(moduleName);
             throw error;
         }
@@ -308,7 +316,12 @@ class ModuleLoader {
                     const loadedModules = await this.loadModules(modules);
                     resolve(loadedModules);
                 } catch (error) {
-                    console.error('Erro no carregamento sob demanda:', error);
+                    log.error({
+                        message: error.message,
+                        stack: error.stack,
+                        component: 'module-loader-preload',
+                        module: moduleName
+                    });
                     resolve([]);
                 }
             };

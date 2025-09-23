@@ -1,6 +1,8 @@
 // Reports Page JavaScript
+console.log('🚀 Arquivo reports.js carregado!');
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página de Relatórios carregada');
+    console.log('📄 Página de Relatórios carregada - DOM ready');
     
     // Initialize reports functionality
     initializeReports();
@@ -126,22 +128,30 @@ function generateInventoryReport() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `relatorio_estoque_${startDate}_${endDate}.pdf`;
+        a.download = `relatorio_prazos_${startDate}_${endDate}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         
-        showToast('Sucesso', 'Relatório de estoque gerado com sucesso!', 'success');
+        showToast('Sucesso', 'Relatório de prazos gerado com sucesso!', 'success');
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deadlinesReportModal'));
+        modal.hide();
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
-        showToast('Erro', 'Erro ao gerar relatório de estoque.', 'error');
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-deadlines-final'
+        });
+        showToast('Erro', 'Erro ao gerar relatório de prazos.', 'error');
     })
     .finally(() => {
         // Restore button state
         btn.disabled = false;
-        btn.textContent = originalText;
+        btn.innerHTML = originalText;
     });
 }
 
@@ -193,7 +203,11 @@ function generateSalesReport() {
         showToast('Sucesso', 'Relatório de vendas gerado com sucesso!', 'success');
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-sales'
+        });
         showToast('Erro', 'Erro ao gerar relatório de vendas.', 'error');
     })
     .finally(() => {
@@ -239,7 +253,11 @@ function generateSuppliersReport() {
         showToast('Sucesso', 'Relatório de fornecedores gerado com sucesso!', 'success');
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-suppliers'
+        });
         showToast('Erro', 'Erro ao gerar relatório de fornecedores.', 'error');
     })
     .finally(() => {
@@ -310,13 +328,17 @@ function generateFinancialReport() {
         showToast('Sucesso', 'Relatório financeiro gerado com sucesso!', 'success');
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-financial'
+        });
         showToast('Erro', 'Erro ao gerar relatório financeiro.', 'error');
     })
     .finally(() => {
         // Restore button state
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-download"></i> Gerar Relatório';
+        btn.innerHTML = '📥 Gerar Relatório';
     });
 }
 
@@ -375,7 +397,10 @@ function showFinancialReportModal() {
         console.log('Modal element found:', modalElement);
         
         if (!modalElement) {
-            console.error('Modal financialReportModal não encontrado!');
+            log.error({
+                message: 'Modal financialReportModal não encontrado!',
+                component: 'reports-modal'
+            });
             showToast('Erro', 'Modal do relatório financeiro não encontrado.', 'error');
             return;
         }
@@ -407,7 +432,11 @@ function showFinancialReportModal() {
         loadSuppliersForFilter('financialSupplier');
         
     } catch (error) {
-        console.error('Erro ao abrir modal do relatório financeiro:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-financial-modal'
+        });
         showToast('Erro', 'Erro ao abrir modal do relatório financeiro.', 'error');
     }
 }
@@ -482,7 +511,11 @@ function generateOrdersReport() {
         addToRecentReports('Pedidos', `${startDate} a ${endDate}`, new Date().toLocaleString('pt-BR'));
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-orders'
+        });
         showToast('Erro', 'Erro ao gerar relatório de pedidos.', 'error');
     })
     .finally(() => {
@@ -551,7 +584,11 @@ function generateSuppliersReport() {
         addToRecentReports('Fornecedores', `${startDate} a ${endDate}`, new Date().toLocaleString('pt-BR'));
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-suppliers'
+        });
         showToast('Erro', 'Erro ao gerar relatório de fornecedores.', 'error');
     })
     .finally(() => {
@@ -583,7 +620,11 @@ function loadSuppliersForFilter(selectId) {
             });
         })
         .catch(error => {
-            console.error('Erro ao carregar fornecedores:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'reports-load-suppliers'
+            });
         });
 }
 
@@ -605,7 +646,7 @@ function addToRecentReports(type, period, generatedAt) {
         <td><span class="badge bg-success">Concluído</span></td>
         <td>
             <button class="btn btn-sm btn-outline-primary" onclick="downloadReport('${type}', '${period}')">
-                <i class="bi bi-download"></i> Download
+                📥 Download
             </button>
         </td>
     `;
@@ -713,7 +754,11 @@ function generateOrdersReport() {
         modal.hide();
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-orders-pdf'
+        });
         showToast('Erro', 'Erro ao gerar relatório de pedidos.', 'error');
     })
     .finally(() => {
@@ -782,7 +827,11 @@ function generateProductsReport() {
         modal.hide();
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-products-pdf'
+        });
         showToast('Erro', 'Erro ao gerar relatório de produtos.', 'error');
     })
     .finally(() => {
@@ -849,7 +898,11 @@ function generateQuotesReport() {
         modal.hide();
     })
     .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'reports-quotes-pdf'
+        });
         showToast('Erro', 'Erro ao gerar relatório de cotações.', 'error');
     })
     .finally(() => {
@@ -857,102 +910,4 @@ function generateQuotesReport() {
         btn.disabled = false;
         btn.innerHTML = originalText;
     });
-}
-
-// Generate Deadlines Report
-function generateDeadlinesReport() {
-    console.log('Gerando relatório de prazos...');
-    
-    const startDate = document.getElementById('deadlinesStartDate').value;
-    const endDate = document.getElementById('deadlinesEndDate').value;
-    const type = document.getElementById('deadlinesType').value;
-    const status = document.getElementById('deadlinesStatus').value;
-    
-    if (!startDate || !endDate) {
-        showToast('Erro', 'Por favor, selecione o período do relatório.', 'error');
-        return;
-    }
-    
-    // Show loading state
-    const btn = document.querySelector('#deadlinesReportModal .btn-danger');
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Gerando...';
-    
-    // Make API call to generate report
-    fetch('/api/reports/deadlines', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            start_date: startDate,
-            end_date: endDate,
-            type: type,
-            status: status
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.blob();
-    })
-    .then(blob => {
-        // Download the report file
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `relatorio_prazos_${startDate}_${endDate}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        showToast('Sucesso', 'Relatório de prazos gerado com sucesso!', 'success');
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('deadlinesReportModal'));
-        modal.hide();
-    })
-    .catch(error => {
-        console.error('Erro ao gerar relatório:', error);
-        showToast('Erro', 'Erro ao gerar relatório de prazos.', 'error');
-    })
-    .finally(() => {
-        // Restore button state
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    });
-}
-
-// Functions to show report modals
-function showOrdersReportModal() {
-    const modal = new bootstrap.Modal(document.getElementById('ordersReportModal'));
-    modal.show();
-}
-
-function showSuppliersReportModal() {
-    const modal = new bootstrap.Modal(document.getElementById('suppliersReportModal'));
-    modal.show();
-}
-
-function showProductsReportModal() {
-    const modal = new bootstrap.Modal(document.getElementById('productsReportModal'));
-    modal.show();
-}
-
-function showQuotesReportModal() {
-    const modal = new bootstrap.Modal(document.getElementById('quotesReportModal'));
-    modal.show();
-}
-
-function showDeadlinesReportModal() {
-    const modal = new bootstrap.Modal(document.getElementById('deadlinesReportModal'));
-    modal.show();
-}
-
-function showFinancialReportModal() {
-    const modal = new bootstrap.Modal(document.getElementById('financialReportModal'));
-    modal.show();
 }

@@ -1,4 +1,5 @@
 // Products Page JavaScript
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página de Produtos carregada');
     
@@ -44,22 +45,10 @@ function loadProducts() {
             const products = data.data || [];
             displayProducts(products);
         })
-        .catch(error => {
+  .catch(error => {
             console.error('Erro ao carregar produtos:', error);
             hideLoadingState();
-            
-            // Show error message in table
-            const tbody = document.querySelector('#products-table');
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-danger">
-                            <i class="bi bi-exclamation-triangle"></i> 
-                            Erro ao carregar produtos: ${error.message}
-                        </td>
-                    </tr>
-                `;
-            }
+            showErrorMessage('Erro ao carregar produtos. Tente novamente.');
         });
 }
 
@@ -103,7 +92,10 @@ function generateProductCode() {
         codeInput.value = code;
         console.log('Product code generated:', code); // Debug log
     } else {
-        console.error('Product code input not found');
+        log.error({
+            message: 'Product code input not found',
+            component: 'products-code-generation'
+        });
     }
 }
 
@@ -163,18 +155,23 @@ function displayProducts(products) {
             // Display products
             tbody.innerHTML = products.map(product => `
                 <tr>
-                    <td>${product.id}</td>
-                    <td>${product.nome}</td>
-                    <td>${product.descricao || '-'}</td>
-                    <td>${product.categoria}</td>
-                    <td>${product.unidade}</td>
-                    <td>R$ ${parseFloat(product.preco).toFixed(2)}</td>
+                    <td>${product.code || product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.description || '-'}</td>
+                    <td>${product.category}</td>
+                    <td>${product.unit}</td>
+                    <td>R$ ${parseFloat(product.price).toFixed(2)}</td>
+                    <td>
+                        <span class="badge ${product.stock <= product.min_stock ? 'bg-danger' : 'bg-success'}">
+                            ${product.stock}
+                        </span>
+                    </td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="editProduct(${product.id})" title="Editar">
-                            <i class="bi bi-pencil"></i>
+                            ✏️
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})" title="Excluir">
-                            <i class="bi bi-trash"></i>
+                            🗑️
                         </button>
                     </td>
                 </tr>
@@ -231,7 +228,11 @@ function editProduct(id) {
             }
         })
         .catch(error => {
-            console.error('Erro ao carregar produto:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'products-load'
+            });
             showToast('Erro', 'Erro ao carregar dados do produto.', 'error');
         });
 }
@@ -265,7 +266,11 @@ function deleteProduct(id) {
         loadProducts();
     })
     .catch(error => {
-        console.error('Erro ao excluir produto:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'products-delete'
+        });
         
         let errorMessage = 'Erro interno do servidor.';
         if (error.message) {
@@ -369,16 +374,16 @@ function saveProduct() {
         loadProducts();
     })
     .catch(error => {
-        console.error('Erro ao salvar produto:', error);
-        
-        let errorMessage = 'Erro interno do servidor.';
-        if (error.message) {
-            errorMessage = error.message;
-        } else if (error.error) {
-            errorMessage = error.error;
-        }
-        
-        showToast('Erro', `Erro ao salvar produto: ${errorMessage}`, 'error');
+            console.error('Erro ao salvar produto:', error);
+            
+            let errorMessage = 'Erro interno do servidor.';
+            if (error.message) {
+                errorMessage = error.message;
+            } else if (error.error) {
+                errorMessage = error.error;
+            }
+            
+            showToast('Erro', `Erro ao salvar produto: ${errorMessage}`, 'error');
     })
     .finally(() => {
         // Restore button state

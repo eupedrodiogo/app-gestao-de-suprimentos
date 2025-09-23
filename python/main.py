@@ -107,6 +107,26 @@ async def get_correlations():
         logger.error(f"Erro ao obter correlações: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get(f"{settings.api_prefix}/analytics/performance")
+async def get_performance():
+    """Obter métricas de performance"""
+    try:
+        performance = await analytics_service.get_performance()
+        return performance
+    except Exception as e:
+        logger.error(f"Erro ao obter performance: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get(f"{settings.api_prefix}/analytics/suppliers")
+async def get_supplier_analytics():
+    """Obter analytics de fornecedores"""
+    try:
+        suppliers = await analytics_service.get_supplier_analytics()
+        return suppliers
+    except Exception as e:
+        logger.error(f"Erro ao obter analytics de fornecedores: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Rotas de Predições
 @app.get(f"{settings.api_prefix}/predictions/demand")
 async def predict_demand(product_id: int, days_ahead: int = 30):
@@ -136,6 +156,16 @@ async def predict_supplier_performance():
         return performance
     except Exception as e:
         logger.error(f"Erro ao predizer performance: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get(f"{settings.api_prefix}/predictions/price-prediction")
+async def predict_prices():
+    """Predizer preços de produtos"""
+    try:
+        prices = await prediction_service.predict_prices()
+        return prices
+    except Exception as e:
+        logger.error(f"Erro ao predizer preços: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Rotas de Relatórios

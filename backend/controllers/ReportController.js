@@ -1,3 +1,5 @@
+const log = require('../utils/logger');
+
 class ReportController {
     static async getInventoryReport(req, res) {
         try {
@@ -27,15 +29,16 @@ class ReportController {
             
             res.json({
                 success: true,
-                data: result.recordset
+                data: result
             });
         } catch (error) {
-            console.error('Erro ao gerar relatório de estoque:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Erro interno do servidor',
-                error: error.message
+            log.error('Erro ao gerar relatório de inventário', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
             });
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
 
@@ -78,12 +81,15 @@ class ReportController {
                 data: result.recordset
             });
         } catch (error) {
-            console.error('Erro ao gerar relatório de vendas:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Erro interno do servidor',
-                error: error.message
+            log.error('Erro ao gerar relatório de vendas', { 
+                error: error.message, 
+                stack: error.stack,
+                startDate: req.query.start_date,
+                endDate: req.query.end_date,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
             });
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
 
@@ -115,12 +121,13 @@ class ReportController {
                 data: result.recordset
             });
         } catch (error) {
-            console.error('Erro ao gerar relatório de fornecedores:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Erro interno do servidor',
-                error: error.message
+            log.error('Erro ao gerar relatório de fornecedores', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
             });
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
 
@@ -144,8 +151,10 @@ class ReportController {
                 LEFT JOIN quote_items qi ON q.id = qi.quote_id
             `;
             
+            const params = [];
             if (status) {
-                query += ` WHERE q.status = '${status}'`;
+                query += ` WHERE q.status = ?`;
+                params.push(status);
             }
             
             query += `
@@ -153,19 +162,20 @@ class ReportController {
                 ORDER BY q.quote_date DESC
             `;
             
-            const result = await db.request().query(query);
+            const result = await db.all(query, params);
             
             res.json({
                 success: true,
                 data: result.recordset
             });
         } catch (error) {
-            console.error('Erro ao gerar relatório de cotações:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Erro interno do servidor',
-                error: error.message
+            log.error('Erro ao gerar relatório de cotações', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
             });
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
 
@@ -202,12 +212,13 @@ class ReportController {
                 }
             });
         } catch (error) {
-            console.error('Erro ao buscar dados do dashboard:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Erro interno do servidor',
-                error: error.message
+            log.error('Erro ao buscar dados do dashboard', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
             });
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
 }

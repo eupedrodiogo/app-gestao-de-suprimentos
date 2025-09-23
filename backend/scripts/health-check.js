@@ -1,4 +1,5 @@
 const Database = require('../database/database');
+const log = require('../utils/logger');
 require('dotenv').config();
 
 async function healthCheck() {
@@ -95,7 +96,11 @@ async function healthCheck() {
         }
         
     } catch (error) {
-        console.error('❌ Erro durante verificação:', error);
+        log.error('Erro durante verificação de saúde', {
+            error: error.message,
+            stack: error.stack,
+            script: 'health-check.js'
+        });
     }
     
     // Resumo final

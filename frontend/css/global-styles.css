@@ -42,6 +42,26 @@ p {
     color: #6c757d;
 }
 
+/* Sobrescrever cor dos textos nos cards coloridos */
+.card.bg-primary p,
+.card.bg-success p,
+.card.bg-warning p,
+.card.bg-info p,
+.card.bg-primary small,
+.card.bg-success small,
+.card.bg-warning small,
+.card.bg-info small,
+.card.bg-primary span,
+.card.bg-success span,
+.card.bg-warning span,
+.card.bg-info span,
+.card.bg-primary h4,
+.card.bg-success h4,
+.card.bg-warning h4,
+.card.bg-info h4 {
+    color: white !important;
+}
+
 /* Enhanced Card Styles */
 .card {
     border: none;

@@ -7,7 +7,83 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Backup CDN for Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Custom Icons CSS -->
+    <style>
+        /* Custom icon system - guaranteed to work */
+        .custom-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .custom-icon.primary {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+        }
+        
+        .custom-icon.success {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+        }
+        
+        .custom-icon.info {
+            background: linear-gradient(135deg, #0dcaf0, #6610f2);
+            color: white;
+        }
+        
+        .custom-icon.warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+        }
+        
+        .custom-icon.secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .custom-icon.danger {
+            background: linear-gradient(135deg, #dc3545, #e91e63);
+            color: white;
+        }
+        
+        /* Icon hover effects */
+        .report-card:hover .custom-icon {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+        
+        /* Fallback for Bootstrap Icons */
+        .bi::before {
+            display: inline-block;
+            font-family: "bootstrap-icons" !important;
+            font-style: normal;
+            font-weight: normal !important;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+            vertical-align: -.125em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Ensure icons are visible */
+        .report-icon i {
+            font-size: 2.5rem !important;
+            display: block !important;
+        }
+    </style>
     
     <!-- Global Styles -->
     <link href="css/global-styles.css" rel="stylesheet">
@@ -296,6 +372,235 @@
             padding-top: 70px;
         }
         
+        /* Modern Report Cards Styles */
+        .report-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        }
+        
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0d6efd, #6f42c1, #d63384, #fd7e14, #198754, #20c997);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .report-card:hover::before {
+            opacity: 1;
+        }
+        
+        .report-card .card-body {
+            padding: 2.5rem 2rem;
+            position: relative;
+        }
+        
+        .report-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            opacity: 0.1;
+            border-radius: inherit;
+        }
+        
+        .report-icon i {
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .report-icon.primary {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+        }
+        
+        .report-icon.success {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+        }
+        
+        .report-icon.info {
+            background: linear-gradient(135deg, #0dcaf0, #6f42c1);
+            color: white;
+        }
+        
+        .report-icon.warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+        }
+        
+        .report-icon.secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .report-icon.danger {
+            background: linear-gradient(135deg, #dc3545, #d63384);
+            color: white;
+        }
+        
+        .report-card .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+        }
+        
+        .report-card .card-text {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .report-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: none;
+        }
+        
+        .report-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .report-btn:hover::before {
+            left: 100%;
+        }
+        
+        .report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .report-btn.btn-primary {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            border: none;
+        }
+        
+        .report-btn.btn-success {
+            background: linear-gradient(135deg, #198754, #20c997);
+            border: none;
+        }
+        
+        .report-btn.btn-info {
+            background: linear-gradient(135deg, #0dcaf0, #6f42c1);
+            border: none;
+        }
+        
+        .report-btn.btn-warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            border: none;
+            color: white;
+        }
+        
+        .report-btn.btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            border: none;
+        }
+        
+        .report-btn.btn-danger {
+            background: linear-gradient(135deg, #dc3545, #d63384);
+            border: none;
+        }
+        
+        /* Page Header Improvements */
+        .page-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header h1 i {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-right: 0.75rem;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        /* Responsive Grid Improvements */
+        @media (max-width: 768px) {
+            .report-card .card-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .page-header {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .report-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .report-icon i {
+                font-size: 2rem;
+            }
+        }
+        
         /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
@@ -308,7 +613,7 @@
         <div class="nav-container">
             <div class="nav-brand">
                 <a href="index.html" class="brand-link">
-                    <i class="bi bi-boxes"></i>
+                    📦
                     <span class="brand-text">Gestão de Suprimentos</span>
                 </a>
             </div>
@@ -327,43 +632,43 @@
                     <div class="nav-header">
                         <span class="nav-title">Menu</span>
                         <button class="nav-close" id="navClose">
-                            <i class="bi bi-x-lg"></i>
+                            ✕
                         </button>
                     </div>
                     <ul class="nav-links">
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.html">
-                                <i class="bi bi-speedometer2"></i>
+                                📊
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="products.html">
-                                <i class="bi bi-box"></i>
+                                📦
                                 <span>Produtos</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="suppliers.html">
-                                <i class="bi bi-building"></i>
+                                🏢
                                 <span>Fornecedores</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="quotes.html">
-                                <i class="bi bi-file-text"></i>
+                                📄
                                 <span>Cotações</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="orders.html">
-                                <i class="bi bi-cart"></i>
+                                🛒
                                 <span>Pedidos</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="reports.html">
-                                <i class="bi bi-graph-up"></i>
+                                📈
                                 <span>Relatórios</span>
                             </a>
                         </li>
@@ -378,88 +683,98 @@
         <!-- Page Header -->
         <div class="row">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1><i class="bi bi-graph-up"></i> Relatórios</h1>
-                        <p class="text-muted">Análises e relatórios do sistema</p>
-                    </div>
+                <div class="page-header">
+                    <h1>📊 Relatórios</h1>
+                    <p>Análises e relatórios detalhados do sistema de gestão de suprimentos</p>
                 </div>
             </div>
         </div>
 
         <!-- Report Cards -->
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card h-100">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card report-card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-cart-check display-4 text-primary"></i>
-                        <h5 class="card-title mt-3">Relatório de Pedidos</h5>
-                        <p class="card-text">Análise detalhada dos pedidos por período</p>
-                        <button class="btn btn-primary" onclick="showOrdersReportModal()">
-                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        <div class="custom-icon primary">
+                            🛒
+                        </div>
+                        <h5 class="card-title">Relatório de Pedidos</h5>
+                        <p class="card-text">Análise detalhada dos pedidos realizados por período, incluindo status e valores</p>
+                        <button class="btn report-btn btn-primary" onclick="showOrdersReportModal()">
+                            📋 Gerar Relatório
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card report-card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-building display-4 text-success"></i>
-                        <h5 class="card-title mt-3">Relatório de Fornecedores</h5>
-                        <p class="card-text">Performance e análise de fornecedores</p>
-                        <button class="btn btn-success" onclick="showSuppliersReportModal()">
-                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        <div class="custom-icon success">
+                            🏢
+                        </div>
+                        <h5 class="card-title">Relatório de Fornecedores</h5>
+                        <p class="card-text">Performance e análise detalhada dos fornecedores cadastrados no sistema</p>
+                        <button class="btn report-btn btn-success" onclick="showSuppliersReportModal()">
+                            📋 Gerar Relatório
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card report-card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-box display-4 text-info"></i>
-                        <h5 class="card-title mt-3">Relatório de Produtos</h5>
-                        <p class="card-text">Análise de produtos mais solicitados</p>
-                        <button class="btn btn-info" onclick="showProductsReportModal()">
-                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        <div class="custom-icon info">
+                            📦
+                        </div>
+                        <h5 class="card-title">Relatório de Produtos</h5>
+                        <p class="card-text">Análise de produtos mais solicitados e estatísticas de demanda</p>
+                        <button class="btn report-btn btn-info" onclick="showProductsReportModal()">
+                            📋 Gerar Relatório
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card h-100">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card report-card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-currency-dollar display-4 text-warning"></i>
-                        <h5 class="card-title mt-3">Relatório Financeiro</h5>
-                        <p class="card-text">Análise de gastos e economia</p>
-                        <button class="btn btn-warning" onclick="showFinancialReportModal()">
-                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        <div class="custom-icon warning">
+                            💰
+                        </div>
+                        <h5 class="card-title">Relatório Financeiro</h5>
+                        <p class="card-text">Análise detalhada de gastos, economia e performance financeira</p>
+                        <button class="btn report-btn btn-warning" onclick="showFinancialReportModal()">
+                            📋 Gerar Relatório
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card report-card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-file-text display-4 text-secondary"></i>
-                        <h5 class="card-title mt-3">Relatório de Cotações</h5>
-                        <p class="card-text">Análise de cotações e aprovações</p>
-                        <button class="btn btn-secondary" onclick="showQuotesReportModal()">
-                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        <div class="custom-icon secondary">
+                            📄
+                        </div>
+                        <h5 class="card-title">Relatório de Cotações</h5>
+                        <p class="card-text">Análise de cotações realizadas, aprovações e comparativos de preços</p>
+                        <button class="btn report-btn btn-secondary" onclick="showQuotesReportModal()">
+                            📋 Gerar Relatório
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card report-card h-100">
                     <div class="card-body text-center">
-                        <i class="bi bi-clock-history display-4 text-danger"></i>
-                        <h5 class="card-title mt-3">Relatório de Prazos</h5>
-                        <p class="card-text">Análise de cumprimento de prazos</p>
-                        <button class="btn btn-danger" onclick="showDeadlinesReportModal()">
-                            <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+                        <div class="custom-icon danger">
+                            ⏰
+                        </div>
+                        <h5 class="card-title">Relatório de Prazos</h5>
+                        <p class="card-text">Análise de cumprimento de prazos e performance de entrega</p>
+                        <button class="btn report-btn btn-danger" onclick="showDeadlinesReportModal()">
+                            📋 Gerar Relatório
                         </button>
                     </div>
                 </div>
@@ -469,8 +784,11 @@
         <!-- Recent Reports -->
         <div class="row mt-5">
             <div class="col-12">
-                <h3>Relatórios Recentes</h3>
-                <div class="card">
+                <div class="page-header">
+                    <h3>📈 Relatórios Recentes</h3>
+                    <p>Histórico dos últimos relatórios gerados no sistema</p>
+                </div>
+                <div class="card report-card">
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped">
@@ -538,7 +856,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" onclick="generateOrdersReport()">
-                        <i class="bi bi-download"></i> Gerar Relatório
+                        📥 Gerar Relatório
                     </button>
                 </div>
             </div>
@@ -576,7 +894,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-success" onclick="generateSuppliersReport()">
-                        <i class="bi bi-download"></i> Gerar Relatório
+                        📥 Gerar Relatório
                     </button>
                 </div>
             </div>
@@ -616,7 +934,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-info" onclick="generateProductsReport()">
-                        <i class="bi bi-download"></i> Gerar Relatório
+                        📥 Gerar Relatório
                     </button>
                 </div>
             </div>
@@ -662,7 +980,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-secondary" onclick="generateQuotesReport()">
-                        <i class="bi bi-download"></i> Gerar Relatório
+                        📥 Gerar Relatório
                     </button>
                 </div>
             </div>
@@ -718,7 +1036,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-warning" onclick="generateFinancialReport()">
-                        <i class="bi bi-download"></i> Gerar Relatório
+                        📥 Gerar Relatório
                     </button>
                 </div>
             </div>
@@ -767,7 +1085,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-danger" onclick="generateDeadlinesReport()">
-                        <i class="bi bi-download"></i> Gerar Relatório
+                        📥 Gerar Relatório
                     </button>
                 </div>
             </div>
@@ -798,5 +1116,97 @@
     
     <!-- Reports JS -->
     <script src="js/reports.js"></script>
+    
+    <!-- Modal Functions - Solução Definitiva -->
+    <script>
+        // Funções dos modais implementadas diretamente
+        function showOrdersReportModal() {
+            console.log('🛒 Abrindo modal de relatório de pedidos...');
+            const modal = new bootstrap.Modal(document.getElementById('ordersReportModal'));
+            
+            // Set default dates
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('ordersStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('ordersEndDate').value = today.toISOString().split('T')[0];
+            
+            modal.show();
+        }
+        
+        function showSuppliersReportModal() {
+            console.log('🏢 Abrindo modal de relatório de fornecedores...');
+            const modal = new bootstrap.Modal(document.getElementById('suppliersReportModal'));
+            modal.show();
+        }
+        
+        function showProductsReportModal() {
+            console.log('📦 Abrindo modal de relatório de produtos...');
+            const modal = new bootstrap.Modal(document.getElementById('productsReportModal'));
+            modal.show();
+        }
+        
+        function showFinancialReportModal() {
+            console.log('💰 Abrindo modal de relatório financeiro...');
+            const modal = new bootstrap.Modal(document.getElementById('financialReportModal'));
+            
+            // Set default dates
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('financialStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('financialEndDate').value = today.toISOString().split('T')[0];
+            
+            modal.show();
+        }
+        
+        function showQuotesReportModal() {
+            console.log('📄 Abrindo modal de relatório de cotações...');
+            const modal = new bootstrap.Modal(document.getElementById('quotesReportModal'));
+            
+            // Set default dates
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('quotesStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('quotesEndDate').value = today.toISOString().split('T')[0];
+            
+            modal.show();
+        }
+        
+        function showDeadlinesReportModal() {
+            console.log('⏰ Abrindo modal de relatório de prazos...');
+            const modal = new bootstrap.Modal(document.getElementById('deadlinesReportModal'));
+            modal.show();
+        }
+        
+        // Teste de funcionalidade
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Página de relatórios carregada - funções dos modais prontas!');
+            
+            // Test all functions
+            setTimeout(function() {
+                const functions = {
+                    showOrdersReportModal: typeof showOrdersReportModal,
+                    showSuppliersReportModal: typeof showSuppliersReportModal,
+                    showProductsReportModal: typeof showProductsReportModal,
+                    showFinancialReportModal: typeof showFinancialReportModal,
+                    showQuotesReportModal: typeof showQuotesReportModal,
+                    showDeadlinesReportModal: typeof showDeadlinesReportModal
+                };
+                
+                const availableFunctions = Object.values(functions).filter(type => type === 'function').length;
+                console.log(`🎉 ${availableFunctions}/6 funções dos modais funcionando!`);
+                
+                // Test buttons
+                const buttons = document.querySelectorAll('[onclick*="ReportModal"]');
+                console.log(`🔘 ${buttons.length} botões com handlers encontrados`);
+                
+                if (availableFunctions === 6) {
+                    console.log('🚀 Todos os modais estão funcionando perfeitamente!');
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>

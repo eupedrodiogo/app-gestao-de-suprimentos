@@ -1,5 +1,6 @@
 const Database = require('../database/database');
 const Joi = require('joi');
+const log = require('../utils/logger');
 const OrderController = require('./OrderController');
 
 class QuoteController {
@@ -95,7 +96,12 @@ class QuoteController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching quotes:', error);
+            log.error('Erro ao buscar cotações', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -508,6 +514,180 @@ class QuoteController {
         `;
         
         return await db.all(sql, [futureDate.toISOString()]);
+    }
+
+    async getQuoteById(req, res) {
+        try {
+            await this.db.ensureConnection();
+            const quote = await QuoteController.getById(this.db, req.params.id);
+            
+            if (!quote) {
+                return res.status(404).json({ error: 'Cotação não encontrada' });
+            }
+            
+            res.json(quote);
+        } catch (error) {
+            log.error('Erro ao buscar cotação por ID', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async createQuote(req, res) {
+        try {
+            await this.db.ensureConnection();
+            
+            const { error, value } = this.getQuoteSchema().validate(req.body);
+            if (error) {
+                return res.status(400).json({ 
+                    error: 'Dados inválidos', 
+                    details: error.details 
+                });
+            }
+            
+            const quoteId = await QuoteController.create(this.db, value);
+            const quote = await QuoteController.getById(this.db, quoteId);
+            
+            res.status(201).json({ 
+                success: true,
+                data: quote 
+            });
+        } catch (error) {
+            log.error('Erro ao criar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ 
+                success: false,
+                error: 'Erro interno do servidor' 
+            });
+        }
+    }
+
+    async updateQuote(req, res) {
+        try {
+            await this.db.ensureConnection();
+            
+            const { error, value } = this.getQuoteSchema().validate(req.body);
+            if (error) {
+                return res.status(400).json({ 
+                    error: 'Dados inválidos', 
+                    details: error.details 
+                });
+            }
+            
+            await QuoteController.update(this.db, req.params.id, value);
+            const quote = await QuoteController.getById(this.db, req.params.id);
+            
+            res.json({ 
+                success: true,
+                data: quote 
+            });
+        } catch (error) {
+            log.error('Erro ao atualizar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: req.params.id,
+                updateData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async deleteQuote(req, res) {
+        try {
+            await this.db.ensureConnection();
+            await QuoteController.delete(this.db, req.params.id);
+            
+            res.json({ 
+                success: true,
+                message: 'Cotação excluída com sucesso' 
+            });
+        } catch (error) {
+            log.error('Erro ao excluir cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async approveQuote(req, res) {
+        try {
+            await this.db.ensureConnection();
+            await QuoteController.updateStatus(this.db, req.params.id, 'aprovada');
+            
+            res.json({ 
+                success: true,
+                message: 'Cotação aprovada com sucesso' 
+            });
+        } catch (error) {
+            log.error('Erro ao aprovar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async rejectQuote(req, res) {
+        try {
+            await this.db.ensureConnection();
+            await QuoteController.updateStatus(this.db, req.params.id, 'rejeitada');
+            
+            res.json({ 
+                success: true,
+                message: 'Cotação rejeitada com sucesso' 
+            });
+        } catch (error) {
+            log.error('Erro ao rejeitar cotação', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async convertQuoteToOrder(req, res) {
+        try {
+            await this.db.ensureConnection();
+            const orderId = await QuoteController.convertToOrder(this.db, req.params.id);
+            
+            res.json({ 
+                success: true,
+                message: 'Cotação convertida em pedido com sucesso',
+                orderId 
+            });
+        } catch (error) {
+            log.error('Erro ao converter cotação em pedido', { 
+                error: error.message, 
+                stack: error.stack,
+                quoteId: req.params.id,
+                orderData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
     }
 }
 

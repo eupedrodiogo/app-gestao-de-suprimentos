@@ -1,4 +1,5 @@
 const Database = require('../database/database');
+const log = require('../utils/logger');
 require('dotenv').config();
 
 async function seedDatabase() {
@@ -50,7 +51,11 @@ async function seedDatabase() {
         console.log('🎉 População do banco concluída com sucesso!');
         
     } catch (error) {
-        console.error('❌ Erro durante a população do banco:', error);
+        log.error('Erro durante a população do banco', {
+            error: error.message,
+            stack: error.stack,
+            script: 'seed.js'
+        });
         process.exit(1);
     } finally {
         await db.disconnect();

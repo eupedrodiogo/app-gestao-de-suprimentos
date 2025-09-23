@@ -1,4 +1,5 @@
 // Orders Page JavaScript
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página de Pedidos carregada');
     
@@ -59,19 +60,7 @@ function loadOrders() {
         .catch(error => {
             console.error('Erro ao carregar pedidos:', error);
             hideLoadingState();
-            
-            // Show error message in table
-            const tbody = document.querySelector('#orders-table');
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-danger">
-                            <i class="bi bi-exclamation-triangle"></i> 
-                            Erro ao carregar pedidos: ${error.message}
-                        </td>
-                    </tr>
-                `;
-            }
+            showErrorMessage('Erro ao carregar pedidos. Tente novamente.');
         });
 }
 
@@ -112,7 +101,7 @@ function showAddOrderModal() {
                 </td>
                 <td>
                     <button type="button" class="btn btn-sm btn-danger" onclick="removeOrderItem(this)">
-                        <i class="bi bi-trash"></i>
+                        🗑️
                     </button>
                 </td>
             </tr>
@@ -157,20 +146,21 @@ function displayOrders(orders) {
             // Display orders
             tbody.innerHTML = orders.map(order => `
                 <tr>
-                    <td>${order.id}</td>
-                    <td>${order.supplier}</td>
-                    <td>${order.date}</td>
-                    <td>R$ ${order.total}</td>
+                    <td>${order.order_number || order.id}</td>
+                    <td>${order.supplier_name || order.supplier}</td>
+                    <td>${order.order_date ? new Date(order.order_date).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>${order.delivery_date ? new Date(order.delivery_date).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>R$ ${parseFloat(order.total_value || order.total).toFixed(2)}</td>
                     <td><span class="badge bg-${getStatusColor(order.status)}">${order.status}</span></td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="viewOrder(${order.id})">
-                            <i class="bi bi-eye"></i>
+                            👁️
                         </button>
                         <button class="btn btn-sm btn-success" onclick="editOrder(${order.id})">
-                            <i class="bi bi-pencil"></i>
+                            ✏️
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="deleteOrder(${order.id})">
-                            <i class="bi bi-trash"></i>
+                            🗑️
                         </button>
                     </td>
                 </tr>
@@ -219,7 +209,12 @@ function viewOrder(id) {
             alert(`Detalhes do Pedido #${order.id || id}\n\nFornecedor: ${order.supplier || 'N/A'}\nData: ${order.date || 'N/A'}\nTotal: R$ ${order.total || '0,00'}\nStatus: ${order.status || 'N/A'}`);
         })
         .catch(error => {
-            console.error('Erro ao carregar pedido:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'orders-view',
+                orderId: id
+            });
             showToast('Erro', 'Erro ao carregar dados do pedido.', 'error');
         });
 }
@@ -257,7 +252,11 @@ function editOrder(id) {
             }
         })
         .catch(error => {
-            console.error('Erro ao carregar pedido:', error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'orders-load'
+            });
             showToast('Erro', 'Erro ao carregar dados do pedido.', 'error');
         });
 }
@@ -291,7 +290,11 @@ function deleteOrder(id) {
         loadOrders();
     })
     .catch(error => {
-        console.error('Erro ao excluir pedido:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'orders-delete'
+        });
         
         let errorMessage = 'Erro interno do servidor.';
         if (error.message) {
@@ -394,7 +397,11 @@ function saveOrder() {
         loadOrders();
     })
     .catch(error => {
-        console.error('Erro ao salvar pedido:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'orders-save'
+        });
         
         let errorMessage = 'Erro interno do servidor.';
         if (error.message) {
@@ -466,7 +473,7 @@ function addOrderItem() {
         </td>
         <td>
             <button type="button" class="btn btn-sm btn-danger" onclick="removeOrderItem(this)">
-                <i class="bi bi-trash"></i>
+                🗑️
             </button>
         </td>
     `;

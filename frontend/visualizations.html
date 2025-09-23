@@ -12,6 +12,7 @@
     <!-- Custom CSS -->
     <link href="css/global-styles.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
+    <link href="css/components/icons.css" rel="stylesheet">
     
     <style>
         .visualization-card {
@@ -112,7 +113,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <i class="bi bi-pie-chart"></i> Visualizações & Dashboards
+                📊 Visualizações & Dashboards
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -121,27 +122,48 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.html">
-                            <i class="bi bi-speedometer2"></i> Dashboard
+                            <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="9" x2="9" y2="21"/>
+                                <line x1="15" y1="9" x2="15" y2="21"/>
+                            </svg>
+                            Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="analytics.html">
-                            <i class="bi bi-graph-up-arrow"></i> Analytics
+                            <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                            </svg>
+                            Analytics
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="predictions.html">
-                            <i class="bi bi-crystal-ball"></i> Predições
+                            <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            Predições
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="visualizations.html">
-                            <i class="bi bi-pie-chart"></i> Visualizações
+                            <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                            Visualizações
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="automation.html">
-                            <i class="bi bi-gear"></i> Automação
+                            <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.5-6.5l-4.24 4.24M7.76 7.76L3.52 3.52m12.96 12.96l-4.24-4.24M7.76 16.24l-4.24 4.24"/>
+                            </svg>
+                            Automação
                         </a>
                     </li>
                 </ul>
@@ -154,7 +176,14 @@
         <!-- Page Header -->
         <div class="row mb-4">
             <div class="col-12">
-                <h1><i class="bi bi-pie-chart"></i> Visualizações & Dashboards</h1>
+                <h1>
+                    <svg class="icon-lg me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                    Visualizações & Dashboards
+                </h1>
                 <p class="text-muted">Crie e personalize dashboards e visualizações de dados</p>
             </div>
         </div>
@@ -165,20 +194,43 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <i class="bi bi-lightning"></i> Ações Rápidas
+                            <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+                            </svg>
+                            Ações Rápidas
                         </h5>
                         <div class="d-flex flex-wrap gap-2">
                             <button class="btn btn-primary" onclick="generateQuickDashboard()">
-                                <i class="bi bi-speedometer2"></i> Dashboard Rápido
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="9" y1="9" x2="9" y2="21"/>
+                                    <line x1="15" y1="9" x2="15" y2="21"/>
+                                </svg>
+                                Dashboard Rápido
                             </button>
                             <button class="btn btn-success" onclick="exportCurrentView()">
-                                <i class="bi bi-download"></i> Exportar Visualização
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7,10 12,15 17,10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Exportar Visualização
                             </button>
                             <button class="btn btn-info" onclick="shareVisualization()">
-                                <i class="bi bi-share"></i> Compartilhar
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                    <polyline points="16,6 12,2 8,6"/>
+                                    <line x1="12" y1="2" x2="12" y2="15"/>
+                                </svg>
+                                Compartilhar
                             </button>
                             <button class="btn btn-warning" onclick="resetVisualization()">
-                                <i class="bi bi-arrow-clockwise"></i> Resetar
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,4 23,10 17,10"/>
+                                    <polyline points="1,20 1,14 7,14"/>
+                                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                                </svg>
+                                Resetar
                             </button>
                         </div>
                     </div>
@@ -197,11 +249,19 @@
                 <div class="col-md-6 mb-4">
                     <div class="card visualization-card h-100">
                         <div class="card-body text-center">
-                            <i class="bi bi-bar-chart" style="font-size: 3rem;"></i>
+                            <svg class="icon-xl mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
                             <h5 class="card-title mt-3">Gráficos Dinâmicos</h5>
                             <p class="card-text">Crie gráficos interativos com dados em tempo real</p>
                             <button class="btn btn-light" onclick="openChartBuilder()">
-                                <i class="bi bi-plus-circle"></i> Criar Gráfico
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Criar Gráfico
                             </button>
                         </div>
                     </div>
@@ -210,11 +270,22 @@
                 <div class="col-md-6 mb-4">
                     <div class="card visualization-card chart-card h-100">
                         <div class="card-body text-center">
-                            <i class="bi bi-speedometer2" style="font-size: 3rem;"></i>
+                            <svg class="icon-xl mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="9" x2="9" y2="21"/>
+                                <line x1="15" y1="9" x2="15" y2="21"/>
+                            </svg>
                             <h5 class="card-title mt-3">Dashboard Personalizado</h5>
                             <p class="card-text">Monte seu próprio dashboard com widgets</p>
                             <button class="btn btn-light" onclick="openDashboardBuilder()">
-                                <i class="bi bi-grid"></i> Construir Dashboard
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <rect x="7" y="7" width="3" height="3"/>
+                                    <rect x="14" y="7" width="3" height="3"/>
+                                    <rect x="7" y="14" width="3" height="3"/>
+                                    <rect x="14" y="14" width="3" height="3"/>
+                                </svg>
+                                Construir Dashboard
                             </button>
                         </div>
                     </div>
@@ -223,11 +294,23 @@
                 <div class="col-md-6 mb-4">
                     <div class="card visualization-card dashboard-card h-100">
                         <div class="card-body text-center">
-                            <i class="bi bi-file-earmark-text" style="font-size: 3rem;"></i>
+                            <svg class="icon-xl mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
                             <h5 class="card-title mt-3">Relatórios Visuais</h5>
                             <p class="card-text">Gere relatórios com gráficos e tabelas</p>
                             <button class="btn btn-light" onclick="generateVisualReport()">
-                                <i class="bi bi-file-plus"></i> Gerar Relatório
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                                Gerar Relatório
                             </button>
                         </div>
                     </div>
@@ -236,11 +319,19 @@
                 <div class="col-md-6 mb-4">
                     <div class="card visualization-card report-card h-100">
                         <div class="card-body text-center">
-                            <i class="bi bi-map" style="font-size: 3rem;"></i>
+                            <svg class="icon-xl mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
                             <h5 class="card-title mt-3">Mapas de Calor</h5>
                             <p class="card-text">Visualize dados geográficos e de densidade</p>
                             <button class="btn btn-light" onclick="createHeatmap()">
-                                <i class="bi bi-geo"></i> Criar Mapa
+                                <svg class="icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                                Criar Mapa
                             </button>
                         </div>
                     </div>
@@ -250,23 +341,23 @@
 
         <!-- Chart Builder -->
         <div class="chart-controls" id="chartControls" style="display: none;">
-            <h5><i class="bi bi-tools"></i> Construtor de Gráficos</h5>
+            <h5>🔧 Construtor de Gráficos</h5>
             
             <div class="row">
                 <div class="col-md-6">
                     <label class="form-label">Tipo de Gráfico</label>
                     <div class="chart-type-selector">
                         <div class="chart-type-btn active" data-type="bar">
-                            <i class="bi bi-bar-chart"></i> Barras
+                            📊 Barras
                         </div>
                         <div class="chart-type-btn" data-type="line">
-                            <i class="bi bi-graph-up"></i> Linha
+                            📈 Linha
                         </div>
                         <div class="chart-type-btn" data-type="pie">
-                            <i class="bi bi-pie-chart"></i> Pizza
+                            🥧 Pizza
                         </div>
                         <div class="chart-type-btn" data-type="doughnut">
-                            <i class="bi bi-circle"></i> Rosca
+                            🍩 Rosca
                         </div>
                     </div>
                 </div>
@@ -306,10 +397,10 @@
             
             <div class="mt-3">
                 <button class="btn btn-primary" onclick="generateChart()">
-                    <i class="bi bi-graph-up"></i> Gerar Gráfico
+                    📈 Gerar Gráfico
                 </button>
                 <button class="btn btn-secondary" onclick="hideChartBuilder()">
-                    <i class="bi bi-x"></i> Cancelar
+                    ❌ Cancelar
                 </button>
             </div>
         </div>
@@ -336,10 +427,10 @@
                             <h5>Produtos por Categoria</h5>
                             <div>
                                 <button class="btn btn-sm btn-outline-primary export-btn" onclick="exportChart('categoryChart')">
-                                    <i class="bi bi-download"></i>
+                                    📥
                                 </button>
                                 <button class="btn btn-sm btn-outline-secondary export-btn" onclick="fullscreenChart('categoryChart')">
-                                    <i class="bi bi-fullscreen"></i>
+                                    🔍
                                 </button>
                             </div>
                         </div>
@@ -353,10 +444,10 @@
                             <h5>Vendas Mensais</h5>
                             <div>
                                 <button class="btn btn-sm btn-outline-primary export-btn" onclick="exportChart('salesChart')">
-                                    <i class="bi bi-download"></i>
+                                    📥
                                 </button>
                                 <button class="btn btn-sm btn-outline-secondary export-btn" onclick="fullscreenChart('salesChart')">
-                                    <i class="bi bi-fullscreen"></i>
+                                    🔍
                                 </button>
                             </div>
                         </div>
@@ -573,10 +664,10 @@
                             <h5>Gráfico Personalizado</h5>
                             <div>
                                 <button class="btn btn-sm btn-outline-primary export-btn" onclick="exportChart('${chartId}')">
-                                    <i class="bi bi-download"></i>
+                                    📥
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger export-btn" onclick="removeChart('${chartId}')">
-                                    <i class="bi bi-trash"></i>
+                                    🗑️
                                 </button>
                             </div>
                         </div>
@@ -722,5 +813,6 @@
             bsToast.show();
         }
     </script>
+    <script src="js/components/icons.js"></script>
 </body>
 </html>

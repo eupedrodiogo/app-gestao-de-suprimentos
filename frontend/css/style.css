@@ -72,6 +72,525 @@ body {
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
 }
 
+/* === CARDS CORPORATIVOS ULTRA PREMIUM === */
+
+/* Paleta de cores corporativa ultra sofisticada */
+:root {
+    --corporate-primary: linear-gradient(135deg, #0f2027 0%, #203a43 25%, #2c5364 50%, #1e3c72 75%, #2a5298 100%);
+    --corporate-success: linear-gradient(135deg, #0c3b2e 0%, #134e5e 25%, #1e6b5c 50%, #2d8659 75%, #71b280 100%);
+    --corporate-warning: linear-gradient(135deg, #8b2635 0%, #c73e1d 25%, #fc4a1a 50%, #f7941d 75%, #f7b733 100%);
+    --corporate-info: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #4b6cb7 75%, #182848 100%);
+    
+    /* Efeitos de iluminação avançados */
+    --light-overlay: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+    --inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    --outer-glow: 0 0 30px rgba(255, 255, 255, 0.1);
+    
+    /* Glassmorphism premium */
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-backdrop: blur(25px) saturate(180%);
+    
+    /* Sombras ultra premium */
+    --shadow-premium: 0 32px 64px -12px rgba(0, 0, 0, 0.4), 0 8px 32px -8px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 48px 100px -12px rgba(0, 0, 0, 0.5), 0 16px 48px -8px rgba(0, 0, 0, 0.4);
+    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Base dos cards corporativos ultra premium */
+.card.bg-primary,
+.card.bg-success,
+.card.bg-warning,
+.card.bg-info {
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 28px !important;
+    backdrop-filter: var(--glass-backdrop) !important;
+    -webkit-backdrop-filter: var(--glass-backdrop) !important;
+    box-shadow: var(--shadow-premium), var(--inner-glow), var(--outer-glow) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    transform-style: preserve-3d !important;
+    
+    /* Textura sutil de superfície */
+    background-attachment: fixed !important;
+    background-size: 400% 400% !important;
+    animation: gradientShift 8s ease-in-out infinite !important;
+}
+
+/* Cores específicas para cada card */
+.card.bg-primary {
+    background: var(--corporate-primary) !important;
+}
+
+.card.bg-success {
+    background: var(--corporate-success) !important;
+}
+
+.card.bg-warning {
+    background: var(--corporate-warning) !important;
+}
+
+.card.bg-info {
+    background: var(--corporate-info) !important;
+}
+
+/* Efeito de iluminação superior premium */
+.card.bg-primary::before,
+.card.bg-success::before,
+.card.bg-warning::before,
+.card.bg-info::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.3) 20%, 
+        rgba(255, 255, 255, 0.8) 50%, 
+        rgba(255, 255, 255, 0.3) 80%, 
+        transparent 100%) !important;
+    border-radius: 28px 28px 0 0 !important;
+    z-index: 3 !important;
+    animation: shimmer 3s ease-in-out infinite !important;
+}
+
+/* Overlay de iluminação complexa */
+.card.bg-primary::after,
+.card.bg-success::after,
+.card.bg-warning::after,
+.card.bg-info::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: 
+        var(--light-overlay),
+        radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%) !important;
+    pointer-events: none !important;
+    border-radius: 28px !important;
+    z-index: 2 !important;
+}
+
+/* Efeitos de hover ultra premium */
+.card.bg-primary:hover,
+.card.bg-success:hover,
+.card.bg-warning:hover,
+.card.bg-info:hover {
+    transform: translateY(-16px) rotateX(8deg) rotateY(2deg) !important;
+    box-shadow: var(--shadow-hover), var(--outer-glow) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    background-size: 100% 100% !important;
+}
+
+.card.bg-primary:hover::before,
+.card.bg-success:hover::before,
+.card.bg-warning:hover::before,
+.card.bg-info:hover::before {
+    height: 3px !important;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.5) 15%, 
+        rgba(255, 255, 255, 1) 50%, 
+        rgba(255, 255, 255, 0.5) 85%, 
+        transparent 100%) !important;
+}
+
+/* Card body ultra premium */
+.card.bg-primary .card-body,
+.card.bg-success .card-body,
+.card.bg-warning .card-body,
+.card.bg-info .card-body {
+    padding: 2.75rem !important;
+    position: relative !important;
+    z-index: 4 !important;
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(15px) saturate(150%) !important;
+    border-radius: 24px !important;
+    margin: 6px !important;
+    box-shadow: var(--shadow-inner) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tipografia corporativa ultra refinada */
+.card.bg-primary h4,
+.card.bg-success h4,
+.card.bg-warning h4,
+.card.bg-info h4 {
+    font-family: 'Segoe UI', 'SF Pro Display', system-ui, -apple-system, sans-serif !important;
+    font-size: 3.25rem !important;
+    font-weight: 200 !important;
+    letter-spacing: -0.03em !important;
+    margin-bottom: 0.5rem !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        0 8px 24px rgba(0, 0, 0, 0.2) !important;
+    line-height: 0.95 !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+}
+
+.card.bg-primary p,
+.card.bg-success p,
+.card.bg-warning p,
+.card.bg-info p {
+    font-family: 'Segoe UI', 'SF Pro Text', system-ui, -apple-system, sans-serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    margin-bottom: 1.25rem !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    position: relative !important;
+}
+
+.card.bg-primary small,
+.card.bg-success small,
+.card.bg-warning small,
+.card.bg-info small {
+    font-family: 'Segoe UI', 'SF Pro Text', system-ui, -apple-system, sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+    padding: 0.5rem 0 !important;
+}
+
+/* Ícones com efeitos premium */
+.card.bg-primary .icon,
+.card.bg-success .icon,
+.card.bg-warning .icon,
+.card.bg-info .icon {
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+    opacity: 0.7 !important;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3)) !important;
+}
+
+.card.bg-primary:hover .icon,
+.card.bg-success:hover .icon,
+.card.bg-warning:hover .icon,
+.card.bg-info:hover .icon {
+    opacity: 1 !important;
+    transform: scale(1.15) rotate(5deg) !important;
+    filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.4)) !important;
+}
+
+/* Micro-interações nos elementos de tendência */
+.card.bg-primary small span,
+.card.bg-success small span,
+.card.bg-warning small span,
+.card.bg-info small span {
+    transition: all 0.3s ease !important;
+}
+
+.card.bg-primary:hover small span,
+.card.bg-success:hover small span,
+.card.bg-warning:hover small span,
+.card.bg-info:hover small span {
+    transform: scale(1.1) !important;
+}
+
+/* Forçar textos brancos em todos os elementos */
+.card.bg-primary *,
+.card.bg-success *,
+.card.bg-warning *,
+.card.bg-info * {
+    color: white !important;
+}
+
+/* Animação de gradiente sutil */
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+}
+
+/* Animação de brilho superior */
+@keyframes shimmer {
+    0%, 100% { 
+        opacity: 0.6;
+        transform: translateX(-10px);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateX(10px);
+    }
+}
+
+/* Animação de entrada ultra sofisticada */
+@keyframes ultraCorporateEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) rotateX(-15deg) rotateY(-5deg) scale(0.8);
+        filter: blur(15px) brightness(0.5);
+        box-shadow: none;
+    }
+    30% {
+        opacity: 0.4;
+        transform: translateY(30px) rotateX(-8deg) rotateY(-2deg) scale(0.9);
+        filter: blur(8px) brightness(0.7);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(10px) rotateX(-3deg) rotateY(-1deg) scale(0.98);
+        filter: blur(3px) brightness(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg) rotateY(0deg) scale(1);
+        filter: blur(0px) brightness(1);
+        box-shadow: var(--shadow-premium), var(--inner-glow), var(--outer-glow);
+    }
+}
+
+/* Pulsação premium com múltiplas camadas */
+@keyframes premiumPulse {
+    0%, 100% { 
+        box-shadow: var(--shadow-premium), var(--inner-glow), var(--outer-glow);
+        border-color: var(--glass-border);
+    }
+    50% { 
+        box-shadow: 
+            0 40px 80px -12px rgba(0, 0, 0, 0.5), 
+            0 12px 40px -8px rgba(0, 0, 0, 0.4),
+            var(--inner-glow), 
+            0 0 40px rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.25);
+    }
+}
+
+/* Aplicação das animações */
+.card.bg-primary,
+.card.bg-success,
+.card.bg-warning,
+.card.bg-info {
+    animation: 
+        ultraCorporateEntrance 1.2s cubic-bezier(0.165, 0.84, 0.44, 1),
+        gradientShift 8s ease-in-out infinite 1.5s,
+        premiumPulse 6s ease-in-out infinite 3s !important;
+}
+
+/* Delay escalonado ultra refinado */
+.col-md-3:nth-child(1) .card { animation-delay: 0.1s, 0.1s, 3.1s !important; }
+.col-md-3:nth-child(2) .card { animation-delay: 0.3s, 0.3s, 3.3s !important; }
+.col-md-3:nth-child(3) .card { animation-delay: 0.5s, 0.5s, 3.5s !important; }
+.col-md-3:nth-child(4) .card { animation-delay: 0.7s, 0.7s, 3.7s !important; }
+
+/* Indicadores de tendência elegantes */
+.card.bg-primary small span,
+.card.bg-success small span,
+.card.bg-warning small span,
+.card.bg-info small span {
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-weight: 600 !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.card.bg-primary:hover small span,
+.card.bg-success:hover small span,
+.card.bg-warning:hover small span,
+.card.bg-info:hover small span {
+    transform: scale(1.15) translateY(-2px) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* === RESPONSIVIDADE PREMIUM === */
+
+/* Tablets - mantém elegância corporativa */
+@media (max-width: 992px) {
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body {
+        padding: 2rem !important;
+        margin: 3px !important;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4 {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* Dispositivos móveis - design adaptado mas premium */
+@media (max-width: 768px) {
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning,
+    .card.bg-info {
+        border-radius: 20px !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body {
+        padding: 1.75rem !important;
+        margin: 2px !important;
+        border-radius: 16px !important;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4 {
+        font-size: 2.25rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .card.bg-primary p,
+    .card.bg-success p,
+    .card.bg-warning p,
+    .card.bg-info p {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .card.bg-primary:hover,
+    .card.bg-success:hover,
+    .card.bg-warning:hover,
+    .card.bg-info:hover {
+        transform: translateY(-8px) rotateX(3deg) !important;
+    }
+    
+    .card.bg-primary .icon,
+    .card.bg-success .icon,
+    .card.bg-warning .icon,
+    .card.bg-info .icon {
+        width: 3rem !important;
+        height: 3rem !important;
+    }
+}
+
+/* Dispositivos muito pequenos - mantém sofisticação */
+@media (max-width: 576px) {
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning,
+    .card.bg-info {
+        border-radius: 18px !important;
+        margin-bottom: 1.25rem !important;
+    }
+    
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body {
+        padding: 1.5rem !important;
+        margin: 2px !important;
+        border-radius: 14px !important;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4 {
+        font-size: 2rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .card.bg-primary p,
+    .card.bg-success p,
+    .card.bg-warning p,
+    .card.bg-info p {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.3px !important;
+    }
+    
+    .card.bg-primary small,
+    .card.bg-success small,
+    .card.bg-warning small,
+    .card.bg-info small {
+        font-size: 0.8rem !important;
+    }
+    
+    .card.bg-primary .icon,
+    .card.bg-success .icon,
+    .card.bg-warning .icon,
+    .card.bg-info .icon {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+    
+    .card.bg-primary:hover,
+    .card.bg-success:hover,
+    .card.bg-warning:hover,
+    .card.bg-info:hover {
+        transform: translateY(-6px) rotateX(2deg) !important;
+    }
+}
+
+/* Dispositivos extra pequenos */
+@media (max-width: 480px) {
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning,
+    .card.bg-info {
+        border-radius: 16px !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body {
+        padding: 1.25rem !important;
+        margin: 1px !important;
+        border-radius: 12px !important;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4 {
+        font-size: 1.75rem !important;
+    }
+    
+    .card.bg-primary .icon,
+    .card.bg-success .icon,
+    .card.bg-warning .icon,
+    .card.bg-info .icon {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    
+    .card.bg-primary:hover,
+    .card.bg-success:hover,
+    .card.bg-warning:hover,
+    .card.bg-info:hover {
+        transform: translateY(-4px) !important;
+    }
+}
+
 /* Tables */
 .table {
     margin-bottom: 0;

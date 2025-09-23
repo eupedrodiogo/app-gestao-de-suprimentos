@@ -73,7 +73,11 @@ export class ApiService {
             try {
                 processedConfig = await interceptor(processedConfig);
             } catch (error) {
-                console.error('Erro no interceptor de requisição:', error);
+                log.error('Erro no interceptor de requisição', {
+                    error: error.message,
+                    stack: error.stack,
+                    component: 'ApiService'
+                });
             }
         }
         
@@ -92,7 +96,11 @@ export class ApiService {
                     response = await interceptor.onSuccess(response);
                 }
             } catch (interceptorError) {
-                console.error('Erro no interceptor de resposta:', interceptorError);
+                log.error('Erro no interceptor de resposta', {
+                    error: interceptorError.message,
+                    stack: interceptorError.stack,
+                    component: 'ApiService'
+                });
             }
         }
         

@@ -1,6 +1,7 @@
 /**
  * LazyLoader - Sistema de carregamento sob demanda para otimização de performance
  */
+import log from './logger.js';
 
 export class LazyLoader {
     constructor() {
@@ -201,7 +202,12 @@ export class LazyLoader {
             this.log('Imagem carregada:', src);
             
         } catch (error) {
-            console.error('Erro ao carregar imagem:', src, error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'lazy-loader-load',
+                src: src
+            });
             img.classList.remove('lazy-loading');
             img.classList.add('lazy-error');
             
@@ -256,7 +262,13 @@ export class LazyLoader {
             this.log('Componente carregado:', componentName);
             
         } catch (error) {
-            console.error('Erro ao carregar componente:', componentName, error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'lazy-loader-component',
+                element: element.tagName,
+                componentName: componentName
+            });
             element.classList.remove('lazy-loading');
             element.classList.add('lazy-error');
             element.innerHTML = this.createErrorPlaceholder(componentName);
@@ -285,7 +297,12 @@ export class LazyLoader {
             this.log('Script carregado:', src);
             
         } catch (error) {
-            console.error('Erro ao carregar script:', src, error);
+            log.error({
+                message: error.message,
+                stack: error.stack,
+                component: 'lazy-loader-script',
+                src: src
+            });
             script.classList.add('lazy-error');
         }
     }

@@ -1,5 +1,6 @@
 const runMigration = require('./migrate');
 const seedDatabase = require('./seed');
+const log = require('../utils/logger');
 require('dotenv').config();
 
 async function setupDatabase() {
@@ -29,7 +30,11 @@ async function setupDatabase() {
         console.log('   - GET /api/orders - Listar pedidos');
         
     } catch (error) {
-        console.error('❌ Erro durante a configuração:', error);
+        log.error('Erro durante a configuração do banco', {
+            error: error.message,
+            stack: error.stack,
+            script: 'setup.js'
+        });
         process.exit(1);
     }
 }

@@ -1,4 +1,5 @@
-// Dashboard Page JavaScript
+// Dashboard JavaScript
+
 let salesChart = null;
 let stockChart = null;
 
@@ -37,7 +38,11 @@ function loadDashboardData() {
     ]).then(() => {
         console.log('Dados do dashboard carregados com sucesso');
     }).catch(error => {
-        console.error('Erro ao carregar dados do dashboard:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'dashboard-initialization'
+        });
         Toast.show('Erro ao carregar dados do dashboard', 'error');
     });
 }
@@ -72,7 +77,13 @@ async function loadKPIData() {
         loadOperationalMetrics();
 
     } catch (error) {
-        console.error('Erro ao carregar KPIs:', error);
+        log.error('Erro ao carregar KPIs', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'dashboard-kpi'
+        });
+        // Show error state
+        document.getElementById('kpi-cards').innerHTML = '<div class="alert alert-danger">Erro ao carregar KPIs</div>';
     }
 }
 
@@ -84,7 +95,7 @@ function updateKPICard(elementId, value, change, trend) {
     if (valueElement) valueElement.textContent = value;
     if (changeElement) changeElement.textContent = `${change > 0 ? '+' : ''}${change.toFixed(1)}%`;
     if (trendElement) {
-        trendElement.className = `bi ${trend === 'up' ? 'bi-arrow-up' : 'bi-arrow-down'} me-1`;
+        trendElement.textContent = trend === 'up' ? '⬆️' : '⬇️';
     }
 }
 
@@ -110,7 +121,13 @@ function loadOperationalMetrics() {
         if (topProductsElement) topProductsElement.textContent = operationalData.topProducts;
 
     } catch (error) {
-        console.error('Erro ao carregar métricas operacionais:', error);
+        log.error('Erro ao carregar métricas operacionais', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'dashboard-metrics'
+        });
+        // Show error state
+        document.getElementById('operational-metrics').innerHTML = '<div class="alert alert-danger">Erro ao carregar métricas</div>';
     }
 }
 
@@ -251,7 +268,11 @@ async function loadChartData() {
             stockChart.update();
         }
     } catch (error) {
-        console.error('Erro ao atualizar gráficos:', error);
+        log.error('Erro ao atualizar gráficos', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'dashboard-charts'
+        });
     }
 }
 
@@ -260,7 +281,11 @@ async function loadAlertData() {
         // Simulate loading alert data
         console.log('Carregando alertas...');
     } catch (error) {
-        console.error('Erro ao carregar alertas:', error);
+        log.error('Erro ao carregar alertas', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'dashboard-alerts'
+        });
     }
 }
 
@@ -313,7 +338,11 @@ async function checkSystemHealth() {
         }
         
     } catch (error) {
-        console.error('Erro ao verificar status do sistema:', error);
+        log.error('Erro ao verificar status do sistema', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'system-health'
+        });
         updateSystemStatus('error');
         Toast.show('Erro ao verificar status do sistema', 'error');
     }
@@ -327,7 +356,11 @@ async function checkApiHealth() {
         });
         return response.ok;
     } catch (error) {
-        console.error('API health check failed:', error);
+        log.error('API health check failed', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'api-health-check'
+        });
         return false;
     }
 }
@@ -340,7 +373,11 @@ async function checkDatabaseHealth() {
         });
         return response.ok;
     } catch (error) {
-        console.error('Database health check failed:', error);
+        log.error('Database health check failed', { 
+            error: error.message, 
+            stack: error.stack,
+            component: 'database-health-check'
+        });
         return false;
     }
 }
@@ -475,7 +512,11 @@ async function saveProduct() {
             showToast(error.message || 'Erro ao adicionar produto', 'error');
         }
     } catch (error) {
-        console.error('Erro ao salvar produto:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'dashboard-product-save'
+        });
         showToast('Erro ao conectar com o servidor', 'error');
     }
 }
@@ -503,11 +544,18 @@ async function loadRecentSuppliers() {
             const suppliers = data.success ? data.data : data.data || [];
             displayRecentSuppliers(suppliers);
         } else {
-            console.error('Erro ao carregar fornecedores:', response.statusText);
+            log.error({
+                message: `Erro ao carregar fornecedores: ${response.statusText}`,
+                component: 'dashboard-suppliers-load'
+            });
             displayRecentSuppliers([]);
         }
     } catch (error) {
-        console.error('Erro ao carregar fornecedores:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'dashboard-suppliers-load'
+        });
         displayRecentSuppliers([]);
     }
 }
@@ -519,10 +567,10 @@ function displayRecentSuppliers(suppliers) {
     if (!suppliers || suppliers.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted py-3">
-                <i class="bi bi-building"></i>
+                🏢
                 <p class="mb-0">Nenhum fornecedor cadastrado ainda.</p>
                 <button class="btn btn-sm btn-primary mt-2" onclick="openNewSupplierModal()">
-                    <i class="bi bi-plus"></i> Adicionar Primeiro Fornecedor
+                    ➕ Adicionar Primeiro Fornecedor
                 </button>
             </div>
         `;
@@ -534,7 +582,7 @@ function displayRecentSuppliers(suppliers) {
             <div class="col-md-4">
                 <div class="d-flex align-items-center">
                     <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                        <i class="bi bi-building text-white"></i>
+                        🏢
                     </div>
                     <div>
                         <h6 class="mb-0">${supplier.name || 'Nome não informado'}</h6>
@@ -624,7 +672,11 @@ async function saveSupplier() {
             showToast(error.error || error.message || 'Erro ao adicionar fornecedor', 'error');
         }
     } catch (error) {
-        console.error('Erro ao salvar fornecedor:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'dashboard-supplier-save'
+        });
         showToast('Erro ao conectar com o servidor', 'error');
     }
 }
@@ -704,7 +756,11 @@ async function saveQuote() {
             showToast(error.message || 'Erro ao adicionar cotação', 'error');
         }
     } catch (error) {
-        console.error('Erro ao salvar cotação:', error);
+        log.error({
+            message: error.message,
+            stack: error.stack,
+            component: 'dashboard-quote-save'
+        });
         showToast('Erro ao conectar com o servidor', 'error');
     }
 }

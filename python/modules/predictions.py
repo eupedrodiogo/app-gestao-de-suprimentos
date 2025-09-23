@@ -244,3 +244,76 @@ class PredictionService:
             recommendations.append("Performance satisfatória - continuar monitoramento")
         
         return recommendations
+    
+    async def predict_prices(self, product_id: Optional[str] = None, period: str = "30d") -> Dict[str, Any]:
+        """Predição de preços simplificada"""
+        try:
+            data = await self._get_data_from_api("products")
+            products = data.get('data', [])
+            
+            if not products:
+                return {"error": "Nenhum dado disponível"}
+            
+            price_predictions = []
+            
+            for product in products:
+                if product_id and product.get('id') != product_id:
+                    continue
+                
+                current_price = float(product.get('price', 0))
+                
+                # Predição simplificada baseada em tendências simuladas
+                market_trend = random.uniform(-0.1, 0.15)  # -10% a +15%
+                seasonal_factor = random.uniform(0.95, 1.08)  # Fator sazonal
+                supply_demand_factor = random.uniform(0.9, 1.1)  # Oferta/demanda
+                
+                predicted_price = current_price * (1 + market_trend) * seasonal_factor * supply_demand_factor
+                confidence = random.uniform(0.65, 0.9)
+                
+                price_change = ((predicted_price - current_price) / current_price) * 100
+                
+                price_predictions.append({
+                    "product_id": product.get('id'),
+                    "product_name": product.get('name', 'Produto'),
+                    "current_price": round(current_price, 2),
+                    "predicted_price": round(predicted_price, 2),
+                    "price_change_percent": round(price_change, 2),
+                    "confidence_score": round(confidence, 2),
+                    "trend": "Alta" if price_change > 5 else "Baixa" if price_change < -5 else "Estável",
+                    "recommendation": self._get_price_recommendation(price_change),
+                    "factors": {
+                        "market_trend": round(market_trend * 100, 1),
+                        "seasonal_impact": round((seasonal_factor - 1) * 100, 1),
+                        "supply_demand": round((supply_demand_factor - 1) * 100, 1)
+                    }
+                })
+            
+            return {
+                "price_predictions": price_predictions,
+                "summary": {
+                    "total_products_analyzed": len(price_predictions),
+                    "price_increases": len([p for p in price_predictions if p["price_change_percent"] > 0]),
+                    "price_decreases": len([p for p in price_predictions if p["price_change_percent"] < 0]),
+                    "stable_prices": len([p for p in price_predictions if abs(p["price_change_percent"]) <= 2]),
+                    "avg_price_change": round(sum(p["price_change_percent"] for p in price_predictions) / len(price_predictions), 2) if price_predictions else 0
+                },
+                "period": period,
+                "generated_at": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Erro na predição de preços: {e}")
+            return {"error": str(e)}
+    
+    def _get_price_recommendation(self, price_change: float) -> str:
+        """Gerar recomendação baseada na mudança de preço"""
+        if price_change > 10:
+            return "ALERTA: Aumento significativo - considerar compra antecipada"
+        elif price_change > 5:
+            return "ATENÇÃO: Aumento moderado - monitorar mercado"
+        elif price_change < -10:
+            return "OPORTUNIDADE: Queda significativa - considerar estoque extra"
+        elif price_change < -5:
+            return "FAVORÁVEL: Queda moderada - bom momento para comprar"
+        else:
+            return "ESTÁVEL: Preço sem grandes variações"

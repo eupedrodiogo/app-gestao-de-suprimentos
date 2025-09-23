@@ -1,6 +1,8 @@
 // Sistema ERP - JavaScript Principal
 // Versão: 3.0.0
 
+// === IMPORTS ===
+
 // === CONFIGURAÇÕES GLOBAIS ===
 const CONFIG = {
   API_BASE_URL: '/api',
@@ -154,7 +156,7 @@ const ApiManager = {
       const data = await response.json();
       return { success: true, data };
     } catch (error) {
-      console.error('API Request failed:', error);
+      console.error('Falha na requisição da API:', error);
       return { success: false, error: error.message };
     }
   },
@@ -430,7 +432,11 @@ const SearchManager = {
         this.showResults(result.data);
       }
     } catch (error) {
-      console.error('Search error:', error);
+      log.error('Erro na busca', {
+        error: error.message,
+        stack: error.stack,
+        query: query
+      });
     }
   },
 
@@ -462,8 +468,11 @@ const DashboardManager = {
       
       this.renderKPIs(mockData);
     } catch (error) {
-      console.error('Error loading KPIs:', error);
-      NotificationManager.error('Erro ao carregar KPIs');
+      log.error('Erro ao carregar KPIs', {
+        error: error.message,
+        stack: error.stack,
+        component: 'KPI'
+      });
     }
   },
 
@@ -529,7 +538,11 @@ const DashboardManager = {
         `;
       });
     } catch (error) {
-      console.error('Error loading charts:', error);
+      log.error('Erro ao carregar gráficos', {
+        error: error.message,
+        stack: error.stack,
+        component: 'charts'
+      });
     }
   },
 
@@ -559,7 +572,11 @@ const DashboardManager = {
       
       this.renderActivities(mockActivities);
     } catch (error) {
-      console.error('Error loading activities:', error);
+      log.error('Erro ao carregar atividades', {
+        error: error.message,
+        stack: error.stack,
+        component: 'activities'
+      });
     }
   },
 
@@ -633,7 +650,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     console.log('Sistema ERP inicializado com sucesso');
   } catch (error) {
-    console.error('Erro na inicialização:', error);
+    log.error('Erro na inicialização da aplicação', {
+      error: error.message,
+      stack: error.stack,
+      component: 'main'
+    });
     NotificationManager.error('Erro na inicialização do sistema');
   }
 });

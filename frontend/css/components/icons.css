@@ -1,0 +1,162 @@
+/* ========================================
+   SISTEMA DE ÍCONES SVG PROFISSIONAIS
+   Para Ambiente Corporativo de Alto Escalão
+   ======================================== */
+
+.icon {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
+    fill: currentColor;
+    transition: all 0.2s ease;
+}
+
+.icon--sm {
+    width: 1em;
+    height: 1em;
+}
+
+.icon--md {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.icon--lg {
+    width: 2em;
+    height: 2em;
+}
+
+.icon--xl {
+    width: 2.5em;
+    height: 2.5em;
+}
+
+/* Cores temáticas para ícones */
+.icon--primary {
+    color: var(--bs-primary, #0d6efd);
+}
+
+.icon--secondary {
+    color: var(--bs-secondary, #6c757d);
+}
+
+.icon--success {
+    color: var(--bs-success, #198754);
+}
+
+.icon--warning {
+    color: var(--bs-warning, #ffc107);
+}
+
+.icon--danger {
+    color: var(--bs-danger, #dc3545);
+}
+
+.icon--info {
+    color: var(--bs-info, #0dcaf0);
+}
+
+.icon--light {
+    color: var(--bs-light, #f8f9fa);
+}
+
+.icon--dark {
+    color: var(--bs-dark, #212529);
+}
+
+/* Estados interativos */
+.icon--interactive {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.icon--interactive:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.icon--interactive:active {
+    transform: scale(0.95);
+}
+
+/* Animações sutis para ambiente profissional */
+.icon--pulse {
+    animation: iconPulse 2s infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.icon--rotate {
+    animation: iconRotate 2s linear infinite;
+}
+
+@keyframes iconRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Espaçamento para ícones em botões */
+.btn .icon {
+    margin-right: 0.5rem;
+}
+
+.btn .icon:last-child {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+/* Ícones em navegação */
+.nav-link .icon {
+    margin-right: 0.75rem;
+    width: 1.1em;
+    height: 1.1em;
+}
+
+/* Ícones em cards e headers */
+.card-header .icon {
+    margin-right: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .icon {
+        width: 1.1em;
+        height: 1.1em;
+    }
+    
+    .nav-link .icon {
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5rem;
+    }
+}
+
+/* Acessibilidade */
+.icon[aria-hidden="true"] {
+    pointer-events: none;
+}
+
+.icon:focus {
+    outline: 2px solid var(--bs-primary, #0d6efd);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Suporte para modo escuro */
+@media (prefers-color-scheme: dark) {
+    .icon {
+        filter: brightness(0.9);
+    }
+}

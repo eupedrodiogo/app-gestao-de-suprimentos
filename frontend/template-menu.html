@@ -1,4 +1,7 @@
 <!-- Template do Novo Menu Hambúrguer -->
+<!-- CSS dos Ícones Profissionais -->
+<link rel="stylesheet" href="css/components/icons.css">
+
 <!-- CSS Customizado -->
 <style>
     /* Reset and Base Styles */
@@ -294,7 +297,9 @@
     <div class="nav-container">
         <div class="nav-brand">
             <a href="index.html" class="brand-link">
-                <i class="bi bi-boxes"></i>
+                <svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z" fill="currentColor"/>
+                </svg>
                 <span class="brand-text">Gestão de Suprimentos</span>
             </a>
         </div>
@@ -313,43 +318,66 @@
                 <div class="nav-header">
                     <span class="nav-title">Menu</span>
                     <button class="nav-close" id="navClose">
-                        <i class="bi bi-x-lg"></i>
+                        <svg class="icon icon--interactive" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="currentColor"/>
+                            <path d="M15 9l-6 6M9 9l6 6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
                     </button>
                 </div>
                 <ul class="nav-links">
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.html">
-                            <i class="bi bi-speedometer2"></i>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="products.html">
-                            <i class="bi bi-box"></i>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z" fill="currentColor"/>
+                            </svg>
                             <span>Produtos</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="suppliers.html">
-                            <i class="bi bi-building"></i>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="currentColor"/>
+                                <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                             <span>Fornecedores</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="quotes.html">
-                            <i class="bi bi-file-text"></i>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" fill="currentColor"/>
+                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                             <span>Cotações</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="orders.html">
-                            <i class="bi bi-cart"></i>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 4V2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1v11a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4zM9 3v1h6V3H9zm9 5H6v11a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8z" fill="currentColor"/>
+                                <path d="M9 11v6M15 11v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
                             <span>Pedidos</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="reports.html">
-                            <i class="bi bi-graph-up"></i>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z" fill="currentColor"/>
+                                <path d="M7 12l3-3 2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="7" cy="12" r="1" fill="white"/>
+                                <circle cx="10" cy="9" r="1" fill="white"/>
+                                <circle cx="12" cy="11" r="1" fill="white"/>
+                                <circle cx="16" cy="7" r="1" fill="white"/>
+                            </svg>
                             <span>Relatórios</span>
                         </a>
                     </li>
@@ -358,3 +386,6 @@
         </div>
     </div>
 </nav>
+
+<!-- Script dos Ícones Profissionais -->
+<script src="js/components/icons.js"></script>

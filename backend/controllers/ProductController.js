@@ -1,5 +1,6 @@
 const Database = require('../database/database');
 const Joi = require('joi');
+const log = require('../utils/logger');
 
 class ProductController {
     constructor() {
@@ -81,7 +82,12 @@ class ProductController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching products:', error);
+            log.error('Erro ao buscar produtos', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -115,7 +121,13 @@ class ProductController {
 
             res.json(product);
         } catch (error) {
-            console.error('Error fetching product:', error);
+            log.error('Erro ao buscar produto por ID', { 
+                error: error.message, 
+                stack: error.stack,
+                productId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -182,7 +194,13 @@ class ProductController {
                 data: newProduct
             });
         } catch (error) {
-            console.error('Error creating product:', error);
+            log.error('Erro ao criar produto', { 
+                error: error.message, 
+                stack: error.stack,
+                productData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ 
                 success: false,
                 error: 'Erro interno do servidor' 
@@ -289,7 +307,14 @@ class ProductController {
 
             res.json(updatedProduct);
         } catch (error) {
-            console.error('Error updating product:', error);
+            log.error('Erro ao atualizar produto', { 
+                error: error.message, 
+                stack: error.stack,
+                productId: req.params.id,
+                updateData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             if (error.message.includes('UNIQUE') || error.message.includes('duplicate')) {
                 res.status(400).json({ error: 'Código do produto já existe' });
             } else {
@@ -385,7 +410,13 @@ class ProductController {
             await this.db.run('DELETE FROM products WHERE id = ?', [id]);
             res.status(204).send();
         } catch (error) {
-            console.error('Error deleting product:', error);
+            log.error('Erro ao excluir produto', { 
+                error: error.message, 
+                stack: error.stack,
+                productId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -430,7 +461,12 @@ class ProductController {
             
             res.json(products);
         } catch (error) {
-            console.error('Error fetching low stock products:', error);
+            log.error('Erro ao buscar produtos com estoque baixo', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -532,27 +568,26 @@ class ProductController {
             }
 
             // Atualizar estoque do produto
-            const request = transaction.request();
-            await request.query(`
+            await db.run(`
                 UPDATE products 
-                SET stock = ${newStock}, updated_at = GETDATE() 
-                WHERE id = ${id}
-            `);
+                SET stock = ?, updated_at = datetime('now') 
+                WHERE id = ?
+            `, [newStock, id]);
 
             // Registrar movimentação de estoque
             const totalCost = value.unit_cost ? value.unit_cost * Math.abs(movementQuantity) : null;
             
-            await request.query(`
+            await db.run(`
                 INSERT INTO inventory_movements (
                     product_id, type, quantity, previous_stock, new_stock, 
                     unit_cost, total_cost, reason, reference_id, reference_type, user_id
-                ) VALUES (
-                    ${id}, '${value.type}', ${movementQuantity}, ${previousStock}, ${newStock},
-                    ${value.unit_cost || 'NULL'}, ${totalCost || 'NULL'}, '${value.reason}',
-                    ${value.reference_id || 'NULL'}, ${value.reference_type ? `'${value.reference_type}'` : 'NULL'}, 
-                    '${req.user?.id || 'system'}'
-                )
-            `);
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [
+                id, value.type, movementQuantity, previousStock, newStock,
+                value.unit_cost || null, totalCost, value.reason,
+                value.reference_id || null, value.reference_type || null, 
+                req.user?.id || 'system'
+            ]);
 
             await this.db.commitTransaction(transaction);
 
@@ -569,7 +604,14 @@ class ProductController {
             res.json(updatedProduct);
         } catch (error) {
             await this.db.rollbackTransaction(transaction);
-            console.error('Error updating stock:', error);
+            log.error('Erro ao atualizar estoque', { 
+                error: error.message, 
+                stack: error.stack,
+                productId: req.params.id,
+                stockData: req.body,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
@@ -608,7 +650,13 @@ class ProductController {
                 }
             });
         } catch (error) {
-            console.error('Error fetching stock history:', error);
+            log.error('Erro ao buscar histórico de estoque', { 
+                error: error.message, 
+                stack: error.stack,
+                productId: req.params.id,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }

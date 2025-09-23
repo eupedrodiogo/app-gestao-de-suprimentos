@@ -89,7 +89,7 @@ class DataPopulator {
                 status: 'ativo'
             },
             {
-                cnpj: '45.678.901/0001-23',
+                cnpj: '11.222.333/0001-81',
                 name: 'Suprimentos Express',
                 contact_name: 'Ana Costa',
                 email: 'ana@suprimentosexpress.com.br',
@@ -101,7 +101,7 @@ class DataPopulator {
                 status: 'ativo'
             },
             {
-                cnpj: '56.789.012/0001-34',
+                cnpj: '11.444.777/0001-61',
                 name: 'Global Parts',
                 contact_name: 'Roberto Lima',
                 email: 'roberto@globalparts.com.br',
@@ -113,7 +113,7 @@ class DataPopulator {
                 status: 'ativo'
             },
             {
-                cnpj: '67.890.123/0001-45',
+                cnpj: '11.555.777/0001-98',
                 name: 'Fornecedor Inativo Ltda',
                 contact_name: 'Pedro Inativo',
                 email: 'contato@inativo.com.br',

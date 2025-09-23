@@ -4,6 +4,7 @@ const path = require('path');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { body, validationResult } = require('express-validator');
+const log = require('./backend/utils/logger');
 require('dotenv').config();
 
 const Database = require('./backend/database/database');
@@ -12,6 +13,10 @@ const SupplierController = require('./backend/controllers/SupplierController');
 const QuoteController = require('./backend/controllers/QuoteController');
 const OrderController = require('./backend/controllers/OrderController');
 const InventoryController = require('./backend/controllers/InventoryController');
+
+// Importar novos middlewares de segurança e validação
+const SecurityMiddleware = require('./backend/middleware/security');
+const ValidationMiddleware = require('./backend/middleware/validation');
 
 // Adicionar o ReportController que estava faltando
 class ReportController {
@@ -39,25 +44,14 @@ class ReportController {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware de segurança - configurado para desenvolvimento
-app.use(helmet({
-    contentSecurityPolicy: false,
-    hsts: false
-}));
+// Aplicar middlewares de segurança integrados
+const securityMiddlewares = SecurityMiddleware.applyAllProtections(app);
+const rateLimiters = securityMiddlewares;
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // máximo 100 requests por IP por janela de tempo
-    message: 'Muitas requisições deste IP, tente novamente em 15 minutos.'
-});
-app.use('/api/', limiter);
+// Middleware de validação de payload
+app.use(ValidationMiddleware.limitPayloadSize('10mb'));
 
 // Middleware básico
-app.use(cors({
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: true
-}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Servir arquivos estáticos da pasta frontend
@@ -68,12 +62,20 @@ app.use(express.static(__dirname));
 
 // Middleware de logging
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    log.info(`${req.method} ${req.path}`, { 
+        ip: req.ip, 
+        userAgent: req.get('User-Agent'),
+        timestamp: new Date().toISOString()
+    });
     next();
 });
 
 // Inicializar database
 const db = new Database();
+
+// Importar middleware de autenticação
+const AuthMiddleware = require('./backend/middleware/auth');
+const AuthController = require('./backend/controllers/AuthController');
 
 // Inicializar controllers
 const productController = new ProductController();
@@ -81,21 +83,45 @@ const supplierController = new SupplierController();
 const quoteController = new QuoteController();
 const orderController = new OrderController();
 const inventoryController = new InventoryController();
+const authController = new AuthController(db, securityMiddlewares.bruteForce);
 
-// Middleware de autenticação simulado (para desenvolvimento)
-app.use((req, res, next) => {
-    req.user = { id: 'system', name: 'Sistema' };
-    next();
-});
+// Rotas de autenticação (públicas)
+app.post('/api/auth/login', 
+    securityMiddlewares.bruteForce.checkBlocked,
+    rateLimiters.login, 
+    ValidationMiddleware.validateUser, 
+    (req, res) => authController.login(req, res)
+);
+
+app.post('/api/auth/register', 
+    rateLimiters.create,
+    ValidationMiddleware.validateUser, 
+    (req, res) => authController.register(req, res)
+);
+
+app.post('/api/auth/logout', 
+    AuthMiddleware.authenticateToken, 
+    (req, res) => authController.logout(req, res)
+);
+
+app.get('/api/auth/verify', 
+    AuthMiddleware.authenticateToken, 
+    (req, res) => authController.verifyToken(req, res)
+);
+
+// Middleware de autenticação para rotas protegidas
+// Para desenvolvimento, usar autenticação opcional em algumas rotas
+const useAuth = process.env.NODE_ENV === 'production';
 
 // Error handling middleware
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log('🚨 Erro de validação:', {
+        log.validation('Erro de validação', {
             path: req.path,
             body: req.body,
-            errors: errors.array()
+            errors: errors.array(),
+            ip: req.ip
         });
         return res.status(400).json({
             success: false,
@@ -103,7 +129,10 @@ const handleValidationErrors = (req, res, next) => {
             errors: errors.array()
         });
     }
-    console.log('✅ Validação passou para:', req.path, req.body);
+    log.validation('Validação passou', { 
+        path: req.path, 
+        ip: req.ip 
+    });
     next();
 };
 
@@ -131,30 +160,30 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
-app.post('/api/products', async (req, res) => {
-    try {
-        const productController = new ProductController();
-        await productController.createProduct(req, res);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+app.post('/api/products', 
+    rateLimiters.create,
+    ValidationMiddleware.validateProduct,
+    async (req, res) => {
+        try {
+            const productController = new ProductController();
+            await productController.createProduct(req, res);
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
-});
+);
 
-app.put('/api/products/:id', [
-    body('code').notEmpty().withMessage('Product code is required'),
-    body('name').notEmpty().withMessage('Product name is required'),
-    body('category').notEmpty().withMessage('Category is required'),
-    body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-    body('stock').isInt({ min: 0 }).withMessage('Stock must be a non-negative integer'),
-    body('minStock').isInt({ min: 0 }).withMessage('Minimum stock must be a non-negative integer')
-], handleValidationErrors, async (req, res) => {
-    try {
-        await ProductController.update(db, req.params.id, req.body);
-        res.json({ success: true, message: 'Product updated successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+app.put('/api/products/:id', 
+    ValidationMiddleware.validateProduct,
+    async (req, res) => {
+        try {
+            await ProductController.update(db, req.params.id, req.body);
+            res.json({ success: true, message: 'Product updated successfully' });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
-});
+);
 
 app.delete('/api/products/:id', async (req, res) => {
     try {
@@ -187,36 +216,37 @@ app.get('/api/suppliers/:id', async (req, res) => {
     }
 });
 
-app.post('/api/suppliers', [
-    body('name').notEmpty().withMessage('Nome do fornecedor é obrigatório'),
-    body('email').isEmail().withMessage('Email válido é obrigatório'),
-    body('phone').notEmpty().withMessage('Telefone é obrigatório')
-], handleValidationErrors, async (req, res) => {
-    try {
-        const supplierController = new SupplierController();
-        await supplierController.createSupplier(req, res);
-    } catch (error) {
-        console.error('Error in POST /api/suppliers:', error);
-        if (!res.headersSent) {
+app.post('/api/suppliers', 
+    rateLimiters.create,
+    ValidationMiddleware.validateSupplier,
+    async (req, res) => {
+        try {
+            const supplierController = new SupplierController();
+            await supplierController.createSupplier(req, res);
+        } catch (error) {
+            log.error('Erro em POST /api/suppliers', { 
+                error: error.message, 
+                stack: error.stack,
+                ip: req.ip 
+            });
+            if (!res.headersSent) {
+                res.status(500).json({ success: false, message: error.message });
+            }
+        }
+    }
+);
+
+app.put('/api/suppliers/:id', 
+    ValidationMiddleware.validateSupplier,
+    async (req, res) => {
+        try {
+            const controller = new SupplierController(db);
+            await controller.updateSupplier(req, res);
+        } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
     }
-});
-
-app.put('/api/suppliers/:id', [
-    body('cnpj').notEmpty().withMessage('CNPJ is required'),
-    body('name').notEmpty().withMessage('Supplier name is required'),
-    body('contact').notEmpty().withMessage('Contact is required'),
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('phone').notEmpty().withMessage('Phone is required')
-], handleValidationErrors, async (req, res) => {
-    try {
-        await SupplierController.update(db, req.params.id, req.body);
-        res.json({ success: true, message: 'Supplier updated successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
+);
 
 app.delete('/api/suppliers/:id', async (req, res) => {
     try {
@@ -313,30 +343,30 @@ app.get('/api/orders/:id', async (req, res) => {
     }
 });
 
-app.post('/api/orders', [
-    body('supplier_id').notEmpty().withMessage('Supplier ID is required'),
-    body('deliveryDate').isISO8601().withMessage('Valid delivery date is required'),
-    body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
-    body('totalValue').isFloat({ min: 0 }).withMessage('Total value must be a positive number')
-], handleValidationErrors, async (req, res) => {
-    try {
-        const orderId = await OrderController.create(db, req.body);
-        res.status(201).json({ success: true, data: { id: orderId } });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+app.post('/api/orders', 
+    rateLimiters.create,
+    ValidationMiddleware.validateOrder,
+    async (req, res) => {
+        try {
+            const orderId = await OrderController.create(db, req.body);
+            res.status(201).json({ success: true, data: { id: orderId } });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
-});
+);
 
-app.put('/api/orders/:id/status', [
-    body('status').isIn(['pendente', 'aprovado', 'em_transito', 'entregue', 'cancelado']).withMessage('Invalid status')
-], handleValidationErrors, async (req, res) => {
-    try {
-        await OrderController.updateStatus(db, req.params.id, req.body.status);
-        res.json({ success: true, message: 'Order status updated successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+app.put('/api/orders/:id/status', 
+    ValidationMiddleware.validateOrderStatus,
+    async (req, res) => {
+        try {
+            await OrderController.updateStatus(db, req.params.id, req.body.status);
+            res.json({ success: true, message: 'Order status updated successfully' });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
-});
+);
 
 app.delete('/api/orders/:id', async (req, res) => {
     try {
@@ -478,7 +508,11 @@ app.get('/api/dashboard/stats', async (req, res) => {
 
         res.json({ success: true, data: stats });
     } catch (error) {
-        console.error('Erro ao buscar estatísticas do dashboard:', error);
+        log.error('Erro ao buscar estatísticas do dashboard', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -501,7 +535,11 @@ app.post('/api/reports/orders', [
         res.setHeader('Content-Disposition', `attachment; filename="relatorio_pedidos_${startDate}_${endDate}.pdf"`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Erro ao gerar relatório de pedidos:', error);
+        log.error('Erro ao gerar relatório de pedidos', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -521,7 +559,11 @@ app.post('/api/reports/suppliers', [
         res.setHeader('Content-Disposition', `attachment; filename="relatorio_fornecedores_${startDate}_${endDate}.pdf"`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Erro ao gerar relatório de fornecedores:', error);
+        log.error('Erro ao gerar relatório de fornecedores', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -531,9 +573,17 @@ app.post('/api/reports/financial', [
     body('endDate').isISO8601().withMessage('Valid end date is required')
 ], handleValidationErrors, async (req, res) => {
     try {
-        console.log('📊 Requisição de relatório financeiro recebida:', req.body);
+        log.info('Requisição de relatório financeiro recebida', { 
+            body: req.body,
+            ip: req.ip 
+        });
         const { startDate, endDate, category } = req.body;
-        console.log('📅 Datas processadas:', { startDate, endDate, category });
+        log.info('Datas processadas para relatório financeiro', { 
+            startDate, 
+            endDate, 
+            category,
+            ip: req.ip 
+        });
         
         // Gerar relatório financeiro PDF
         const reportData = await generateFinanceReportData(db, startDate, endDate, category);
@@ -543,7 +593,11 @@ app.post('/api/reports/financial', [
         res.setHeader('Content-Disposition', `attachment; filename="relatorio_financeiro_${startDate}_${endDate}.pdf"`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Erro ao gerar relatório financeiro:', error);
+        log.error('Erro ao gerar relatório financeiro', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -563,7 +617,11 @@ app.post('/api/reports/cotacoes', [
         res.setHeader('Content-Disposition', `attachment; filename="relatorio_cotacoes_${startDate}_${endDate}.pdf"`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Erro ao gerar relatório de cotações:', error);
+        log.error('Erro ao gerar relatório de cotações', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -583,7 +641,11 @@ app.post('/api/reports/prazos', [
         res.setHeader('Content-Disposition', `attachment; filename="relatorio_prazos_${startDate}_${endDate}.pdf"`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Erro ao gerar relatório de prazos:', error);
+        log.error('Erro ao gerar relatório de prazos', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -603,7 +665,11 @@ app.post('/api/reports/products', [
         res.setHeader('Content-Disposition', `attachment; filename="relatorio_produtos_${startDate}_${endDate}.pdf"`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Erro ao gerar relatório de produtos:', error);
+        log.error('Erro ao gerar relatório de produtos', { 
+            error: error.message, 
+            stack: error.stack,
+            ip: req.ip 
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -664,7 +730,10 @@ async function generateOrdersReportData(db, startDate, endDate, status, supplier
             orders
         };
     } catch (error) {
-        console.error('Erro ao gerar dados do relatório de pedidos:', error);
+        log.error('Erro ao gerar dados do relatório de pedidos', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         throw error;
     }
 }
@@ -707,14 +776,17 @@ async function generateSuppliersReportData(db, startDate, endDate, status) {
             suppliers
         };
     } catch (error) {
-        console.error('Erro ao gerar dados do relatório de fornecedores:', error);
+        log.error('Erro ao gerar dados do relatório de fornecedores', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         throw error;
     }
 }
 
 async function generateFinanceReportData(db, startDate, endDate, category) {
     try {
-        console.log('💰 Iniciando geração de dados financeiros:', { startDate, endDate, category });
+        log.info('Iniciando geração de dados financeiros', { startDate, endDate, category });
         // Simular dados financeiros baseados em pedidos e produtos
         let query = `
             SELECT 
@@ -730,8 +802,7 @@ async function generateFinanceReportData(db, startDate, endDate, category) {
             WHERE o.created_at BETWEEN ? AND ?
         `;
         const params = [startDate, endDate];
-        console.log('💰 Query preparada:', query);
-        console.log('💰 Parâmetros:', params);
+        log.debug('Query preparada para relatório financeiro', { query, params });
         
         if (category) {
             query += ' AND ? = ?';
@@ -763,7 +834,10 @@ async function generateFinanceReportData(db, startDate, endDate, category) {
             transactions
         };
     } catch (error) {
-        console.error('Erro ao gerar dados do relatório financeiro:', error);
+        log.error('Erro ao gerar dados do relatório financeiro', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         throw error;
     }
 }
@@ -817,7 +891,10 @@ async function generateQuotesReportData(db, startDate, endDate, status, supplier
             quotes
         };
     } catch (error) {
-        console.error('Erro ao gerar dados do relatório de cotações:', error);
+        log.error('Erro ao gerar dados do relatório de cotações', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         throw error;
     }
 }
@@ -885,7 +962,10 @@ async function generateDeadlinesReportData(db, startDate, endDate, status, urgen
             deadlines
         };
     } catch (error) {
-        console.error('Erro ao gerar dados do relatório de prazos:', error);
+        log.error('Erro ao gerar dados do relatório de prazos', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         throw error;
     }
 }
@@ -958,7 +1038,10 @@ async function generateProductsReportData(db, startDate, endDate, category) {
             products
         };
     } catch (error) {
-        console.error('Erro ao gerar dados do relatório de produtos:', error);
+        log.error('Erro ao gerar dados do relatório de produtos', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         throw error;
     }
 }
@@ -1234,7 +1317,13 @@ function getTableValue(item, header) {
 
 // Global error handler
 app.use((error, req, res, next) => {
-    console.error('Global error handler:', error);
+    log.error('Global error handler', { 
+        error: error.message, 
+        stack: error.stack,
+        ip: req.ip,
+        url: req.url,
+        method: req.method 
+    });
     res.status(500).json({
         success: false,
         message: 'Internal server error',
@@ -1247,7 +1336,7 @@ async function startServer() {
     try {
         // Inicializar banco SQLite
         await db.connect();
-        console.log('✅ Banco SQLite inicializado com sucesso!');
+        log.info('Banco SQLite inicializado com sucesso');
         
         app.listen(PORT, '0.0.0.0', () => {
             const os = require('os');
@@ -1268,28 +1357,32 @@ async function startServer() {
                 if (localIP !== 'localhost') break;
             }
             
-            console.log(`Supply Management Server running on port ${PORT}`);
-            console.log(`Frontend (Local): http://localhost:${PORT}`);
-            console.log(`Frontend (Mobile): http://${localIP}:${PORT}`);
-            console.log(`API: http://${localIP}:${PORT}/api`);
-            console.log(`Health Check: http://${localIP}:${PORT}/api/health`);
-            console.log(`\n📱 Para acessar no celular, use: http://${localIP}:${PORT}`);
+            log.info('Supply Management Server iniciado', {
+                port: PORT,
+                localUrl: `http://localhost:${PORT}`,
+                mobileUrl: `http://${localIP}:${PORT}`,
+                apiUrl: `http://${localIP}:${PORT}/api`,
+                healthUrl: `http://${localIP}:${PORT}/api/health`
+            });
         });
     } catch (error) {
-        console.error('Failed to start server:', error);
+        log.error('Falha ao iniciar servidor', { 
+            error: error.message, 
+            stack: error.stack 
+        });
         process.exit(1);
     }
 }
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-    console.log('Shutting down gracefully...');
+    log.info('Desligando servidor graciosamente (SIGINT)');
     await db.close();
     process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-    console.log('Shutting down gracefully...');
+    log.info('Desligando servidor graciosamente (SIGTERM)');
     await db.close();
     process.exit(0);
 });
