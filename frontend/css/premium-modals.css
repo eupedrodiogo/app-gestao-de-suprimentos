@@ -1,0 +1,349 @@
+/* ===================================================================
+   MODAIS PREMIUM - Design Ultra Sofisticado
+   Modais com glassmorphism, animações suaves e efeitos luxuosos
+   =================================================================== */
+
+/* === BACKDROP PREMIUM === */
+.modal-backdrop-premium {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.15) 0%, 
+        rgba(16, 185, 129, 0.1) 50%, 
+        rgba(245, 158, 11, 0.15) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    z-index: 1040;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.modal-backdrop-premium.show {
+    opacity: 1;
+}
+
+/* === MODAL CONTAINER PREMIUM === */
+.modal-premium {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.modal-premium.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* === MODAL DIALOG PREMIUM === */
+.modal-dialog-premium {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 32px;
+    box-shadow: 
+        0 48px 100px -12px rgba(0, 0, 0, 0.35),
+        0 16px 48px -8px rgba(0, 0, 0, 0.25),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    animation: modalSlideIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.modal-dialog-premium.modal-lg {
+    max-width: 1200px;
+}
+
+.modal-dialog-premium.modal-md {
+    max-width: 800px;
+}
+
+.modal-dialog-premium.modal-sm {
+    max-width: 500px;
+}
+
+/* === MODAL HEADER PREMIUM === */
+.modal-header-premium {
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.08) 0%, 
+        rgba(16, 185, 129, 0.05) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 32px 32px 0 0;
+    padding: 2rem 2.5rem 1.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-header-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        rgba(14, 165, 233, 0.8) 0%, 
+        rgba(16, 185, 129, 0.8) 50%, 
+        rgba(245, 158, 11, 0.8) 100%);
+    animation: gradientShift 3s ease-in-out infinite;
+    background-size: 200% 100%;
+}
+
+.modal-title-premium {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
+    font-size: 1.75rem;
+    background: linear-gradient(135deg, #0369a1 0%, #047857 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.modal-subtitle-premium {
+    color: rgba(64, 64, 64, 0.7);
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0.5rem 0 0 0;
+}
+
+.modal-close-premium {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: rgba(64, 64, 64, 0.8);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.modal-close-premium:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px -5px rgba(239, 68, 68, 0.3);
+}
+
+/* === MODAL BODY PREMIUM === */
+.modal-body-premium {
+    padding: 2rem 2.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(14, 165, 233, 0.3) transparent;
+}
+
+.modal-body-premium::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body-premium::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.modal-body-premium::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.4) 0%, 
+        rgba(16, 185, 129, 0.4) 100%);
+    border-radius: 4px;
+}
+
+.modal-body-premium::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.6) 0%, 
+        rgba(16, 185, 129, 0.6) 100%);
+}
+
+/* === MODAL FOOTER PREMIUM === */
+.modal-footer-premium {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.6) 0%, 
+        rgba(255, 255, 255, 0.3) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 32px 32px;
+    padding: 1.5rem 2.5rem 2rem 2.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* === FORMULÁRIOS PREMIUM === */
+.form-group-premium {
+    margin-bottom: 1.5rem;
+}
+
+.form-label-premium {
+    display: block;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.form-control-premium {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid rgba(14, 165, 233, 0.2);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.95rem;
+    color: #374151;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.form-control-premium:focus {
+    outline: none;
+    border-color: rgba(14, 165, 233, 0.5);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+        0 8px 25px -5px rgba(14, 165, 233, 0.25),
+        0 0 0 3px rgba(14, 165, 233, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+}
+
+.form-control-premium::placeholder {
+    color: rgba(107, 114, 128, 0.6);
+    font-style: italic;
+}
+
+/* === SELECT PREMIUM === */
+.form-select-premium {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: 48px;
+}
+
+/* === TABELAS PREMIUM === */
+.table-premium {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.table-premium thead {
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.1) 0%, 
+        rgba(16, 185, 129, 0.1) 100%);
+}
+
+.table-premium th {
+    padding: 1rem 1.5rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.table-premium td {
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background-color 0.2s ease;
+}
+
+.table-premium tbody tr:hover {
+    background: rgba(14, 165, 233, 0.05);
+}
+
+.table-premium tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* === ANIMAÇÕES === */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 768px) {
+    .modal-premium {
+        padding: 1rem;
+    }
+    
+    .modal-dialog-premium {
+        border-radius: 24px;
+        max-width: 95vw;
+    }
+    
+    .modal-header-premium,
+    .modal-body-premium,
+    .modal-footer-premium {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .modal-title-premium {
+        font-size: 1.5rem;
+    }
+    
+    .modal-footer-premium {
+        flex-direction: column;
+    }
+    
+    .modal-footer-premium .btn-premium {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Sentimento - Sistema de Gestão</title>
+    <link rel="stylesheet" href="css/sentiment-analysis.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="sentiment-container">
+        <!-- Header -->
+        <header class="sentiment-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-brain"></i> Análise de Sentimento IA</h1>
+                    <p>Monitoramento em tempo real do sentimento dos fornecedores</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </button>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Atualizar
+                    </button>
+                    <button class="btn btn-settings" onclick="openSettings()">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Real-time Dashboard -->
+        <section class="dashboard-section">
+            <div class="dashboard-grid">
+                <!-- Overall Sentiment Card -->
+                <div class="sentiment-card overall-sentiment">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> Sentimento Geral</h3>
+                        <div class="sentiment-indicator" id="overallIndicator">
+                            <span class="sentiment-score" id="overallScore">0.0</span>
+                            <span class="sentiment-label" id="overallLabel">Neutro</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="sentiment-breakdown">
+                            <div class="breakdown-item positive">
+                                <span class="label">Positivo</span>
+                                <span class="value" id="positiveCount">0</span>
+                                <span class="percentage" id="positivePercentage">0%</span>
+                            </div>
+                            <div class="breakdown-item neutral">
+                                <span class="label">Neutro</span>
+                                <span class="value" id="neutralCount">0</span>
+                                <span class="percentage" id="neutralPercentage">0%</span>
+                            </div>
+                            <div class="breakdown-item negative">
+                                <span class="label">Negativo</span>
+                                <span class="value" id="negativeCount">0</span>
+                                <span class="percentage" id="negativePercentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-time Alerts -->
+                <div class="sentiment-card alerts-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Alertas Ativos</h3>
+                        <span class="alert-count" id="alertCount">0</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="alerts-list" id="alertsList">
+                            <div class="no-alerts">
+                                <i class="fas fa-check-circle"></i>
+                                <p>Nenhum alerta ativo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trending Suppliers -->
+                <div class="sentiment-card trending-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-trending-up"></i> Tendências</h3>
+                        <div class="trend-filters">
+                            <button class="trend-filter active" data-trend="improving">
+                                <i class="fas fa-arrow-up"></i> Melhorando
+                            </button>
+                            <button class="trend-filter" data-trend="declining">
+                                <i class="fas fa-arrow-down"></i> Declinando
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="trending-list" id="trendingList">
+                            <!-- Trending suppliers will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-time Chart -->
+                <div class="sentiment-card chart-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-area"></i> Sentimento em Tempo Real</h3>
+                        <div class="chart-controls">
+                            <select id="chartTimeframe">
+                                <option value="1h">Última Hora</option>
+                                <option value="24h" selected>Últimas 24h</option>
+                                <option value="7d">Últimos 7 dias</option>
+                                <option value="30d">Últimos 30 dias</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suppliers Analysis -->
+        <section class="suppliers-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> Análise por Fornecedor</h2>
+                <div class="section-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="supplierSearch" placeholder="Buscar fornecedor...">
+                    </div>
+                    <select id="sortBy">
+                        <option value="sentiment">Sentimento</option>
+                        <option value="name">Nome</option>
+                        <option value="trend">Tendência</option>
+                        <option value="activity">Atividade</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addFeedback()">
+                        <i class="fas fa-plus"></i> Adicionar Feedback
+                    </button>
+                </div>
+            </div>
+            
+            <div class="suppliers-grid" id="suppliersGrid">
+                <!-- Supplier cards will be populated here -->
+            </div>
+        </section>
+
+        <!-- Feedback Analysis -->
+        <section class="feedback-section">
+            <div class="section-header">
+                <h2><i class="fas fa-comments"></i> Análise de Feedback</h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary" onclick="exportFeedback()">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                    <button class="btn btn-primary" onclick="analyzeBatch()">
+                        <i class="fas fa-cogs"></i> Análise em Lote
+                    </button>
+                </div>
+            </div>
+            
+            <div class="feedback-analyzer">
+                <div class="analyzer-input">
+                    <h3>Analisar Novo Feedback</h3>
+                    <div class="input-group">
+                        <select id="feedbackSupplier">
+                            <option value="">Selecionar fornecedor...</option>
+                        </select>
+                        <select id="feedbackType">
+                            <option value="review">Avaliação</option>
+                            <option value="complaint">Reclamação</option>
+                            <option value="compliment">Elogio</option>
+                            <option value="delivery_feedback">Feedback de Entrega</option>
+                            <option value="quality_feedback">Feedback de Qualidade</option>
+                            <option value="service_feedback">Feedback de Atendimento</option>
+                        </select>
+                    </div>
+                    <textarea id="feedbackText" placeholder="Digite o feedback para análise..."></textarea>
+                    <button class="btn btn-primary" onclick="analyzeFeedback()">
+                        <i class="fas fa-brain"></i> Analisar Sentimento
+                    </button>
+                </div>
+                
+                <div class="analyzer-result" id="analyzerResult">
+                    <!-- Analysis results will be shown here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Configurações de Análise</h3>
+                <button class="modal-close" onclick="closeSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <h4>Limites de Alerta</h4>
+                    <div class="setting-item">
+                        <label>Sentimento Negativo:</label>
+                        <input type="range" id="negativeThreshold" min="-1" max="0" step="0.1" value="-0.6">
+                        <span id="negativeThresholdValue">-0.6</span>
+                    </div>
+                    <div class="setting-item">
+                        <label>Sentimento Positivo:</label>
+                        <input type="range" id="positiveThreshold" min="0" max="1" step="0.1" value="0.6">
+                        <span id="positiveThresholdValue">0.6</span>
+                    </div>
+                    <div class="setting-item">
+                        <label>Volatilidade:</label>
+                        <input type="range" id="volatilityThreshold" min="0" max="1" step="0.1" value="0.4">
+                        <span id="volatilityThresholdValue">0.4</span>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Atualização em Tempo Real</h4>
+                    <div class="setting-item">
+                        <label>Intervalo de Atualização:</label>
+                        <select id="updateInterval">
+                            <option value="5000">5 segundos</option>
+                            <option value="10000" selected>10 segundos</option>
+                            <option value="30000">30 segundos</option>
+                            <option value="60000">1 minuto</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="autoRefresh" checked>
+                            Atualização Automática
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="soundAlerts" checked>
+                            Alertas Sonoros
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Visualização</h4>
+                    <div class="setting-item">
+                        <label>Tema:</label>
+                        <select id="themeSelect">
+                            <option value="light">Claro</option>
+                            <option value="dark">Escuro</option>
+                            <option value="auto">Automático</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="showConfidence" checked>
+                            Mostrar Nível de Confiança
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="resetSettings()">
+                    <i class="fas fa-undo"></i> Restaurar Padrão
+                </button>
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Adicionar Feedback</h3>
+                <button class="modal-close" onclick="closeFeedbackModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label>Fornecedor:</label>
+                        <select id="modalSupplier" required>
+                            <option value="">Selecionar fornecedor...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Feedback:</label>
+                        <select id="modalFeedbackType" required>
+                            <option value="review">Avaliação Geral</option>
+                            <option value="complaint">Reclamação</option>
+                            <option value="compliment">Elogio</option>
+                            <option value="delivery_feedback">Feedback de Entrega</option>
+                            <option value="quality_feedback">Feedback de Qualidade</option>
+                            <option value="service_feedback">Feedback de Atendimento</option>
+                            <option value="price_feedback">Feedback de Preço</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Avaliação (1-5):</label>
+                        <div class="rating-input">
+                            <input type="range" id="modalRating" min="1" max="5" value="3">
+                            <span id="modalRatingValue">3</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Feedback:</label>
+                        <textarea id="modalFeedbackText" placeholder="Descreva sua experiência com o fornecedor..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeFeedbackModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-primary" onclick="submitFeedback()">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-brain fa-spin"></i>
+            <p>Analisando sentimento...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer">
+        <!-- Toast notifications will be added here -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Initialize the Sentiment Analysis App
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aguardar o Chart.js carregar completamente
+            if (typeof Chart !== 'undefined') {
+                // Importar o script da aplicação após o Chart.js estar disponível
+                const script = document.createElement('script');
+                script.src = 'js/sentiment-analysis.js';
+                script.onload = function() {
+                    window.sentimentApp = new SentimentAnalysisApp();
+                };
+                document.head.appendChild(script);
+            } else {
+                console.error('Chart.js não foi carregado corretamente');
+            }
+        });
+    </script>
+</body>
+</html>

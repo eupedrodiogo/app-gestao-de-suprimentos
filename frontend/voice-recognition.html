@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconhecimento de Voz - Sistema de Gestão</title>
+    <link rel="stylesheet" href="css/voice-recognition.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="voice-header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="back-btn" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-microphone"></i>
+                    Reconhecimento de Voz
+                </h1>
+            </div>
+            <div class="header-right">
+                <button class="settings-btn" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="help-btn" onclick="showHelp()">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="voice-main">
+        <!-- Voice Control Panel -->
+        <section class="voice-control-panel">
+            <div class="voice-status">
+                <div class="status-indicator" id="statusIndicator">
+                    <div class="status-dot"></div>
+                    <span class="status-text" id="statusText">Pronto para ouvir</span>
+                </div>
+                <div class="voice-level">
+                    <div class="level-bar" id="voiceLevel"></div>
+                </div>
+            </div>
+
+            <!-- Microphone Button -->
+            <div class="mic-container">
+                <button class="mic-button" id="micButton">
+                    <i class="fas fa-microphone" id="micIcon"></i>
+                    <div class="mic-pulse"></div>
+                </button>
+                <p class="mic-instruction">Clique para falar ou diga "Olá Sistema"</p>
+            </div>
+
+            <!-- Voice Feedback -->
+            <div class="voice-feedback" id="voiceFeedback">
+                <div class="transcript-container">
+                    <h3>Você disse:</h3>
+                    <p class="transcript" id="transcript">Aguardando comando...</p>
+                    <div class="confidence-meter">
+                        <span>Confiança:</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                        <span class="confidence-value" id="confidenceValue">0%</span>
+                    </div>
+                </div>
+                
+                <div class="command-result" id="commandResult">
+                    <h3>Resultado:</h3>
+                    <p class="result-text" id="resultText">Nenhum comando executado</p>
+                    <div class="result-actions" id="resultActions"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Commands -->
+        <section class="quick-commands">
+            <h2>Comandos Rápidos</h2>
+            <div class="commands-grid">
+                <button class="command-card" onclick="executeQuickCommand('ir para produtos')">
+                    <i class="fas fa-box"></i>
+                    <span>Ir para Produtos</span>
+                </button>
+                <button class="command-card" onclick="executeQuickCommand('ir para fornecedores')">
+                    <i class="fas fa-truck"></i>
+                    <span>Ir para Fornecedores</span>
+                </button>
+                <button class="command-card" onclick="executeQuickCommand('verificar estoque')">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Verificar Estoque</span>
+                </button>
+                <button class="command-card" onclick="executeQuickCommand('gerar relatório')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Gerar Relatório</span>
+                </button>
+                <button class="command-card" onclick="executeQuickCommand('criar novo produto')">
+                    <i class="fas fa-plus"></i>
+                    <span>Novo Produto</span>
+                </button>
+                <button class="command-card" onclick="executeQuickCommand('buscar pedido')">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar Pedido</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Command History -->
+        <section class="command-history">
+            <div class="history-header">
+                <h2>Histórico de Comandos</h2>
+                <button class="clear-history-btn" onclick="clearHistory()">
+                    <i class="fas fa-trash"></i>
+                    Limpar
+                </button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- Histórico será preenchido dinamicamente -->
+            </div>
+        </section>
+
+        <!-- Voice Statistics -->
+        <section class="voice-stats">
+            <h2>Estatísticas de Uso</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalCommands">0</h3>
+                        <p>Comandos Executados</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="successRate">0%</h3>
+                        <p>Taxa de Sucesso</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="avgConfidence">0%</h3>
+                        <p>Confiança Média</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="mostUsedCommand">-</h3>
+                        <p>Comando Mais Usado</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurações de Voz</h2>
+                <button class="close-btn" onclick="closeSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="language">Idioma:</label>
+                    <select id="language">
+                        <option value="pt-BR">Português (Brasil)</option>
+                        <option value="en-US">English (US)</option>
+                        <option value="es-ES">Español</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="sensitivity">Sensibilidade do Microfone:</label>
+                    <input type="range" id="sensitivity" min="0" max="100" value="50">
+                    <span class="range-value" id="sensitivityValue">50%</span>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="confidence">Confiança Mínima:</label>
+                    <input type="range" id="confidence" min="50" max="95" value="70">
+                    <span class="range-value" id="confidenceMinValue">70%</span>
+                </div>
+                
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="voiceFeedback" checked>
+                        <span class="checkmark"></span>
+                        Feedback por Voz
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="soundEffects" checked>
+                        <span class="checkmark"></span>
+                        Efeitos Sonoros
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="wakeWord" checked>
+                        <span class="checkmark"></span>
+                        Palavra de Ativação ("Olá Sistema")
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="continuousListening">
+                        <span class="checkmark"></span>
+                        Escuta Contínua
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="resetSettings()">Restaurar Padrão</button>
+                <button class="btn-primary" onclick="saveSettings()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Comandos Disponíveis</h2>
+                <button class="close-btn" onclick="closeHelp()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3><i class="fas fa-route"></i> Navegação</h3>
+                    <ul class="command-list">
+                        <li>"Ir para produtos" - Navega para a página de produtos</li>
+                        <li>"Abrir fornecedores" - Abre a página de fornecedores</li>
+                        <li>"Ir para dashboard" - Vai para o painel principal</li>
+                        <li>"Voltar" - Volta para a página anterior</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3><i class="fas fa-search"></i> Busca</h3>
+                    <ul class="command-list">
+                        <li>"Buscar produto [nome]" - Busca um produto específico</li>
+                        <li>"Procurar fornecedor [nome]" - Busca um fornecedor</li>
+                        <li>"Buscar pedido [número]" - Busca um pedido</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3><i class="fas fa-plus"></i> Ações</h3>
+                    <ul class="command-list">
+                        <li>"Criar novo produto" - Abre formulário de produto</li>
+                        <li>"Adicionar fornecedor" - Cria novo fornecedor</li>
+                        <li>"Salvar" - Salva o formulário atual</li>
+                        <li>"Cancelar" - Cancela a operação atual</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3><i class="fas fa-warehouse"></i> Estoque</h3>
+                    <ul class="command-list">
+                        <li>"Verificar estoque [produto]" - Consulta estoque</li>
+                        <li>"Atualizar estoque" - Abre tela de atualização</li>
+                        <li>"Relatório de estoque" - Gera relatório</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3><i class="fas fa-cog"></i> Sistema</h3>
+                    <ul class="command-list">
+                        <li>"Ajuda" - Mostra esta tela de ajuda</li>
+                        <li>"Configurações" - Abre configurações</li>
+                        <li>"Comandos disponíveis" - Lista todos os comandos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Suggestions -->
+    <div class="suggestions-panel" id="suggestionsPanel">
+        <h3>Você quis dizer:</h3>
+        <div class="suggestions-list" id="suggestionsList">
+            <!-- Sugestões serão preenchidas dinamicamente -->
+        </div>
+    </div>
+
+    <!-- Voice Visualizer -->
+    <div class="voice-visualizer" id="voiceVisualizer">
+        <canvas id="visualizerCanvas"></canvas>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-microphone fa-spin"></i>
+            <p>Processando comando...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer">
+        <!-- Notificações serão adicionadas dinamicamente -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/voice-recognition.js"></script>
+    <script>
+        // Inicializar aplicação quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.VoiceRecognitionApp) {
+                window.voiceApp = new VoiceRecognitionApp();
+                window.voiceApp.init();
+            } else {
+                console.error('VoiceRecognitionApp não encontrado');
+            }
+        });
+    </script>
+</body>
+</html>

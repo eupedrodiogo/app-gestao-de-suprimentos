@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Vision - Análise Inteligente de Produtos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/computer-vision.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-eye me-2"></i>
+                Computer Vision AI
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item">
+                    <span class="nav-link">
+                        <i class="fas fa-circle text-success me-1"></i>
+                        <span id="connection-status">Conectado</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-5 pt-4">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-gradient-primary text-white">
+                    <div class="card-body text-center py-5">
+                        <h1 class="display-4 mb-3">
+                            <i class="fas fa-robot me-3"></i>
+                            Computer Vision AI
+                        </h1>
+                        <p class="lead">Análise inteligente de produtos usando visão computacional avançada</p>
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 id="total-analyses">0</h3>
+                                    <small>Análises Realizadas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 id="accuracy-rate">0%</h3>
+                                    <small>Taxa de Precisão</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 id="avg-processing">0s</h3>
+                                    <small>Tempo Médio</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 id="success-rate">0%</h3>
+                                    <small>Taxa de Sucesso</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Camera and Analysis Section -->
+        <div class="row">
+            <!-- Camera Feed -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-camera me-2"></i>
+                            Captura de Imagem
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Camera Controls -->
+                        <div class="camera-controls mb-3">
+                            <button id="start-camera" class="btn btn-success me-2">
+                                <i class="fas fa-video me-1"></i>
+                                Iniciar Câmera
+                            </button>
+                            <button id="capture-photo" class="btn btn-primary me-2" disabled>
+                                <i class="fas fa-camera me-1"></i>
+                                Capturar
+                            </button>
+                            <button id="upload-image" class="btn btn-secondary">
+                                <i class="fas fa-upload me-1"></i>
+                                Upload
+                            </button>
+                            <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                        </div>
+
+                        <!-- Camera/Image Display -->
+                        <div class="camera-container">
+                            <video id="camera-feed" class="camera-feed" autoplay muted></video>
+                            <canvas id="capture-canvas" class="capture-canvas" style="display: none;"></canvas>
+                            <div id="image-preview" class="image-preview" style="display: none;">
+                                <img id="preview-image" class="preview-image" alt="Preview">
+                            </div>
+                            <div id="camera-overlay" class="camera-overlay">
+                                <div class="scanning-line"></div>
+                                <div class="corner-markers">
+                                    <div class="corner top-left"></div>
+                                    <div class="corner top-right"></div>
+                                    <div class="corner bottom-left"></div>
+                                    <div class="corner bottom-right"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Controls -->
+                        <div class="analysis-controls mt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Tipo de Análise</label>
+                                    <select id="analysis-type" class="form-select">
+                                        <option value="complete">Análise Completa</option>
+                                        <option value="barcode">Código de Barras</option>
+                                        <option value="quality">Avaliação de Qualidade</option>
+                                        <option value="dimensions">Estimativa de Dimensões</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Categoria Esperada</label>
+                                    <select id="expected-category" class="form-select">
+                                        <option value="">Detectar Automaticamente</option>
+                                        <option value="electronics">Eletrônicos</option>
+                                        <option value="clothing">Roupas</option>
+                                        <option value="food">Alimentos</option>
+                                        <option value="books">Livros</option>
+                                        <option value="tools">Ferramentas</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button id="analyze-image" class="btn btn-warning btn-lg w-100 mt-3" disabled>
+                                <i class="fas fa-brain me-2"></i>
+                                Analisar com IA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Resultados da Análise
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="analysis-results" class="analysis-results">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-search fa-3x mb-3"></i>
+                                <p>Capture ou faça upload de uma imagem para iniciar a análise</p>
+                            </div>
+                        </div>
+
+                        <!-- Loading Animation -->
+                        <div id="analysis-loading" class="analysis-loading" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary mb-3" role="status">
+                                    <span class="visually-hidden">Analisando...</span>
+                                </div>
+                                <p class="mb-0">Processando imagem com IA...</p>
+                                <small class="text-muted">Isso pode levar alguns segundos</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis History -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history me-2"></i>
+                            Histórico de Análises
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Categoria</th>
+                                        <th>Confiança</th>
+                                        <th>Tempo</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-tbody">
+                                    <!-- Histórico será carregado aqui -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Charts -->
+        <div class="row mt-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Análises por Categoria
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Análises Diárias
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="daily-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Details Modal -->
+    <div class="modal fade" id="analysis-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-microscope me-2"></i>
+                        Detalhes da Análise
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modal-analysis-details">
+                    <!-- Detalhes serão carregados aqui -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="export-analysis">
+                        <i class="fas fa-download me-1"></i>
+                        Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/computer-vision.js"></script>
+</body>
+</html>

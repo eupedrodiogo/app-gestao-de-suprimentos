@@ -301,6 +301,41 @@ class Database {
                 last_login DATETIME,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`,
+
+            // Tabela de análise de sentimento (sentiment_analysis)
+            `CREATE TABLE IF NOT EXISTS sentiment_analysis (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                supplier_id INTEGER NOT NULL,
+                text TEXT NOT NULL,
+                sentiment_score REAL NOT NULL,
+                sentiment_label TEXT NOT NULL CHECK (sentiment_label IN ('positive', 'negative', 'neutral')),
+                confidence REAL NOT NULL,
+                keywords TEXT,
+                feedback_type TEXT DEFAULT 'general',
+                source TEXT DEFAULT 'manual',
+                metadata TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
+            )`,
+
+            // Tabela de alertas de sentimento (sentiment_alerts)
+            `CREATE TABLE IF NOT EXISTS sentiment_alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                supplier_id INTEGER NOT NULL,
+                alert_type TEXT NOT NULL CHECK (alert_type IN ('negative_trend', 'positive_trend', 'volatility', 'threshold')),
+                severity TEXT NOT NULL CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                threshold_value REAL,
+                current_value REAL,
+                status TEXT DEFAULT 'active' CHECK (status IN ('active', 'resolved', 'dismissed')),
+                resolved_at DATETIME,
+                resolved_by TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
             )`
         ];
 

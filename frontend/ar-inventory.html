@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realidade Aumentada - Visualização 3D de Estoque</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/ar-inventory.css">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+</head>
+<body>
+    <div class="ar-container">
+        <header class="ar-header">
+            <h1>🥽 Realidade Aumentada - Estoque 3D</h1>
+            <div class="ar-controls">
+                <button id="startAR" class="btn btn-primary">Iniciar AR</button>
+                <button id="stopAR" class="btn btn-secondary">Parar AR</button>
+                <button id="switchCamera" class="btn btn-info">Trocar Câmera</button>
+            </div>
+        </header>
+
+        <div class="ar-info">
+            <div class="info-card">
+                <h3>📱 Como usar:</h3>
+                <ol>
+                    <li>Clique em "Iniciar AR" para ativar a câmera</li>
+                    <li>Aponte para uma superfície plana</li>
+                    <li>Toque na tela para posicionar itens 3D</li>
+                    <li>Use gestos para interagir com os objetos</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- AR Scene -->
+        <a-scene 
+            id="arScene"
+            embedded 
+            arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+            vr-mode-ui="enabled: false"
+            renderer="logarithmicDepthBuffer: true;"
+            style="display: none;">
+            
+            <!-- Assets -->
+            <a-assets>
+                <a-box id="box-template" 
+                       geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+                       material="color: #4CC3D9; opacity: 0.8"
+                       animation="property: rotation; to: 0 360 0; loop: true; dur: 10000">
+                </a-box>
+                
+                <a-cylinder id="cylinder-template"
+                           geometry="primitive: cylinder; radius: 0.3; height: 0.6"
+                           material="color: #EF2D5E; opacity: 0.8"
+                           animation="property: position; to: 0 0.1 0; dir: alternate; dur: 2000; loop: true">
+                </a-cylinder>
+                
+                <a-sphere id="sphere-template"
+                         geometry="primitive: sphere; radius: 0.25"
+                         material="color: #FFC65D; opacity: 0.8"
+                         animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1500; loop: true">
+                </a-sphere>
+            </a-assets>
+
+            <!-- Lighting -->
+            <a-light type="ambient" color="#404040"></a-light>
+            <a-light type="directional" position="0 1 0" color="#ffffff"></a-light>
+
+            <!-- Camera -->
+            <a-camera-static></a-camera-static>
+
+            <!-- Ground plane for object placement -->
+            <a-plane 
+                id="ground"
+                position="0 -1 -3" 
+                rotation="-90 0 0" 
+                width="4" 
+                height="4" 
+                color="#7BC8A4" 
+                opacity="0.3"
+                visible="false">
+            </a-plane>
+
+            <!-- Sample inventory items -->
+            <a-box 
+                id="item1"
+                position="-1 0 -3" 
+                geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5"
+                material="color: #4CC3D9; opacity: 0.8"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
+                class="inventory-item"
+                data-item-id="1"
+                data-item-name="Produto A"
+                data-quantity="150">
+                <a-text 
+                    value="Produto A\n150 unidades" 
+                    position="0 0.7 0" 
+                    align="center"
+                    color="#000000"
+                    scale="0.5 0.5 0.5">
+                </a-text>
+            </a-box>
+
+            <a-cylinder 
+                id="item2"
+                position="0 0 -3"
+                geometry="primitive: cylinder; radius: 0.3; height: 0.6"
+                material="color: #EF2D5E; opacity: 0.8"
+                animation="property: position; to: 0 0.1 -3; dir: alternate; dur: 2000; loop: true"
+                class="inventory-item"
+                data-item-id="2"
+                data-item-name="Produto B"
+                data-quantity="75">
+                <a-text 
+                    value="Produto B\n75 unidades" 
+                    position="0 0.8 0" 
+                    align="center"
+                    color="#000000"
+                    scale="0.5 0.5 0.5">
+                </a-text>
+            </a-cylinder>
+
+            <a-sphere 
+                id="item3"
+                position="1 0 -3"
+                geometry="primitive: sphere; radius: 0.25"
+                material="color: #FFC65D; opacity: 0.8"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1500; loop: true"
+                class="inventory-item"
+                data-item-id="3"
+                data-item-name="Produto C"
+                data-quantity="200">
+                <a-text 
+                    value="Produto C\n200 unidades" 
+                    position="0 0.6 0" 
+                    align="center"
+                    color="#000000"
+                    scale="0.5 0.5 0.5">
+                </a-text>
+            </a-sphere>
+        </a-scene>
+
+        <!-- Fallback for non-AR devices -->
+        <div id="fallback" class="fallback-container">
+            <div class="fallback-content">
+                <h2>📱 Visualização 3D de Estoque</h2>
+                <p>Seu dispositivo não suporta AR ou a câmera não está disponível.</p>
+                <p>Aqui está uma visualização 3D alternativa do estoque:</p>
+                
+                <div class="inventory-grid">
+                    <div class="inventory-card">
+                        <div class="item-3d box"></div>
+                        <h3>Produto A</h3>
+                        <p>150 unidades</p>
+                        <div class="stock-level high">Alto Estoque</div>
+                    </div>
+                    
+                    <div class="inventory-card">
+                        <div class="item-3d cylinder"></div>
+                        <h3>Produto B</h3>
+                        <p>75 unidades</p>
+                        <div class="stock-level medium">Estoque Médio</div>
+                    </div>
+                    
+                    <div class="inventory-card">
+                        <div class="item-3d sphere"></div>
+                        <h3>Produto C</h3>
+                        <p>200 unidades</p>
+                        <div class="stock-level high">Alto Estoque</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AR UI Overlay -->
+        <div id="arUI" class="ar-ui" style="display: none;">
+            <div class="ar-toolbar">
+                <button id="addItem" class="ar-btn">➕ Adicionar Item</button>
+                <button id="removeItem" class="ar-btn">🗑️ Remover</button>
+                <button id="infoItem" class="ar-btn">ℹ️ Informações</button>
+            </div>
+            
+            <div class="ar-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Itens Visíveis:</span>
+                    <span id="visibleItems">3</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Estoque:</span>
+                    <span id="totalStock">425</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="products.html" class="nav-item">
+            <span class="nav-icon">📦</span>
+            <span class="nav-label">Produtos</span>
+        </a>
+        <a href="ar-inventory.html" class="nav-item active">
+            <span class="nav-icon">🥽</span>
+            <span class="nav-label">AR Estoque</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Relatórios</span>
+        </a>
+    </nav>
+
+    <script src="js/ar-inventory.js"></script>
+</body>
+</html>

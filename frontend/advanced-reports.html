@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios Avançados - Sistema de Gestão de Suprimentos</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/advanced-reports.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold" href="index.html">
+                <i class="bi bi-graph-up me-2"></i>
+                Sistema de Gestão
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html">
+                            <i class="bi bi-house me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="products.html">
+                            <i class="bi bi-box me-1"></i>Produtos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="suppliers.html">
+                            <i class="bi bi-building me-1"></i>Fornecedores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="orders.html">
+                            <i class="bi bi-cart me-1"></i>Pedidos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="reports.html">
+                            <i class="bi bi-file-earmark-text me-1"></i>Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" href="advanced-reports.html">
+                            <i class="bi bi-graph-up-arrow me-1"></i>Relatórios Avançados
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="advanced-reports-container">
+        <!-- Header -->
+        <div class="report-header fade-in">
+            <h1><i class="bi bi-graph-up-arrow me-3"></i>Relatórios Avançados</h1>
+            <p>Análises detalhadas e insights estratégicos para tomada de decisão</p>
+        </div>
+
+        <!-- Report Controls -->
+        <div class="report-controls slide-up">
+            <h5 class="mb-3"><i class="bi bi-sliders me-2"></i>Filtros e Controles</h5>
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="reportType">Tipo de Relatório</label>
+                    <select id="reportType" class="form-select">
+                        <option value="executive">Dashboard Executivo</option>
+                        <option value="stock">Performance de Estoque</option>
+                        <option value="supplier">Análise de Fornecedores</option>
+                        <option value="trends">Tendências de Pedidos</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="dateRange">Período</label>
+                    <select id="dateRange" class="form-select">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="365">Último ano</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="category">Categoria</label>
+                    <select id="category" class="form-select">
+                        <option value="">Todas as categorias</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <button class="btn-generate" onclick="generateReport()">
+                        <i class="bi bi-play-fill me-2"></i>Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Grid -->
+        <div id="kpiGrid" class="kpi-grid" style="display: none;">
+            <!-- KPIs will be dynamically generated here -->
+        </div>
+
+        <!-- Charts Grid -->
+        <div id="chartsGrid" class="chart-grid" style="display: none;">
+            <!-- Charts will be dynamically generated here -->
+        </div>
+
+        <!-- Data Tables -->
+        <div id="dataTablesContainer" style="display: none;">
+            <!-- Data tables will be dynamically generated here -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-5" style="display: none;">
+            <div class="loading-spinner mx-auto mb-3"></div>
+            <p class="text-muted">Gerando relatório avançado...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-5">
+            <i class="bi bi-graph-up display-1 text-muted mb-3"></i>
+            <h3 class="text-muted">Selecione um tipo de relatório</h3>
+            <p class="text-muted">Escolha o tipo de relatório e clique em "Gerar Relatório" para visualizar as análises</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Advanced Reports JavaScript -->
+    <script>
+        // Global variables
+        let currentReportData = null;
+        let charts = {};
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+        });
+
+        // Load categories for filter
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const categories = [...new Set(data.products.map(p => p.category))];
+                    const categorySelect = document.getElementById('category');
+                    
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category;
+                        categorySelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        // Generate report based on selected type
+        async function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const dateRange = document.getElementById('dateRange').value;
+            const category = document.getElementById('category').value;
+
+            showLoading();
+
+            try {
+                let endpoint = '';
+                switch (reportType) {
+                    case 'executive':
+                        endpoint = '/api/reports/advanced/executive-dashboard';
+                        break;
+                    case 'stock':
+                        endpoint = '/api/reports/advanced/stock-performance';
+                        break;
+                    case 'supplier':
+                        endpoint = '/api/reports/advanced/supplier-analysis';
+                        break;
+                    case 'trends':
+                        endpoint = '/api/reports/advanced/order-trends';
+                        break;
+                }
+
+                const params = new URLSearchParams({
+                    days: dateRange,
+                    ...(category && { category })
+                });
+
+                const response = await fetch(`${endpoint}?${params}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    currentReportData = data;
+                    renderReport(reportType, data);
+                } else {
+                    throw new Error(data.message || 'Erro ao gerar relatório');
+                }
+            } catch (error) {
+                console.error('Erro ao gerar relatório:', error);
+                showError('Erro ao gerar relatório: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Render report based on type
+        function renderReport(type, data) {
+            hideEmptyState();
+            
+            switch (type) {
+                case 'executive':
+                    renderExecutiveDashboard(data);
+                    break;
+                case 'stock':
+                    renderStockPerformance(data);
+                    break;
+                case 'supplier':
+                    renderSupplierAnalysis(data);
+                    break;
+                case 'trends':
+                    renderOrderTrends(data);
+                    break;
+            }
+        }
+
+        // Render Executive Dashboard
+        function renderExecutiveDashboard(data) {
+            const { kpis, trends, alerts } = data;
+            
+            // Render KPIs
+            renderKPIs([
+                { icon: 'box', label: 'Total de Produtos', value: kpis.totalProducts, trend: trends.newProducts, color: 'primary' },
+                { icon: 'currency-dollar', label: 'Valor do Estoque', value: formatCurrency(kpis.stockValue), trend: null, color: 'success' },
+                { icon: 'exclamation-triangle', label: 'Estoque Crítico', value: kpis.criticalStock, trend: null, color: 'danger' },
+                { icon: 'cart', label: 'Pedidos (Mês)', value: kpis.monthlyOrders, trend: trends.orderGrowth, color: 'info' },
+                { icon: 'building', label: 'Fornecedores Ativos', value: kpis.activeSuppliers, trend: trends.newSuppliers, color: 'warning' },
+                { icon: 'file-text', label: 'Cotações Pendentes', value: kpis.pendingQuotes, trend: null, color: 'secondary' }
+            ]);
+
+            // Render Charts
+            renderCharts([
+                {
+                    id: 'trendsChart',
+                    title: 'Tendências de Crescimento',
+                    subtitle: 'Últimos 30 dias',
+                    type: 'line',
+                    data: {
+                        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+                        datasets: [
+                            {
+                                label: 'Pedidos',
+                                data: [trends.weeklyOrders || [10, 15, 12, 18]],
+                                borderColor: '#0d6efd',
+                                backgroundColor: 'rgba(13, 110, 253, 0.1)'
+                            },
+                            {
+                                label: 'Valor (R$ mil)',
+                                data: [trends.weeklyValue || [25, 30, 28, 35]],
+                                borderColor: '#198754',
+                                backgroundColor: 'rgba(25, 135, 84, 0.1)'
+                            }
+                        ]
+                    }
+                }
+            ]);
+
+            // Render Alerts Table
+            if (alerts && alerts.length > 0) {
+                renderDataTable('Alertas e Notificações', alerts, [
+                    { key: 'type', label: 'Tipo' },
+                    { key: 'message', label: 'Mensagem' },
+                    { key: 'severity', label: 'Severidade', render: (value) => `<span class="status-badge ${value.toLowerCase()}">${value}</span>` },
+                    { key: 'createdAt', label: 'Data', render: (value) => new Date(value).toLocaleDateString('pt-BR') }
+                ]);
+            }
+        }
+
+        // Render Stock Performance
+        function renderStockPerformance(data) {
+            const { summary, products, charts: chartData } = data;
+            
+            // Render KPIs
+            renderKPIs([
+                { icon: 'box', label: 'Total de Produtos', value: summary.totalProducts, color: 'primary' },
+                { icon: 'exclamation-circle', label: 'Estoque Crítico', value: summary.criticalStock, color: 'danger' },
+                { icon: 'exclamation-triangle', label: 'Estoque Baixo', value: summary.lowStock, color: 'warning' },
+                { icon: 'currency-dollar', label: 'Valor Total', value: formatCurrency(summary.totalValue), color: 'success' }
+            ]);
+
+            // Render Charts
+            renderCharts([
+                {
+                    id: 'stockLevelsChart',
+                    title: 'Distribuição por Nível de Estoque',
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.stockLevels.labels,
+                        datasets: [{
+                            data: chartData.stockLevels.data,
+                            backgroundColor: ['#dc3545', '#ffc107', '#0dcaf0', '#198754']
+                        }]
+                    }
+                },
+                {
+                    id: 'categoryChart',
+                    title: 'Distribuição por Categoria',
+                    type: 'bar',
+                    data: {
+                        labels: chartData.categories.labels,
+                        datasets: [{
+                            label: 'Produtos',
+                            data: chartData.categories.data,
+                            backgroundColor: '#0d6efd'
+                        }]
+                    }
+                }
+            ]);
+
+            // Render Products Table
+            renderDataTable('Produtos por Performance', products, [
+                { key: 'name', label: 'Produto' },
+                { key: 'category', label: 'Categoria' },
+                { key: 'currentStock', label: 'Estoque Atual' },
+                { key: 'minimumStock', label: 'Estoque Mínimo' },
+                { key: 'stockLevel', label: 'Nível', render: (value) => `<span class="status-badge ${value.toLowerCase()}">${value}</span>` },
+                { key: 'stockValue', label: 'Valor', render: (value) => formatCurrency(value) }
+            ]);
+        }
+
+        // Render Supplier Analysis
+        function renderSupplierAnalysis(data) {
+            const { summary, suppliers, charts: chartData } = data;
+            
+            // Render KPIs
+            renderKPIs([
+                { icon: 'building', label: 'Total de Fornecedores', value: summary.totalSuppliers, color: 'primary' },
+                { icon: 'star', label: 'Performance Excelente', value: summary.excellentPerformance, color: 'success' },
+                { icon: 'clock', label: 'Fornecedores Inativos', value: summary.inactiveSuppliers, color: 'danger' },
+                { icon: 'currency-dollar', label: 'Valor Total', value: formatCurrency(summary.totalValue), color: 'info' }
+            ]);
+
+            // Render Charts
+            renderCharts([
+                {
+                    id: 'performanceChart',
+                    title: 'Distribuição de Performance',
+                    type: 'pie',
+                    data: {
+                        labels: chartData.performance.labels,
+                        datasets: [{
+                            data: chartData.performance.data,
+                            backgroundColor: ['#198754', '#20c997', '#ffc107', '#fd7e14', '#6c757d']
+                        }]
+                    }
+                },
+                {
+                    id: 'topSuppliersChart',
+                    title: 'Top 10 Fornecedores por Valor',
+                    type: 'horizontalBar',
+                    data: {
+                        labels: chartData.topSuppliers.labels,
+                        datasets: [{
+                            label: 'Valor (R$)',
+                            data: chartData.topSuppliers.data,
+                            backgroundColor: '#0d6efd'
+                        }]
+                    }
+                }
+            ]);
+
+            // Render Suppliers Table
+            renderDataTable('Análise de Fornecedores', suppliers, [
+                { key: 'name', label: 'Fornecedor' },
+                { key: 'totalOrders', label: 'Pedidos' },
+                { key: 'totalValue', label: 'Valor Total', render: (value) => formatCurrency(value) },
+                { key: 'totalProducts', label: 'Produtos' },
+                { key: 'performanceScore', label: 'Score', render: (value) => `<span class="status-badge ${getPerformanceClass(value)}">${value.toFixed(1)}</span>` },
+                { key: 'daysSinceLastOrder', label: 'Dias desde último pedido' }
+            ]);
+        }
+
+        // Render Order Trends
+        function renderOrderTrends(data) {
+            const { summary, trends, charts: chartData } = data;
+            
+            // Render KPIs
+            renderKPIs([
+                { icon: 'cart', label: 'Total de Pedidos', value: summary.totalOrders, color: 'primary' },
+                { icon: 'currency-dollar', label: 'Valor Total', value: formatCurrency(summary.totalValue), color: 'success' },
+                { icon: 'clock', label: 'Tempo Médio de Entrega', value: `${summary.avgDeliveryTime} dias`, color: 'info' },
+                { icon: 'check-circle', label: 'Taxa de Conclusão', value: `${summary.completionRate}%`, color: 'warning' }
+            ]);
+
+            // Render Charts
+            renderCharts([
+                {
+                    id: 'weeklyTrendsChart',
+                    title: 'Tendências Semanais',
+                    type: 'line',
+                    data: {
+                        labels: chartData.weekly.labels,
+                        datasets: [
+                            {
+                                label: 'Pedidos',
+                                data: chartData.weekly.orders,
+                                borderColor: '#0d6efd',
+                                backgroundColor: 'rgba(13, 110, 253, 0.1)'
+                            },
+                            {
+                                label: 'Valor (R$ mil)',
+                                data: chartData.weekly.values,
+                                borderColor: '#198754',
+                                backgroundColor: 'rgba(25, 135, 84, 0.1)'
+                            }
+                        ]
+                    }
+                },
+                {
+                    id: 'statusChart',
+                    title: 'Distribuição por Status',
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.status.labels,
+                        datasets: [{
+                            data: chartData.status.data,
+                            backgroundColor: ['#ffc107', '#0dcaf0', '#198754', '#dc3545']
+                        }]
+                    }
+                }
+            ]);
+        }
+
+        // Helper functions
+        function renderKPIs(kpis) {
+            const kpiGrid = document.getElementById('kpiGrid');
+            kpiGrid.innerHTML = '';
+            kpiGrid.style.display = 'grid';
+
+            kpis.forEach(kpi => {
+                const kpiCard = document.createElement('div');
+                kpiCard.className = 'kpi-card fade-in';
+                kpiCard.innerHTML = `
+                    <div class="kpi-icon ${kpi.color}">
+                        <i class="bi bi-${kpi.icon}"></i>
+                    </div>
+                    <div class="kpi-value">${kpi.value}</div>
+                    <div class="kpi-label">${kpi.label}</div>
+                    ${kpi.trend ? `
+                        <div class="kpi-trend ${kpi.trend > 0 ? 'positive' : kpi.trend < 0 ? 'negative' : 'neutral'}">
+                            <i class="bi bi-${kpi.trend > 0 ? 'arrow-up' : kpi.trend < 0 ? 'arrow-down' : 'dash'}"></i>
+                            ${Math.abs(kpi.trend)}%
+                        </div>
+                    ` : ''}
+                `;
+                kpiGrid.appendChild(kpiCard);
+            });
+        }
+
+        function renderCharts(chartsConfig) {
+            const chartsGrid = document.getElementById('chartsGrid');
+            chartsGrid.innerHTML = '';
+            chartsGrid.style.display = 'grid';
+
+            chartsConfig.forEach(config => {
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'chart-container slide-up';
+                chartContainer.innerHTML = `
+                    <div class="chart-header">
+                        <div>
+                            <h5 class="chart-title">${config.title}</h5>
+                            ${config.subtitle ? `<p class="chart-subtitle">${config.subtitle}</p>` : ''}
+                        </div>
+                        <div class="export-controls">
+                            <button class="btn-export" onclick="exportChart('${config.id}')">
+                                <i class="bi bi-download"></i>PNG
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-canvas">
+                        <canvas id="${config.id}"></canvas>
+                    </div>
+                `;
+                chartsGrid.appendChild(chartContainer);
+
+                // Create chart
+                const ctx = document.getElementById(config.id).getContext('2d');
+                charts[config.id] = new Chart(ctx, {
+                    type: config.type,
+                    data: config.data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function renderDataTable(title, data, columns) {
+            const container = document.getElementById('dataTablesContainer');
+            container.style.display = 'block';
+
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'data-table-container slide-up';
+            tableContainer.innerHTML = `
+                <div class="chart-header">
+                    <div>
+                        <h5 class="chart-title">${title}</h5>
+                    </div>
+                    <div class="export-controls">
+                        <button class="btn-export" onclick="exportTable('${title}')">
+                            <i class="bi bi-file-earmark-excel"></i>Excel
+                        </button>
+                        <button class="btn-export" onclick="exportTableCSV('${title}')">
+                            <i class="bi bi-filetype-csv"></i>CSV
+                        </button>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            ${columns.map(col => `<th>${col.label}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(row => `
+                            <tr>
+                                ${columns.map(col => `
+                                    <td>${col.render ? col.render(row[col.key]) : row[col.key]}</td>
+                                `).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.appendChild(tableContainer);
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function getPerformanceClass(score) {
+            if (score >= 8) return 'excellent';
+            if (score >= 6) return 'good';
+            if (score >= 4) return 'average';
+            return 'poor';
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('kpiGrid').style.display = 'none';
+            document.getElementById('chartsGrid').style.display = 'none';
+            document.getElementById('dataTablesContainer').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        function hideEmptyState() {
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showError(message) {
+            alert('Erro: ' + message);
+        }
+
+        // Export functions
+        function exportChart(chartId) {
+            const chart = charts[chartId];
+            if (chart) {
+                const url = chart.toBase64Image();
+                const link = document.createElement('a');
+                link.download = `${chartId}.png`;
+                link.href = url;
+                link.click();
+            }
+        }
+
+        function exportTable(title) {
+            // Implementation for Excel export would go here
+            alert('Funcionalidade de exportação para Excel será implementada em breve');
+        }
+
+        function exportTableCSV(title) {
+            // Implementation for CSV export would go here
+            alert('Funcionalidade de exportação para CSV será implementada em breve');
+        }
+    </script>
+</body>
+</html>

@@ -18,6 +18,13 @@
     <!-- Global Styles -->
     <link href="css/global-styles.css" rel="stylesheet">
     
+    <!-- Premium Design System -->
+    <link href="css/premium-design.css" rel="stylesheet">
+    <link href="css/premium-cards.css" rel="stylesheet">
+    <link href="css/premium-typography.css" rel="stylesheet">
+    <link href="css/premium-interactions.css" rel="stylesheet">
+    <link href="css/premium-notifications.css" rel="stylesheet">
+    
     <!-- Custom Styles -->
     <link href="css/style.css" rel="stylesheet">
     
@@ -28,187 +35,67 @@
     <link href="css/mobile.css" rel="stylesheet">
     <link href="css/touch-improvements.css" rel="stylesheet">
     
-    <!-- Custom CSS for Navigation -->
+    <!-- Premium Dashboard Styles -->
     <style>
-        /* Reset and Base Styles */
-        * {
-            box-sizing: border-box;
+        /* Dashboard Premium Overrides */
+        body {
+            background: var(--bg-primary);
+            font-family: var(--font-primary);
+            color: var(--text-primary);
         }
         
-        /* === CARDS CORPORATIVOS ULTRA PREMIUM === */
-        :root {
-            --corporate-primary: linear-gradient(135deg, #0f2027 0%, #203a43 25%, #2c5364 50%, #1e3c72 75%, #2a5298 100%);
-            --corporate-success: linear-gradient(135deg, #0c3b2e 0%, #134e5e 25%, #1e6b5c 50%, #2d8659 75%, #71b280 100%);
-            --corporate-warning: linear-gradient(135deg, #8b2635 0%, #c73e1d 25%, #fc4a1a 50%, #f7941d 75%, #f7b733 100%);
-            --corporate-info: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #4b6cb7 75%, #182848 100%);
-            
-            --light-overlay: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
-            --glass-backdrop: blur(25px) saturate(180%);
-            --shadow-premium: 0 32px 64px -12px rgba(0, 0, 0, 0.4), 0 8px 32px -8px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 48px 100px -12px rgba(0, 0, 0, 0.5), 0 16px 48px -8px rgba(0, 0, 0, 0.4);
+        .container-fluid {
+            background: transparent;
+            padding: var(--spacing-lg);
         }
         
-        /* Cards Ultra Premium - Dimensões Otimizadas */
-         .card.bg-primary,
-         .card.bg-success,
-         .card.bg-warning,
-         .card.bg-info {
-             border: 1px solid rgba(255, 255, 255, 0.15) !important;
-             border-radius: 16px !important;
-             backdrop-filter: var(--glass-backdrop) !important;
-             -webkit-backdrop-filter: var(--glass-backdrop) !important;
-             box-shadow: var(--shadow-premium) !important;
-             position: relative !important;
-             overflow: hidden !important;
-             transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-             transform-style: preserve-3d !important;
-             background-size: 400% 400% !important;
-             animation: gradientShift 8s ease-in-out infinite !important;
-             color: white !important;
-             min-height: 140px !important;
-             max-height: 180px !important;
-         }
-        
-        .card.bg-primary { background: var(--corporate-primary) !important; }
-        .card.bg-success { background: var(--corporate-success) !important; }
-        .card.bg-warning { background: var(--corporate-warning) !important; }
-        .card.bg-info { background: var(--corporate-info) !important; }
-        
-        /* Efeito de iluminação superior - Compacto */
-         .card.bg-primary::before,
-         .card.bg-success::before,
-         .card.bg-warning::before,
-         .card.bg-info::before {
-             content: '' !important;
-             position: absolute !important;
-             top: 0 !important;
-             left: 0 !important;
-             right: 0 !important;
-             height: 1.5px !important;
-             background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 20%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.3) 80%, transparent 100%) !important;
-             border-radius: 18px 18px 0 0 !important;
-             z-index: 3 !important;
-             animation: shimmer 3s ease-in-out infinite !important;
-         }
-         
-         /* Overlay de iluminação - Otimizado */
-         .card.bg-primary::after,
-         .card.bg-success::after,
-         .card.bg-warning::after,
-         .card.bg-info::after {
-             content: '' !important;
-             position: absolute !important;
-             top: 0 !important;
-             left: 0 !important;
-             right: 0 !important;
-             bottom: 0 !important;
-             background: var(--light-overlay) !important;
-             pointer-events: none !important;
-             border-radius: 16px !important;
-             z-index: 2 !important;
-         }
-        
-        /* Hover Effects Ultra Premium - Mais Sutil */
-         .card.bg-primary:hover,
-         .card.bg-success:hover,
-         .card.bg-warning:hover,
-         .card.bg-info:hover {
-             transform: translateY(-8px) rotateX(4deg) rotateY(1deg) !important;
-             box-shadow: var(--shadow-hover) !important;
-             border-color: rgba(255, 255, 255, 0.4) !important;
-             background-size: 100% 100% !important;
-         }
-        
-        /* Animações */
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        /* Premium Navigation */
+        .custom-navbar {
+            background: var(--gradient-primary) !important;
+            backdrop-filter: var(--glass-effect);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
         }
         
-        @keyframes shimmer {
-            0%, 100% { opacity: 0.3; transform: translateX(-100%); }
-            50% { opacity: 1; transform: translateX(100%); }
+        /* Stats Grid Premium */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
         }
         
-        /* Card Body Premium - Compacto Otimizado */
-          .card-body {
-              position: relative !important;
-              z-index: 4 !important;
-              backdrop-filter: blur(10px) !important;
-              border-radius: 14px !important;
-              margin: 3px !important;
-              padding: 0.8rem !important;
-              background: rgba(255, 255, 255, 0.05) !important;
-              border: 1px solid rgba(255, 255, 255, 0.1) !important;
-          }
-          
-          /* Tipografia Compacta e Otimizada */
-           .card h4 {
-               font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif !important;
-               font-size: 2rem !important;
-               font-weight: 300 !important;
-               letter-spacing: -0.02em !important;
-               text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-               background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%) !important;
-               -webkit-background-clip: text !important;
-               background-clip: text !important;
-               filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
-               margin-bottom: 0.2rem !important;
-               line-height: 1.0 !important;
-           }
-           
-           .card p {
-               font-family: 'Segoe UI', sans-serif !important;
-               font-size: 0.85rem !important;
-               font-weight: 500 !important;
-               letter-spacing: 0.3px !important;
-               text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-               margin-bottom: 0.1rem !important;
-               line-height: 1.2 !important;
-           }
-           
-           .card small {
-               font-family: 'Segoe UI', sans-serif !important;
-               font-size: 0.7rem !important;
-               font-weight: 400 !important;
-               letter-spacing: 0.2px !important;
-               text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-               line-height: 1.2 !important;
-           }
-          
-          /* Ícones Compactos */
-            .card i,
-            .card .bi,
-            .card .icon {
-                font-size: 1.5rem !important;
-                opacity: 0.8 !important;
-                width: 1.8rem !important;
-                height: 1.8rem !important;
-            }
+        /* Chart Containers Premium */
+        .chart-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: var(--glass-effect);
+            transition: var(--transition-smooth);
+        }
         
-        /* Forçar textos brancos nos cards coloridos */
+        .chart-container:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
         
-        .card.bg-primary *,
-        .card.bg-success *,
-        .card.bg-warning *,
-        .card.bg-info *,
-        .card.bg-primary h4,
-        .card.bg-success h4,
-        .card.bg-warning h4,
-        .card.bg-info h4,
-        .card.bg-primary p,
-        .card.bg-success p,
-        .card.bg-warning p,
-        .card.bg-info p,
-        .card.bg-primary small,
-        .card.bg-success small,
-        .card.bg-warning small,
-        .card.bg-info small,
-        .card.bg-primary span,
-        .card.bg-success span,
-        .card.bg-warning span,
-        .card.bg-info span {
-            color: white !important;
+        /* Premium Buttons */
+        .btn-premium {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 600;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-premium:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            color: white;
         }
         
         /* Custom Navigation Styles */
@@ -963,103 +850,93 @@
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 id="total-products">0</h4>
-                                <p class="mb-1">Produtos</p>
-                                <small class="d-flex align-items-center">
-                                    <span id="products-trend">⬆️</span>
-                                    <span id="products-change">+0%</span> este mês
-                                </small>
-                            </div>
-                            <div class="align-self-center">
-                                <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z" fill="currentColor"/>
-                                </svg>
-                            </div>
-                        </div>
+        <!-- Statistics Cards Premium -->
+        <div class="stats-grid">
+            <div class="premium-card primary hover-lift-premium animate-fade-in-up">
+                <div class="card-header">
+                    <div class="card-icon micro-float">
+                        <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="trend-indicator positive animate-morphing-pulse">
+                        <span id="products-trend">⬆️</span>
+                        <span id="products-change">+0%</span>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 id="total-suppliers">0</h4>
-                                <p class="mb-1">Fornecedores</p>
-                                <small class="d-flex align-items-center">
-                                    <span id="suppliers-trend">⬆️</span>
-                                    <span id="suppliers-change">+0%</span> este mês
-                                </small>
-                            </div>
-                            <div class="align-self-center">
-                                <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="currentColor"/>
-                                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card-content">
+                    <h3 class="card-title text-gradient-animated" id="total-products">0</h3>
+                    <p class="card-subtitle">Produtos</p>
+                    <small class="card-description">este mês</small>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 id="total-quotes">0</h4>
-                                <p class="mb-1">Cotações</p>
-                                <small class="d-flex align-items-center">
-                                    <span id="quotes-trend">⬆️</span>
-                                    <span id="quotes-change">+0%</span> este mês
-                                </small>
-                            </div>
-                            <div class="align-self-center">
-                                <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" fill="currentColor"/>
-                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
+            
+            <div class="premium-card success hover-lift-premium animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="card-header">
+                    <div class="card-icon micro-float">
+                        <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="currentColor"/>
+                            <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="trend-indicator positive animate-morphing-pulse">
+                        <span id="suppliers-trend">⬆️</span>
+                        <span id="suppliers-change">+0%</span>
                     </div>
                 </div>
+                <div class="card-content">
+                    <h3 class="card-title text-gradient-animated" id="total-suppliers">0</h3>
+                    <p class="card-subtitle">Fornecedores</p>
+                    <small class="card-description">este mês</small>
+                </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-info text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 id="total-orders">0</h4>
-                                <p class="mb-1">Pedidos</p>
-                                <small class="d-flex align-items-center">
-                                    <span id="orders-trend">⬆️</span>
-                                    <span id="orders-change">+0%</span> este mês
-                                </small>
-                            </div>
-                            <div class="align-self-center">
-                                <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m1.6 8L5 3H3m4 10v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-6m-9 0h10" fill="currentColor"/>
-                                </svg>
-                            </div>
-                        </div>
+            <div class="premium-card warning hover-lift-premium animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="card-header">
+                    <div class="card-icon micro-float">
+                        <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" fill="currentColor"/>
+                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </div>
+                    <div class="trend-indicator positive animate-morphing-pulse">
+                        <span id="quotes-trend">⬆️</span>
+                        <span id="quotes-change">+0%</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title text-gradient-animated" id="total-quotes">0</h3>
+                    <p class="card-subtitle">Cotações</p>
+                    <small class="card-description">este mês</small>
+                </div>
+            </div>
+            
+            <div class="premium-card danger hover-lift-premium animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="card-header">
+                    <div class="card-icon micro-float">
+                        <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m1.6 8L5 3H3m4 10v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-6m-9 0h10" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="trend-indicator positive animate-morphing-pulse">
+                        <span id="orders-trend">⬆️</span>
+                        <span id="orders-change">+0%</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title text-gradient-animated" id="total-orders">0</h3>
+                    <p class="card-subtitle">Pedidos</p>
+                    <small class="card-description">este mês</small>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Section -->
+        <!-- Charts Section Premium -->
         <div class="row mt-4">
             <div class="col-md-8 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div class="chart-container hover-lift-premium animate-fade-in-scale" style="animation-delay: 0.4s;">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <svg class="icon micro-glow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z" fill="currentColor"/>
                                 <path d="M7 12l3-3 2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <circle cx="7" cy="12" r="1" fill="white"/>
@@ -1067,131 +944,148 @@
                                 <circle cx="12" cy="11" r="1" fill="white"/>
                                 <circle cx="16" cy="7" r="1" fill="white"/>
                             </svg>
-                            Vendas e Produtos - Últimos 6 Meses
-                        </h5>
+                            <span>Vendas e Produtos - Últimos 6 Meses</span>
+                        </div>
+                        <div class="chart-actions">
+                            <button class="btn-premium small hover-magnetic micro-bounce">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body">
+                    <div class="chart-content">
                         <canvas id="salesChart" style="height: 300px !important; min-height: 300px !important; width: 100% !important; display: block !important;"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div class="chart-container hover-lift-premium animate-fade-in-scale" style="animation-delay: 0.5s;">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <svg class="icon micro-glow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="12" cy="12" r="10" fill="currentColor"/>
                                 <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            Estoque por Categoria
-                        </h5>
+                            <span>Estoque por Categoria</span>
+                        </div>
+                        <div class="chart-actions">
+                            <button class="btn-premium small hover-magnetic micro-bounce">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body">
+                    <div class="chart-content">
                         <canvas id="stockChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Operational Metrics Section -->
-        <div class="row mt-4">
-            <div class="col-md-3 mb-3">
-                <div class="card bg-gradient-primary text-white h-100">
-                    <div class="card-body text-center">
+        <!-- Operational Metrics Section Premium -->
+        <div class="stats-grid mt-4">
+            <div class="premium-card primary compact hover-lift-premium animate-fade-in-up micro-float" style="animation-delay: 0.6s;">
+                <div class="card-content centered">
+                    <div class="card-icon micro-glow">
                         <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 17h2l.4-2M7 13h10l4-8H5.4m1.6 8L5 3H3m4 10v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-6m-9 0h10" fill="currentColor"/>
                             <path d="M16 8l2 2-2 2M8 8l-2 2 2 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <h4 id="pending-deliveries">12</h4>
-                        <p class="mb-0">Entregas Pendentes</p>
                     </div>
+                    <h3 class="card-title animate-morphing-pulse" id="pending-deliveries">12</h3>
+                    <p class="card-subtitle">Entregas Pendentes</p>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-gradient-success text-white h-100">
-                    <div class="card-body text-center">
+            
+            <div class="premium-card success compact hover-lift-premium animate-fade-in-up micro-float" style="animation-delay: 0.7s;">
+                <div class="card-content centered">
+                    <div class="card-icon micro-glow">
                         <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" fill="currentColor"/>
                             <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <h4 id="completed-orders">45</h4>
-                        <p class="mb-0">Pedidos Concluídos</p>
                     </div>
+                    <h3 class="card-title animate-morphing-pulse" id="completed-orders">45</h3>
+                    <p class="card-subtitle">Pedidos Concluídos</p>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-gradient-warning text-white h-100">
-                    <div class="card-body text-center">
+            
+            <div class="premium-card warning compact hover-lift-premium animate-fade-in-up micro-float" style="animation-delay: 0.8s;">
+                <div class="card-content centered">
+                    <div class="card-icon micro-glow">
                         <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" fill="currentColor"/>
                             <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <h4 id="processing-orders">8</h4>
-                        <p class="mb-0">Em Processamento</p>
                     </div>
+                    <h3 class="card-title animate-morphing-pulse" id="processing-orders">8</h3>
+                    <p class="card-subtitle">Em Processamento</p>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-gradient-info text-white h-100">
-                    <div class="card-body text-center">
+            
+            <div class="premium-card danger compact hover-lift-premium animate-fade-in-up micro-float" style="animation-delay: 0.9s;">
+                <div class="card-content centered">
+                    <div class="card-icon micro-glow">
                         <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
                         </svg>
-                        <h4 id="top-products">15</h4>
-                        <p class="mb-0">Produtos Top</p>
                     </div>
+                    <h3 class="card-title animate-morphing-pulse" id="top-products">15</h3>
+                    <p class="card-subtitle">Produtos Top</p>
                 </div>
             </div>
         </div>
 
-        <!-- Additional KPIs -->
+        <!-- Additional KPIs Premium -->
         <div class="row mt-4">
             <div class="col-md-6 mb-3">
-                <div class="card">
+                <div class="premium-card warning hover-lift-premium animate-fade-in-scale" style="animation-delay: 1.0s;">
                     <div class="card-header">
-                        <h6>
+                        <div class="card-icon micro-glow">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="currentColor"/>
                                 <path d="M12 8v4M12 16h.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            Alertas de Estoque
-                        </h6>
+                        </div>
+                        <h6 class="card-title">Alertas de Estoque</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-content">
                         <div class="row">
                             <div class="col-6 text-center">
-                                <h4 id="low-stock-count" class="text-danger">0</h4>
-                                <small class="text-muted">Estoque Baixo</small>
+                                <h4 id="low-stock-count" class="text-danger animate-morphing-pulse">0</h4>
+                                <small class="card-subtitle">Estoque Baixo</small>
                             </div>
                             <div class="col-6 text-center">
-                                <h4 id="out-of-stock-count" class="text-warning">0</h4>
-                                <small class="text-muted">Sem Estoque</small>
+                                <h4 id="out-of-stock-count" class="text-warning animate-morphing-pulse">0</h4>
+                                <small class="card-subtitle">Sem Estoque</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-                <div class="card">
+                <div class="premium-card success hover-lift-premium animate-fade-in-scale" style="animation-delay: 1.1s;">
                     <div class="card-header">
-                        <h6>
+                        <div class="card-icon micro-glow">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="12" cy="12" r="10" fill="currentColor"/>
                                 <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M8 12h8M12 8v8" stroke="white" stroke-width="1" stroke-linecap="round"/>
                             </svg>
-                            Métricas Financeiras
-                        </h6>
+                        </div>
+                        <h6 class="card-title">Métricas Financeiras</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-content">
                         <div class="row">
                             <div class="col-6 text-center">
-                                <h4 id="total-value" class="text-success">R$ 0</h4>
-                                <small class="text-muted">Valor Total</small>
+                                <h4 id="total-value" class="text-success animate-morphing-pulse">R$ 0</h4>
+                                <small class="card-subtitle">Valor Total</small>
                             </div>
                             <div class="col-6 text-center">
-                                <h4 id="avg-order-value" class="text-info">R$ 0</h4>
-                                <small class="text-muted">Ticket Médio</small>
+                                <h4 id="avg-order-value" class="text-info animate-morphing-pulse">R$ 0</h4>
+                                <small class="card-subtitle">Ticket Médio</small>
                             </div>
                         </div>
                     </div>
@@ -1681,5 +1575,8 @@
     <!-- Dashboard JS -->
     <script src="js/dashboard.js"></script>
     <script src="js/components/icons.js"></script>
+    
+    <!-- Notifications System JS -->
+    <script src="js/notifications.js"></script>
 </body>
 </html>

@@ -1,0 +1,435 @@
+/* ===================================================================
+   PREMIUM DESIGN SYSTEM - Sistema ERP Ultra Sofisticado
+   Design System Premium com Paleta Corporativa Luxuosa
+   =================================================================== */
+
+:root {
+    /* === PALETA DE CORES PREMIUM CORPORATIVA === */
+    
+    /* Cores Primárias - Azul Corporativo Luxuoso */
+    --premium-primary: #0A1628;
+    --premium-primary-light: #1E3A5F;
+    --premium-primary-lighter: #2E4A6F;
+    --premium-primary-dark: #050B14;
+    --premium-primary-darker: #020408;
+    
+    /* Cores Secundárias - Cinza Sofisticado */
+    --premium-secondary: #2D3748;
+    --premium-secondary-light: #4A5568;
+    --premium-secondary-lighter: #718096;
+    --premium-secondary-dark: #1A202C;
+    --premium-secondary-darker: #171923;
+    
+    /* Cores de Destaque - Azul Premium */
+    --premium-accent: #3182CE;
+    --premium-accent-light: #4299E1;
+    --premium-accent-lighter: #63B3ED;
+    --premium-accent-dark: #2C5282;
+    --premium-accent-darker: #2A4365;
+    
+    /* Cores de Status Premium */
+    --premium-success: #38A169;
+    --premium-success-light: #48BB78;
+    --premium-success-dark: #2F855A;
+    
+    --premium-warning: #D69E2E;
+    --premium-warning-light: #ECC94B;
+    --premium-warning-dark: #B7791F;
+    
+    --premium-danger: #E53E3E;
+    --premium-danger-light: #F56565;
+    --premium-danger-dark: #C53030;
+    
+    --premium-info: #3182CE;
+    --premium-info-light: #4299E1;
+    --premium-info-dark: #2C5282;
+    
+    /* === GRADIENTES PREMIUM CORPORATIVOS === */
+    
+    /* Gradiente Principal - Azul Corporativo */
+    --gradient-primary: linear-gradient(135deg, #0A1628 0%, #1E3A5F 25%, #2E4A6F 50%, #3182CE 75%, #4299E1 100%);
+    --gradient-primary-reverse: linear-gradient(315deg, #0A1628 0%, #1E3A5F 25%, #2E4A6F 50%, #3182CE 75%, #4299E1 100%);
+    
+    /* Gradiente Secundário - Cinza Elegante */
+    --gradient-secondary: linear-gradient(135deg, #2D3748 0%, #4A5568 50%, #718096 100%);
+    --gradient-secondary-reverse: linear-gradient(315deg, #2D3748 0%, #4A5568 50%, #718096 100%);
+    
+    /* Gradientes de Status */
+    --gradient-success: linear-gradient(135deg, #22543D 0%, #2F855A 25%, #38A169 50%, #48BB78 75%, #68D391 100%);
+    --gradient-warning: linear-gradient(135deg, #744210 0%, #B7791F 25%, #D69E2E 50%, #ECC94B 75%, #F6E05E 100%);
+    --gradient-danger: linear-gradient(135deg, #742A2A 0%, #C53030 25%, #E53E3E 50%, #F56565 75%, #FC8181 100%);
+    --gradient-info: linear-gradient(135deg, #1A365D 0%, #2C5282 25%, #3182CE 50%, #4299E1 75%, #63B3ED 100%);
+    
+    /* Gradientes Especiais */
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    --gradient-overlay: linear-gradient(135deg, rgba(10, 22, 40, 0.8) 0%, rgba(45, 55, 72, 0.6) 100%);
+    --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    
+    /* === SOMBRAS PREMIUM CORPORATIVAS === */
+    
+    /* Sombras Básicas */
+    --shadow-xs: 0 1px 2px rgba(10, 22, 40, 0.05);
+    --shadow-sm: 0 2px 4px rgba(10, 22, 40, 0.08);
+    --shadow-md: 0 4px 8px rgba(10, 22, 40, 0.12);
+    --shadow-lg: 0 8px 16px rgba(10, 22, 40, 0.15);
+    --shadow-xl: 0 16px 32px rgba(10, 22, 40, 0.18);
+    --shadow-2xl: 0 24px 48px rgba(10, 22, 40, 0.22);
+    
+    /* Sombras Premium */
+    --shadow-premium: 0 20px 40px rgba(10, 22, 40, 0.15), 0 8px 16px rgba(10, 22, 40, 0.1);
+    --shadow-premium-hover: 0 32px 64px rgba(10, 22, 40, 0.25), 0 16px 32px rgba(10, 22, 40, 0.15);
+    --shadow-premium-active: 0 8px 16px rgba(10, 22, 40, 0.2), 0 4px 8px rgba(10, 22, 40, 0.15);
+    
+    /* Sombras Coloridas */
+    --shadow-primary: 0 8px 32px rgba(49, 130, 206, 0.25);
+    --shadow-success: 0 8px 32px rgba(56, 161, 105, 0.25);
+    --shadow-warning: 0 8px 32px rgba(214, 158, 46, 0.25);
+    --shadow-danger: 0 8px 32px rgba(229, 62, 62, 0.25);
+    
+    /* === BORDAS E RAIOS PREMIUM === */
+    
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+    --radius-3xl: 24px;
+    --radius-full: 9999px;
+    
+    /* === ESPAÇAMENTOS PREMIUM === */
+    
+    --space-px: 1px;
+    --space-0: 0;
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+    
+    /* === TIPOGRAFIA PREMIUM === */
+    
+    /* Famílias de Fonte */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    
+    /* Pesos de Fonte */
+    --font-weight-thin: 100;
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --font-weight-black: 900;
+    
+    /* Tamanhos de Fonte */
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+    --font-size-5xl: 3rem;      /* 48px */
+    --font-size-6xl: 3.75rem;   /* 60px */
+    
+    /* Alturas de Linha */
+    --line-height-none: 1;
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+    --line-height-loose: 2;
+    
+    /* === TRANSIÇÕES PREMIUM === */
+    
+    --transition-none: none;
+    --transition-all: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-premium: 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --transition-bounce: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* === EFEITOS ESPECIAIS === */
+    
+    /* Blur Effects */
+    --blur-none: blur(0);
+    --blur-sm: blur(4px);
+    --blur-md: blur(8px);
+    --blur-lg: blur(16px);
+    --blur-xl: blur(24px);
+    --blur-2xl: blur(40px);
+    --blur-3xl: blur(64px);
+    
+    /* Backdrop Filters */
+    --backdrop-blur: blur(20px) saturate(180%);
+    --backdrop-glass: blur(25px) saturate(180%) brightness(110%);
+    --backdrop-premium: blur(30px) saturate(200%) brightness(120%);
+    
+    /* === Z-INDEX LAYERS === */
+    
+    --z-auto: auto;
+    --z-0: 0;
+    --z-10: 10;
+    --z-20: 20;
+    --z-30: 30;
+    --z-40: 40;
+    --z-50: 50;
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+}
+
+/* === RESET E BASE PREMIUM === */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--premium-secondary);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e0 100%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+}
+
+/* === ANIMAÇÕES PREMIUM === */
+
+@keyframes premiumFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes premiumSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes premiumScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes premiumGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(49, 130, 206, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(49, 130, 206, 0.6);
+    }
+}
+
+@keyframes premiumShimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes premiumPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes premiumBounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -8px, 0);
+    }
+    70% {
+        transform: translate3d(0, -4px, 0);
+    }
+    90% {
+        transform: translate3d(0, -2px, 0);
+    }
+}
+
+/* === CLASSES UTILITÁRIAS PREMIUM === */
+
+.premium-animate-fade-in {
+    animation: premiumFadeIn 0.6s var(--transition-premium);
+}
+
+.premium-animate-slide-in {
+    animation: premiumSlideIn 0.6s var(--transition-premium);
+}
+
+.premium-animate-scale {
+    animation: premiumScale 0.6s var(--transition-premium);
+}
+
+.premium-animate-glow {
+    animation: premiumGlow 2s ease-in-out infinite;
+}
+
+.premium-animate-pulse {
+    animation: premiumPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.premium-animate-bounce {
+    animation: premiumBounce 1s infinite;
+}
+
+/* === GRADIENTES UTILITÁRIOS === */
+
+.premium-gradient-primary { background: var(--gradient-primary); }
+.premium-gradient-secondary { background: var(--gradient-secondary); }
+.premium-gradient-success { background: var(--gradient-success); }
+.premium-gradient-warning { background: var(--gradient-warning); }
+.premium-gradient-danger { background: var(--gradient-danger); }
+.premium-gradient-info { background: var(--gradient-info); }
+.premium-gradient-glass { background: var(--gradient-glass); }
+.premium-gradient-card { background: var(--gradient-card); }
+
+/* === SOMBRAS UTILITÁRIAS === */
+
+.premium-shadow-xs { box-shadow: var(--shadow-xs); }
+.premium-shadow-sm { box-shadow: var(--shadow-sm); }
+.premium-shadow-md { box-shadow: var(--shadow-md); }
+.premium-shadow-lg { box-shadow: var(--shadow-lg); }
+.premium-shadow-xl { box-shadow: var(--shadow-xl); }
+.premium-shadow-2xl { box-shadow: var(--shadow-2xl); }
+.premium-shadow-premium { box-shadow: var(--shadow-premium); }
+.premium-shadow-premium-hover { box-shadow: var(--shadow-premium-hover); }
+.premium-shadow-primary { box-shadow: var(--shadow-primary); }
+.premium-shadow-success { box-shadow: var(--shadow-success); }
+.premium-shadow-warning { box-shadow: var(--shadow-warning); }
+.premium-shadow-danger { box-shadow: var(--shadow-danger); }
+
+/* === TRANSIÇÕES UTILITÁRIAS === */
+
+.premium-transition { transition: var(--transition-premium); }
+.premium-transition-fast { transition: var(--transition-fast); }
+.premium-transition-normal { transition: var(--transition-normal); }
+.premium-transition-slow { transition: var(--transition-slow); }
+.premium-transition-bounce { transition: var(--transition-bounce); }
+
+/* === EFEITOS ESPECIAIS UTILITÁRIOS === */
+
+.premium-backdrop { backdrop-filter: var(--backdrop-blur); }
+.premium-glass { backdrop-filter: var(--backdrop-glass); }
+.premium-backdrop-premium { backdrop-filter: var(--backdrop-premium); }
+
+.premium-blur-sm { filter: var(--blur-sm); }
+.premium-blur-md { filter: var(--blur-md); }
+.premium-blur-lg { filter: var(--blur-lg); }
+.premium-blur-xl { filter: var(--blur-xl); }
+
+/* === HOVER EFFECTS PREMIUM === */
+
+.premium-hover-lift {
+    transition: var(--transition-premium);
+}
+
+.premium-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-premium-hover);
+}
+
+.premium-hover-glow {
+    transition: var(--transition-premium);
+}
+
+.premium-hover-glow:hover {
+    box-shadow: var(--shadow-primary);
+    transform: scale(1.02);
+}
+
+.premium-hover-scale {
+    transition: var(--transition-premium);
+}
+
+.premium-hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* === RESPONSIVIDADE PREMIUM === */
+
+@media (max-width: 640px) {
+    :root {
+        --space-4: 0.75rem;
+        --space-6: 1rem;
+        --space-8: 1.5rem;
+        --font-size-3xl: 1.5rem;
+        --font-size-4xl: 1.875rem;
+        --font-size-5xl: 2.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .premium-shadow-premium {
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .premium-shadow-premium-hover {
+        box-shadow: var(--shadow-xl);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
