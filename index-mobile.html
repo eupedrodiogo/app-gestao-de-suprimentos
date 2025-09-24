@@ -2,9 +2,15 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SupplyChain Pro - Sistema ERP</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="msapplication-navbutton-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-title" content="Gestão Suprimentos">
+    <title>Sistema de Gestão de Suprimentos - Mobile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -20,26 +26,34 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
 
         .welcome-container {
             text-align: center;
             max-width: 800px;
-            padding: 3rem;
+            padding: 2rem;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
 
         .logo {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
         }
 
         .title {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
             background: linear-gradient(45deg, #fff, #f0f9ff);
@@ -49,46 +63,68 @@
         }
 
         .subtitle {
-            font-size: 1.25rem;
-            margin-bottom: 3rem;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
             opacity: 0.9;
             line-height: 1.6;
         }
 
+        .mobile-notice {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
         }
 
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-card:active {
+            transform: scale(0.98);
         }
 
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
             color: #f59e0b;
         }
 
         .feature-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
+            text-align: center;
         }
 
         .feature-desc {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.8;
+            text-align: center;
         }
 
         .actions {
@@ -96,11 +132,11 @@
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 3rem;
+            margin-top: 2rem;
         }
 
         .btn {
-            padding: 1rem 2rem;
+            padding: 1rem 1.5rem;
             border: none;
             border-radius: 8px;
             font-size: 1rem;
@@ -111,6 +147,8 @@
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
+            min-height: 44px;
+            min-width: 44px;
         }
 
         .btn-primary {
@@ -138,10 +176,10 @@
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-            padding: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -152,16 +190,16 @@
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #f59e0b;
             display: block;
         }
 
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.8;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
         }
 
         .loading {
@@ -187,8 +225,7 @@
 
         @media (max-width: 768px) {
             .welcome-container {
-                margin: 1rem;
-                padding: 2rem;
+                padding: 1.5rem;
             }
 
             .title {
@@ -196,7 +233,7 @@
             }
 
             .features-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .actions {
@@ -216,28 +253,42 @@
     <div class="welcome-container">
         <div class="logo">🚀</div>
         <h1 class="title">SupplyChain Pro</h1>
-        <p class="subtitle">Sistema Completo de Gestão de Suprimentos e ERP</p>
+        <p class="subtitle">Sistema Completo de Gestão de Suprimentos - Versão Mobile</p>
+
+        <div class="mobile-notice">
+            <i class="fas fa-mobile-alt"></i> Versão otimizada para dispositivos móveis
+        </div>
 
         <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-boxes"></i></div>
-                <div class="feature-title">Gestão de Produtos</div>
-                <div class="feature-desc">Controle completo do seu estoque</div>
+            <div class="feature-card" onclick="showMobileMessage('Dashboard')">
+                <div class="feature-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div class="feature-title">Dashboard</div>
+                <div class="feature-desc">Visão geral do sistema</div>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" onclick="showMobileMessage('Produtos')">
+                <div class="feature-icon"><i class="fas fa-boxes"></i></div>
+                <div class="feature-title">Produtos</div>
+                <div class="feature-desc">Gestão de estoque</div>
+            </div>
+            <div class="feature-card" onclick="showMobileMessage('Fornecedores')">
                 <div class="feature-icon"><i class="fas fa-truck"></i></div>
                 <div class="feature-title">Fornecedores</div>
-                <div class="feature-desc">Gerencie sua rede de fornecedores</div>
+                <div class="feature-desc">Rede de fornecedores</div>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" onclick="showMobileMessage('Cotações')">
+                <div class="feature-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="feature-title">Cotações</div>
+                <div class="feature-desc">Solicitar cotações</div>
+            </div>
+            <div class="feature-card" onclick="showMobileMessage('Pedidos')">
                 <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
                 <div class="feature-title">Pedidos</div>
-                <div class="feature-desc">Controle de pedidos e compras</div>
+                <div class="feature-desc">Controle de compras</div>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" onclick="showMobileMessage('Relatórios')">
                 <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="feature-title">Relatórios</div>
-                <div class="feature-desc">Análises e insights detalhados</div>
+                <div class="feature-desc">Análises detalhadas</div>
             </div>
         </div>
 
@@ -251,24 +302,24 @@
                 <div class="stat-label">Fornecedores</div>
             </div>
             <div class="stat-item">
-                <span class="stat-number" id="orderCount">-</span>
-                <div class="stat-label">Pedidos</div>
+                <span class="stat-number" id="quoteCount">-</span>
+                <div class="stat-label">Cotações</div>
             </div>
             <div class="stat-item">
-                <span class="stat-number">99%</span>
-                <div class="stat-label">Uptime</div>
+                <span class="stat-number" id="orderCount">-</span>
+                <div class="stat-label">Pedidos</div>
             </div>
         </div>
 
         <div class="actions">
-            <button class="btn btn-primary" onclick="accessSystem()">
-                <i class="fas fa-sign-in-alt"></i>
-                Acessar Sistema
+            <button class="btn btn-primary" onclick="testAPI()">
+                <i class="fas fa-play"></i>
+                Testar API
             </button>
-            <a href="debug.html" class="btn btn-secondary">
-                <i class="fas fa-tools"></i>
-                Diagnóstico
-            </a>
+            <button class="btn btn-secondary" onclick="testConnection()">
+                <i class="fas fa-wifi"></i>
+                Testar Conexão
+            </button>
         </div>
 
         <div class="loading" id="loading">
@@ -278,19 +329,59 @@
     </div>
 
     <script>
+        // Função para mostrar mensagem mobile
+        function showMobileMessage(module) {
+            alert(`📱 Módulo ${module}\n\nEsta é a versão mobile de demonstração.\nO módulo completo está disponível no sistema principal.`);
+        }
+
+        // Função para testar API
+        async function testAPI() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ API funcionando!\n\nServidor: ' + data.server + '\nHorário: ' + new Date(data.timestamp).toLocaleString());
+                } else {
+                    alert('❌ Erro na API: ' + data.message);
+                }
+            } catch (error) {
+                alert('❌ Erro de conexão: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Função para testar conexão
+        async function testConnection() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('/mobile-check');
+                const data = await response.json();
+                
+                if (data.mobile) {
+                    alert('✅ Conexão Mobile OK!\n\nIP: ' + data.ip + '\nPorta: ' + data.port + '\nStatus: ' + data.status);
+                } else {
+                    alert('❌ Problema na conexão mobile');
+                }
+            } catch (error) {
+                alert('❌ Erro de conexão: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
         // Função para carregar estatísticas
         async function loadStats() {
             try {
-                // Configurar timeout para requisições
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
-
                 // Carregar produtos
                 try {
-                    const productsResponse = await fetch('/api/products', { 
-                        signal: controller.signal,
-                        headers: { 'Cache-Control': 'no-cache' }
-                    });
+                    const productsResponse = await fetch('/api/products');
                     if (productsResponse.ok) {
                         const products = await productsResponse.json();
                         document.getElementById('productCount').textContent = products.length || 0;
@@ -303,10 +394,7 @@
 
                 // Carregar fornecedores
                 try {
-                    const suppliersResponse = await fetch('/api/suppliers', { 
-                        signal: controller.signal,
-                        headers: { 'Cache-Control': 'no-cache' }
-                    });
+                    const suppliersResponse = await fetch('/api/suppliers');
                     if (suppliersResponse.ok) {
                         const suppliers = await suppliersResponse.json();
                         document.getElementById('supplierCount').textContent = suppliers.length || 0;
@@ -317,12 +405,22 @@
                     document.getElementById('supplierCount').textContent = '0';
                 }
 
+                // Carregar cotações
+                try {
+                    const quotesResponse = await fetch('/api/quotes');
+                    if (quotesResponse.ok) {
+                        const quotes = await quotesResponse.json();
+                        document.getElementById('quoteCount').textContent = quotes.length || 0;
+                    } else {
+                        document.getElementById('quoteCount').textContent = '0';
+                    }
+                } catch (err) {
+                    document.getElementById('quoteCount').textContent = '0';
+                }
+
                 // Carregar pedidos
                 try {
-                    const ordersResponse = await fetch('/api/orders', { 
-                        signal: controller.signal,
-                        headers: { 'Cache-Control': 'no-cache' }
-                    });
+                    const ordersResponse = await fetch('/api/orders');
                     if (ordersResponse.ok) {
                         const orders = await ordersResponse.json();
                         document.getElementById('orderCount').textContent = orders.length || 0;
@@ -333,60 +431,34 @@
                     document.getElementById('orderCount').textContent = '0';
                 }
 
-                clearTimeout(timeoutId);
             } catch (error) {
                 console.warn('Erro ao carregar estatísticas:', error);
                 // Definir valores padrão se houver erro
                 document.getElementById('productCount').textContent = '0';
                 document.getElementById('supplierCount').textContent = '0';
+                document.getElementById('quoteCount').textContent = '0';
                 document.getElementById('orderCount').textContent = '0';
             }
         }
 
-        // Função para acessar o sistema
-        function accessSystem() {
-            const loading = document.getElementById('loading');
-            const container = document.querySelector('.welcome-container');
-            
-            loading.style.display = 'block';
-            container.style.opacity = '0.7';
-            
-            // Simular carregamento e redirecionar
-            setTimeout(() => {
-                window.location.href = 'frontend/dashboard.html';
-            }, 1500);
-        }
-
-        // Variável para controlar se já foi carregado
-        let statsLoaded = false;
-
-        // Carregar estatísticas quando a página carregar
+        // Carregar quando a página carregar
         document.addEventListener('DOMContentLoaded', () => {
-            if (!statsLoaded) {
-                statsLoaded = true;
-                loadStats();
-                
-                // Verificar saúde da API uma única vez
-                fetch('/api/health', {
-                    headers: { 'Cache-Control': 'no-cache' }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Sistema online:', data);
-                })
-                .catch(error => {
-                    console.warn('Sistema pode estar offline:', error);
-                });
-            }
+            loadStats();
+            
+            // Verificar saúde da API
+            fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Sistema mobile online:', data);
+            })
+            .catch(error => {
+                console.warn('Sistema pode estar offline:', error);
+            });
         });
 
-        // Tratamento de erros globais
+        // Tratamento de erros
         window.addEventListener('error', function(event) {
             console.error('Erro na página:', event.error);
-        });
-
-        window.addEventListener('unhandledrejection', function(event) {
-            console.error('Promise rejeitada:', event.reason);
         });
     </script>
 </body>

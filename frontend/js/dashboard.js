@@ -14,17 +14,381 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up auto-refresh
     setInterval(loadDashboardData, 30000); // Refresh every 30 seconds
+    
+    // Set up responsive chart handling
+    setupResponsiveCharts();
 });
+
+
+
+function setupResponsiveCharts() {
+    // Handle window resize for mobile devices
+    window.addEventListener('resize', function() {
+        if (salesChart) {
+            salesChart.resize();
+        }
+        if (stockChart) {
+            stockChart.resize();
+        }
+    });
+    
+    // Handle orientation change for mobile devices
+    window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+            if (salesChart) {
+                salesChart.resize();
+            }
+            if (stockChart) {
+                stockChart.resize();
+            }
+        }, 100);
+    });
+    
+    // Force chart resize on mobile after DOM is fully loaded
+    setTimeout(function() {
+        if (window.innerWidth <= 768) {
+            if (salesChart) {
+                salesChart.resize();
+            }
+            if (stockChart) {
+                stockChart.resize();
+            }
+        }
+    }, 500);
+}
+
+// Função para detectar dispositivos móveis
+function detectMobileDevice() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    
+    // Detecta por user agent
+    const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    
+    // Detecta por largura da tela
+    const isMobileScreen = screenWidth <= 768;
+    
+    // Detecta por touch capability
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    const isMobile = isMobileUA || (isMobileScreen && isTouchDevice);
+    
+    console.log('Detecção de dispositivo móvel:', {
+        userAgent: userAgent,
+        screenWidth: screenWidth,
+        isMobileUA: isMobileUA,
+        isMobileScreen: isMobileScreen,
+        isTouchDevice: isTouchDevice,
+        isMobile: isMobile
+    });
+    
+    return isMobile;
+}
+
+// Função para inicializar gráficos em dispositivos móveis
+function initializeMobileCharts() {
+    console.log('Inicializando gráficos para dispositivos móveis...');
+    
+    // Testa se Chart.js está disponível
+    testChartJSAvailability().then(chartJSAvailable => {
+        if (chartJSAvailable) {
+            console.log('Chart.js disponível - usando gráficos padrão');
+            initializeCharts();
+        } else {
+            console.log('Chart.js não disponível - usando fallback mobile');
+            createMobileFallback();
+        }
+    }).catch(error => {
+        console.error('Erro ao testar Chart.js:', error);
+        console.log('Usando fallback mobile devido ao erro');
+        createMobileFallback();
+    });
+}
+
+// Função para testar disponibilidade do Chart.js
+function testChartJSAvailability() {
+    return new Promise((resolve) => {
+        console.log('Testando disponibilidade do Chart.js...');
+        
+        // Verifica se Chart.js já está carregado
+        if (typeof Chart !== 'undefined') {
+            console.log('Chart.js já está disponível');
+            resolve(true);
+            return;
+        }
+        
+        // Tenta carregar Chart.js manualmente
+        console.log('Tentando carregar Chart.js manualmente...');
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.onload = () => {
+            console.log('Chart.js carregado com sucesso');
+            resolve(true);
+        };
+        script.onerror = () => {
+            console.log('Falha ao carregar Chart.js');
+            resolve(false);
+        };
+        
+        // Timeout de 5 segundos
+        setTimeout(() => {
+            if (typeof Chart === 'undefined') {
+                console.log('Timeout ao carregar Chart.js');
+                resolve(false);
+            }
+        }, 5000);
+        
+        document.head.appendChild(script);
+    });
+}
+
+// Função para criar fallback mobile quando Chart.js não está disponível
+function createMobileFallback() {
+    console.log('Criando fallback mobile para gráficos...');
+    
+    // Encontra todos os canvas de gráficos
+    const chartCanvases = document.querySelectorAll('canvas[id*="Chart"]');
+    
+    chartCanvases.forEach(canvas => {
+        console.log('Criando gráfico mobile para:', canvas.id);
+        drawMobileChart(canvas);
+    });
+    
+    // Se não encontrou canvas, cria gráficos padrão
+    if (chartCanvases.length === 0) {
+        console.log('Nenhum canvas encontrado, criando gráficos padrão...');
+        
+        // Cria gráficos para os containers principais
+        const containers = [
+            'salesChart',
+            'inventoryChart', 
+            'ordersChart',
+            'suppliersChart'
+        ];
+        
+        containers.forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                const canvas = document.createElement('canvas');
+                canvas.id = containerId + 'Canvas';
+                canvas.width = 300;
+                canvas.height = 200;
+                container.appendChild(canvas);
+                drawMobileChart(canvas);
+            }
+        });
+    }
+}
+
+// Função para desenhar gráficos customizados em dispositivos móveis
+function drawMobileChart(canvas) {
+    const ctx = canvas.getContext('2d');
+    
+    // Ajusta dimensões do canvas baseado no container pai
+    const container = canvas.parentElement;
+    if (container) {
+        const containerWidth = container.offsetWidth || 300;
+        const containerHeight = container.offsetHeight || 200;
+        canvas.width = Math.min(containerWidth - 20, 350);
+        canvas.height = Math.min(containerHeight - 20, 250);
+    }
+    
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Limpa o canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Fundo com gradiente
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, '#f8f9fa');
+    gradient.addColorStop(1, '#e9ecef');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Bordas arredondadas
+    ctx.strokeStyle = '#dee2e6';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, width, height, 8);
+    ctx.stroke();
+    
+    // Título dinâmico baseado no ID do canvas
+    let title = 'Gráfico Mobile';
+    let subtitle = 'Dados em tempo real';
+    
+    if (canvas.id.includes('sales') || canvas.id.includes('Sales')) {
+        title = 'Vendas';
+        subtitle = 'Últimos 6 meses';
+    } else if (canvas.id.includes('inventory') || canvas.id.includes('Inventory')) {
+        title = 'Estoque';
+        subtitle = 'Níveis atuais';
+    } else if (canvas.id.includes('orders') || canvas.id.includes('Orders')) {
+        title = 'Pedidos';
+        subtitle = 'Status atual';
+    } else if (canvas.id.includes('suppliers') || canvas.id.includes('Suppliers')) {
+        title = 'Fornecedores';
+        subtitle = 'Desempenho';
+    }
+    
+    // Título
+    ctx.fillStyle = '#495057';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, width / 2, 25);
+    
+    // Subtítulo
+    ctx.fillStyle = '#6c757d';
+    ctx.font = '12px Arial';
+    ctx.fillText(subtitle, width / 2, 45);
+    
+    // Dados simulados mais realistas
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const data = [
+        Math.floor(Math.random() * 50) + 30,
+        Math.floor(Math.random() * 50) + 35,
+        Math.floor(Math.random() * 50) + 40,
+        Math.floor(Math.random() * 50) + 45,
+        Math.floor(Math.random() * 50) + 50,
+        Math.floor(Math.random() * 50) + 55
+    ];
+    
+    // Área do gráfico
+    const chartX = 50;
+    const chartY = 60;
+    const chartWidth = width - 100;
+    const chartHeight = height - 120;
+    
+    // Grid de fundo
+    ctx.strokeStyle = '#e9ecef';
+    ctx.lineWidth = 1;
+    
+    // Linhas horizontais
+    for (let i = 0; i <= 5; i++) {
+        const y = chartY + (chartHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(chartX, y);
+        ctx.lineTo(chartX + chartWidth, y);
+        ctx.stroke();
+    }
+    
+    // Linhas verticais
+    for (let i = 0; i <= 5; i++) {
+        const x = chartX + (chartWidth / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, chartY);
+        ctx.lineTo(x, chartY + chartHeight);
+        ctx.stroke();
+    }
+    
+    // Eixos principais
+    ctx.strokeStyle = '#495057';
+    ctx.lineWidth = 2;
+    
+    // Eixo Y
+    ctx.beginPath();
+    ctx.moveTo(chartX, chartY);
+    ctx.lineTo(chartX, chartY + chartHeight);
+    ctx.stroke();
+    
+    // Eixo X
+    ctx.beginPath();
+    ctx.moveTo(chartX, chartY + chartHeight);
+    ctx.lineTo(chartX + chartWidth, chartY + chartHeight);
+    ctx.stroke();
+    
+    // Calcula pontos do gráfico
+    const maxValue = Math.max(...data);
+    const points = data.map((value, index) => ({
+        x: chartX + (chartWidth / (data.length - 1)) * index,
+        y: chartY + chartHeight - (value / maxValue) * chartHeight
+    }));
+    
+    // Área preenchida do gráfico
+    ctx.fillStyle = 'rgba(0, 123, 255, 0.1)';
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, chartY + chartHeight);
+    points.forEach(point => ctx.lineTo(point.x, point.y));
+    ctx.lineTo(points[points.length - 1].x, chartY + chartHeight);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Linha do gráfico
+    ctx.strokeStyle = '#007bff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    points.forEach(point => ctx.lineTo(point.x, point.y));
+    ctx.stroke();
+    
+    // Pontos de dados
+    points.forEach(point => {
+        ctx.fillStyle = '#007bff';
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Borda branca nos pontos
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+    
+    // Labels dos meses
+    ctx.fillStyle = '#495057';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    months.forEach((month, index) => {
+        const x = chartX + (chartWidth / (months.length - 1)) * index;
+        ctx.fillText(month, x, chartY + chartHeight + 15);
+    });
+    
+    // Valores no eixo Y
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 5; i++) {
+        const value = Math.round((maxValue / 5) * (5 - i));
+        const y = chartY + (chartHeight / 5) * i + 5;
+        ctx.fillText(value.toString(), chartX - 10, y);
+    }
+    
+    // Indicador de status
+    ctx.fillStyle = '#28a745';
+    ctx.beginPath();
+    ctx.arc(width - 20, 20, 6, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    ctx.fillStyle = '#495057';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText('Online', width - 30, 25);
+}
 
 function initializeDashboard() {
     console.log('Inicializando dashboard...');
     
-    // Initialize charts
-    initializeCharts();
+    // Detecta se é dispositivo móvel
+    const isMobile = detectMobileDevice();
     
-    // Check system health
+    if (isMobile) {
+        console.log('Dispositivo móvel detectado - inicializando gráficos mobile');
+        initializeMobileCharts();
+    } else {
+        console.log('Dispositivo desktop detectado - inicializando gráficos padrão');
+        initializeCharts();
+    }
+    
+    // Initialize other dashboard components
     checkSystemHealth();
+    loadRecentSuppliers();
 }
+
+
+
+
+
+
+
+
 
 function loadDashboardData() {
     console.log('Carregando dados do dashboard...');
@@ -38,7 +402,7 @@ function loadDashboardData() {
     ]).then(() => {
         console.log('Dados do dashboard carregados com sucesso');
     }).catch(error => {
-        log.error({
+        console.error('Erro ao carregar dados do dashboard:', {
             message: error.message,
             stack: error.stack,
             component: 'dashboard-initialization'
@@ -77,7 +441,7 @@ async function loadKPIData() {
         loadOperationalMetrics();
 
     } catch (error) {
-        log.error('Erro ao carregar KPIs', { 
+        console.error('Erro ao carregar KPIs', { 
             error: error.message, 
             stack: error.stack,
             component: 'dashboard-kpi'
@@ -85,6 +449,54 @@ async function loadKPIData() {
         // Show error state
         document.getElementById('kpi-cards').innerHTML = '<div class="alert alert-danger">Erro ao carregar KPIs</div>';
     }
+}
+
+// Função de fallback para dispositivos móveis
+function createFallbackChart(canvasId, chartTitle) {
+    console.log(`Criando fallback para ${chartTitle} no elemento ${canvasId}`);
+    
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) {
+        console.error(`Canvas ${canvasId} não encontrado para fallback`);
+        return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Limpar canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Configurar estilo
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, width, height);
+    
+    // Desenhar borda
+    ctx.strokeStyle = '#dee2e6';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, width, height);
+    
+    // Desenhar texto
+    ctx.fillStyle = '#6c757d';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    const text = `Gráfico ${chartTitle}`;
+    const subText = 'Carregando...';
+    
+    ctx.fillText(text, width / 2, height / 2 - 10);
+    ctx.font = '12px Arial';
+    ctx.fillText(subText, width / 2, height / 2 + 15);
+    
+    // Tentar recriar o gráfico após 3 segundos
+    setTimeout(() => {
+        if (typeof Chart !== 'undefined') {
+            console.log(`Tentando recriar gráfico ${chartTitle}...`);
+            initializeCharts();
+        }
+    }, 3000);
 }
 
 function updateKPICard(elementId, value, change, trend) {
@@ -121,10 +533,10 @@ function loadOperationalMetrics() {
         if (topProductsElement) topProductsElement.textContent = operationalData.topProducts;
 
     } catch (error) {
-        log.error('Erro ao carregar métricas operacionais', { 
-            error: error.message, 
+        console.error('Erro ao carregar métricas operacionais', {
+            error: error.message,
             stack: error.stack,
-            component: 'dashboard-metrics'
+            component: 'dashboard-operational-metrics'
         });
         // Show error state
         document.getElementById('operational-metrics').innerHTML = '<div class="alert alert-danger">Erro ao carregar métricas</div>';
@@ -132,10 +544,36 @@ function loadOperationalMetrics() {
 }
 
 function initializeCharts() {
+    console.log('=== CHART DEBUG ===');
+    console.log('Chart.js disponível:', typeof Chart !== 'undefined');
+    console.log('Window width:', window.innerWidth);
+    console.log('User agent:', navigator.userAgent);
+    
+    // Verificar se Chart.js está carregado
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js não está carregado! Tentando novamente em 2 segundos...');
+        setTimeout(initializeCharts, 2000);
+        return;
+    }
+    
     // Initialize Sales Chart
     const salesCtx = document.getElementById('salesChart');
+    console.log('Sales canvas encontrado:', !!salesCtx);
     if (salesCtx) {
-        salesChart = new Chart(salesCtx, {
+        // Garantir dimensões mínimas para o canvas
+        if (salesCtx.clientWidth === 0 || salesCtx.clientHeight === 0) {
+            console.log('Canvas sem dimensões, definindo dimensões padrão...');
+            salesCtx.style.width = '100%';
+            salesCtx.style.height = '300px';
+            salesCtx.width = salesCtx.offsetWidth || 400;
+            salesCtx.height = salesCtx.offsetHeight || 300;
+        }
+        
+        console.log('Sales canvas dimensions:', salesCtx.offsetWidth, 'x', salesCtx.offsetHeight);
+        console.log('Sales canvas style:', salesCtx.style.cssText);
+        
+        try {
+            salesChart = new Chart(salesCtx, {
             type: 'line',
             data: {
                 labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
@@ -166,8 +604,13 @@ function initializeCharts() {
                     x: {
                         display: true,
                         title: {
-                            display: true,
+                            display: window.innerWidth > 768,
                             text: 'Mês'
+                        },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth <= 768 ? 10 : 12
+                            }
                         }
                     },
                     y: {
@@ -175,39 +618,78 @@ function initializeCharts() {
                         display: true,
                         position: 'left',
                         title: {
-                            display: true,
+                            display: window.innerWidth > 768,
                             text: 'Vendas (R$)'
+                        },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth <= 768 ? 10 : 12
+                            }
                         }
                     },
                     y1: {
                         type: 'linear',
-                        display: true,
+                        display: window.innerWidth > 768,
                         position: 'right',
                         title: {
-                            display: true,
+                            display: window.innerWidth > 768,
                             text: 'Quantidade'
                         },
                         grid: {
                             drawOnChartArea: false,
                         },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth <= 768 ? 10 : 12
+                            }
+                        }
                     }
                 },
                 plugins: {
                     legend: {
-                        position: 'top',
+                        position: window.innerWidth <= 768 ? 'bottom' : 'top',
+                        labels: {
+                            font: {
+                                size: window.innerWidth <= 768 ? 10 : 12
+                            },
+                            padding: window.innerWidth <= 768 ? 10 : 20,
+                            usePointStyle: true
+                        }
                     },
                     title: {
                         display: false
                     }
                 }
             }
-        });
+            });
+            console.log('Sales chart criado com sucesso');
+        } catch (error) {
+            console.error('Erro ao criar sales chart:', error);
+            createFallbackChart('salesChart', 'Vendas');
+        }
+    } else {
+        console.error('Elemento salesChart não encontrado no DOM');
+        createFallbackChart('salesChart', 'Vendas');
     }
 
     // Initialize Stock Chart
     const stockCtx = document.getElementById('stockChart');
+    console.log('Stock canvas encontrado:', !!stockCtx);
     if (stockCtx) {
-        stockChart = new Chart(stockCtx, {
+        // Garantir dimensões mínimas para o canvas
+        if (stockCtx.clientWidth === 0 || stockCtx.clientHeight === 0) {
+            console.log('Stock canvas sem dimensões, definindo dimensões padrão...');
+            stockCtx.style.width = '100%';
+            stockCtx.style.height = '300px';
+            stockCtx.width = stockCtx.offsetWidth || 400;
+            stockCtx.height = stockCtx.offsetHeight || 300;
+        }
+        
+        console.log('Stock canvas dimensions:', stockCtx.offsetWidth, 'x', stockCtx.offsetHeight);
+        console.log('Stock canvas style:', stockCtx.style.cssText);
+        
+        try {
+            stockChart = new Chart(stockCtx, {
             type: 'doughnut',
             data: {
                 labels: ['Eletrônicos', 'Escritório', 'Limpeza', 'Segurança', 'Outros'],
@@ -231,11 +713,20 @@ function initializeCharts() {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            padding: 20,
-                            usePointStyle: true
+                            padding: window.innerWidth <= 768 ? 10 : 20,
+                            usePointStyle: true,
+                            font: {
+                                size: window.innerWidth <= 768 ? 10 : 12
+                            }
                         }
                     },
                     tooltip: {
+                        titleFont: {
+                            size: window.innerWidth <= 768 ? 12 : 14
+                        },
+                        bodyFont: {
+                            size: window.innerWidth <= 768 ? 11 : 13
+                        },
                         callbacks: {
                             label: function(context) {
                                 return context.label + ': ' + context.parsed + '%';
@@ -244,7 +735,15 @@ function initializeCharts() {
                     }
                 }
             }
-        });
+            });
+            console.log('Stock chart criado com sucesso');
+        } catch (error) {
+            console.error('Erro ao criar stock chart:', error);
+            createFallbackChart('stockChart', 'Estoque');
+        }
+    } else {
+        console.error('Elemento stockChart não encontrado no DOM');
+        createFallbackChart('stockChart', 'Estoque');
     }
 }
 
@@ -268,8 +767,8 @@ async function loadChartData() {
             stockChart.update();
         }
     } catch (error) {
-        log.error('Erro ao atualizar gráficos', { 
-            error: error.message, 
+        console.error('Erro ao atualizar gráficos', {
+            error: error.message,
             stack: error.stack,
             component: 'dashboard-charts'
         });
@@ -281,8 +780,8 @@ async function loadAlertData() {
         // Simulate loading alert data
         console.log('Carregando alertas...');
     } catch (error) {
-        log.error('Erro ao carregar alertas', { 
-            error: error.message, 
+        console.error('Erro ao carregar alertas', {
+            error: error.message,
             stack: error.stack,
             component: 'dashboard-alerts'
         });
@@ -338,8 +837,8 @@ async function checkSystemHealth() {
         }
         
     } catch (error) {
-        log.error('Erro ao verificar status do sistema', { 
-            error: error.message, 
+        console.error('Erro ao verificar status do sistema', {
+            error: error.message,
             stack: error.stack,
             component: 'system-health'
         });
@@ -356,8 +855,8 @@ async function checkApiHealth() {
         });
         return response.ok;
     } catch (error) {
-        log.error('API health check failed', { 
-            error: error.message, 
+        console.error('API health check failed', {
+            error: error.message,
             stack: error.stack,
             component: 'api-health-check'
         });
@@ -373,8 +872,8 @@ async function checkDatabaseHealth() {
         });
         return response.ok;
     } catch (error) {
-        log.error('Database health check failed', { 
-            error: error.message, 
+        console.error('Database health check failed', {
+            error: error.message,
             stack: error.stack,
             component: 'database-health-check'
         });
@@ -551,7 +1050,7 @@ async function loadRecentSuppliers() {
             displayRecentSuppliers([]);
         }
     } catch (error) {
-        log.error({
+        console.error('Erro ao carregar fornecedores recentes:', {
             message: error.message,
             stack: error.stack,
             component: 'dashboard-suppliers-load'
@@ -776,68 +1275,7 @@ function calculateTotalPrice() {
     }
 }
 
-// ===== PYTHON API INTEGRATION FUNCTIONS =====
 
-// Analytics Functions
-function getAnalyticsSummary() {
-    window.location.href = 'analytics.html';
-}
-
-function getAnalyticsTrends() {
-    window.location.href = 'analytics.html';
-}
-
-function getPerformanceMetrics() {
-    window.location.href = 'analytics.html';
-}
-
-function getSupplierAnalysis() {
-    window.location.href = 'analytics.html';
-}
-
-// Predictions Functions
-function getDemandForecast() {
-    window.location.href = 'predictions.html';
-}
-
-function getStockOptimization() {
-    window.location.href = 'predictions.html';
-}
-
-function getPriceOptimization() {
-    window.location.href = 'predictions.html';
-}
-
-function getSupplierRecommendations() {
-    window.location.href = 'predictions.html';
-}
-
-// Visualization Functions
-function generateInventoryDashboard() {
-    window.location.href = 'visualizations.html';
-}
-
-function generateSalesDashboard() {
-    window.location.href = 'visualizations.html';
-}
-
-function openExportsFolder() {
-    window.location.href = 'visualizations.html';
-}
-
-// Automation Functions
-function runAutomatedReorder() {
-    window.location.href = 'automation.html';
-}
-
-function runPriceUpdate() {
-    window.location.href = 'automation.html';
-}
-
-function openPythonDocs() {
-    // Abrir a documentação da API Python
-    window.open('http://localhost:8000/docs', '_blank');
-}
 
 // Helper function to show analytics results in a modal
 function showAnalyticsModal(title, data) {

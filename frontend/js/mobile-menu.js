@@ -1,213 +1,112 @@
-/**
- * Mobile Menu JavaScript
- */
+// Mobile Menu Controller - Versão Simplificada
+console.log('📱 Carregando Mobile Menu Controller...');
 
-class MobileMenuController {
-    constructor() {
-        this.menuBtn = null;
-        this.navMenu = null;
-        this.navOverlay = null;
-        this.navClose = null;
-        this.navLinks = null;
-        
-        this.init();
+// Aguarda o DOM carregar
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM carregado - inicializando menu mobile...');
+    
+    // Busca elementos
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const navMenu = document.getElementById('navMenu');
+    const navOverlay = document.getElementById('navOverlay');
+    const navClose = document.querySelector('.nav-close');
+    
+    console.log('🔍 Elementos encontrados:');
+    console.log('- menuBtn:', menuBtn);
+    console.log('- navMenu:', navMenu);
+    console.log('- navOverlay:', navOverlay);
+    console.log('- navClose:', navClose);
+    
+    if (!menuBtn || !navMenu) {
+        console.error('❌ Elementos essenciais não encontrados!');
+        return;
     }
     
-    init() {
-        // Aguarda o DOM estar pronto
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.setupMenu());
-        } else {
-            this.setupMenu();
-        }
-    }
+    let isMenuOpen = false;
     
-    setupMenu() {
-        try {
-            // Seleciona elementos do menu
-            this.menuBtn = document.getElementById('mobileMenuBtn');
-            this.navMenu = document.getElementById('navMenu');
-            this.navOverlay = document.getElementById('navOverlay');
-            this.navClose = document.getElementById('navClose');
-            this.navLinks = document.querySelectorAll('.nav-link');
-            
-            if (!this.menuBtn || !this.navMenu) {
-                console.warn('Mobile menu elements not found');
-                return;
-            }
-            
-            this.bindEvents();
-            console.log('Mobile menu initialized successfully');
-            
-        } catch (error) {
-            log.error({
-                message: error.message,
-                stack: error.stack,
-                component: 'mobile-menu-init'
-            });
-        }
-    }
-    
-    addTouchAndClickEvent(element, callback) {
-        let touchStarted = false;
-        
-        // Touch events para dispositivos móveis
-        element.addEventListener('touchstart', (e) => {
-            touchStarted = true;
-            callback(e);
-        }, { passive: false });
-        
-        // Click event como fallback para desktop
-        element.addEventListener('click', (e) => {
-            // Evita duplo disparo em dispositivos que suportam tanto touch quanto click
-            if (!touchStarted) {
-                callback(e);
-            }
-            touchStarted = false;
-        });
-        
-        // Reset do flag após um tempo
-        element.addEventListener('touchend', () => {
-            setTimeout(() => {
-                touchStarted = false;
-            }, 300);
-        });
-    }
-
-    bindEvents() {
-        // Evento para abrir o menu (suporte a touch e click)
-        this.addTouchAndClickEvent(this.menuBtn, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.toggleMenu();
-        });
-        
-        // Evento para fechar o menu (botão X)
-        if (this.navClose) {
-            this.addTouchAndClickEvent(this.navClose, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.closeMenu();
-            });
-        }
-        
-        // Evento para fechar o menu (clique no overlay)
-        if (this.navOverlay) {
-            this.addTouchAndClickEvent(this.navOverlay, (e) => {
-                e.preventDefault();
-                this.closeMenu();
-            });
-        }
-        
-        // Evento para fechar o menu ao clicar em links
-        this.navLinks.forEach(link => {
-            this.addTouchAndClickEvent(link, () => {
-                // Pequeno delay para permitir a navegação
-                setTimeout(() => {
-                    this.closeMenu();
-                }, 100);
-            });
-        });
-        
-        // Evento para fechar com ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isMenuOpen) {
-                this.closeMenu();
-            }
-        });
-        
-        // Evento para fechar ao redimensionar a tela
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 768 && this.isMenuOpen) {
-                this.closeMenu();
-            }
-        });
-        
-        // Previne scroll do body quando menu está aberto
-        this.navMenu.addEventListener('touchmove', (e) => {
-            if (this.isMenuOpen) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-    }
-    
-    toggleMenu() {
-        if (this.navMenu.classList.contains('active')) {
-            this.closeMenu();
-        } else {
-            this.openMenu();
-        }
-    }
-    
-    openMenu() {
-        this.navMenu.classList.add('active');
-        if (this.navOverlay) {
-            this.navOverlay.classList.add('active');
-        }
-        
-        // Previne scroll do body
+    // Função para abrir menu
+    function openMenu() {
+        console.log('🚀 Abrindo menu...');
+        isMenuOpen = true;
+        navMenu.classList.add('active');
+        menuBtn.classList.add('active');
+        if (navOverlay) navOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
-        // Foca no primeiro link para acessibilidade
-        const firstLink = this.navMenu.querySelector('.nav-link');
-        if (firstLink) {
-            firstLink.focus();
+        console.log('✅ Menu aberto!');
+    }
+    
+    // Função para fechar menu
+    function closeMenu() {
+        console.log('🔒 Fechando menu...');
+        isMenuOpen = false;
+        navMenu.classList.remove('active');
+        menuBtn.classList.remove('active');
+        if (navOverlay) navOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        console.log('✅ Menu fechado!');
+    }
+    
+    // Função para alternar menu
+    function toggleMenu() {
+        console.log(`🔄 Toggle menu - Estado atual: ${isMenuOpen ? 'Aberto' : 'Fechado'}`);
+        if (isMenuOpen) {
+            closeMenu();
+        } else {
+            openMenu();
         }
     }
     
-    closeMenu() {
-        try {
-            this.isMenuOpen = false;
-            
-            // Remove classes ativas
-            this.menuBtn.classList.remove('active');
-            this.navMenu.classList.remove('active');
-            
-            // Restaura scroll do body
-            document.body.style.overflow = '';
-            
-            console.log('Menu closed');
-            
-        } catch (error) {
-            log.error({
-                message: error.message,
-                stack: error.stack,
-                component: 'mobile-menu-toggle'
-            });
-        }
+    // Event listeners para o botão do menu
+    menuBtn.addEventListener('click', function(e) {
+        console.log('🖱️ Clique no botão detectado!');
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu();
+    });
+    
+    menuBtn.addEventListener('touchend', function(e) {
+        console.log('👆 Toque no botão detectado!');
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu();
+    });
+    
+    // Event listener para fechar menu
+    if (navClose) {
+        navClose.addEventListener('click', function(e) {
+            console.log('❌ Botão fechar clicado!');
+            e.preventDefault();
+            closeMenu();
+        });
     }
     
-    // Método público para controle externo
-    destroy() {
-        // Remove event listeners se necessário
-        if (this.menuBtn) {
-            this.menuBtn.removeEventListener('click', this.toggleMenu);
+    // Event listener para overlay
+    if (navOverlay) {
+        navOverlay.addEventListener('click', function(e) {
+            console.log('🌫️ Overlay clicado!');
+            e.preventDefault();
+            closeMenu();
+        });
+    }
+    
+    // Event listener para links do menu
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            console.log('🔗 Link do menu clicado!');
+            closeMenu();
+        });
+    });
+    
+    // Event listener para redimensionamento
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 991.98 && isMenuOpen) {
+            console.log('📏 Tela redimensionada - fechando menu');
+            closeMenu();
         }
-        console.log('Mobile menu destroyed');
-    }
-}
+    });
+    
+    console.log('✅ Mobile Menu Controller inicializado com sucesso!');
+});
 
-// Inicializa o controlador do menu
-let mobileMenuController;
-
-// Função de inicialização global
-function initMobileMenu() {
-    if (!mobileMenuController) {
-        mobileMenuController = new MobileMenuController();
-    }
-}
-
-// Auto-inicialização
-initMobileMenu();
-
-// Fallback para garantir inicialização
-setTimeout(() => {
-    if (!mobileMenuController) {
-        console.log('Fallback: Initializing mobile menu...');
-        initMobileMenu();
-    }
-}, 1000);
-
-// Exporta para uso global se necessário
-window.MobileMenuController = MobileMenuController;
-window.mobileMenuController = mobileMenuController;
+console.log('📱 Mobile Menu Controller carregado!');

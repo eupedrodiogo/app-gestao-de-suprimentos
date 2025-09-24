@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Mobile - Gestão de Suprimentos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            min-height: 50px;
+        }
+
+        .btn:hover, .btn:active {
+            background: #45a049;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+        }
+
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+
+        .btn-warning {
+            background: #FF9800;
+        }
+
+        .btn-warning:hover {
+            background: #F57C00;
+        }
+
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status:last-child {
+            border-bottom: none;
+        }
+
+        .status-value {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #FF9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚀</div>
+            <div class="title">Mobile Dashboard</div>
+            <div class="subtitle">Gestão de Suprimentos</div>
+        </div>
+
+        <div class="card">
+            <h3>📊 Status do Sistema</h3>
+            <div class="status">
+                <span>Servidor:</span>
+                <span class="status-value" id="serverStatus">Verificando...</span>
+            </div>
+            <div class="status">
+                <span>Produtos:</span>
+                <span class="status-value" id="productCount">-</span>
+            </div>
+            <div class="status">
+                <span>Fornecedores:</span>
+                <span class="status-value" id="supplierCount">-</span>
+            </div>
+            <div class="status">
+                <span>Cotações:</span>
+                <span class="status-value" id="quoteCount">-</span>
+            </div>
+            <div class="status">
+                <span>Pedidos:</span>
+                <span class="status-value" id="orderCount">-</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔧 Ações</h3>
+            <button class="btn" onclick="testarConexao()">
+                🔍 Testar Conexão
+            </button>
+            
+            <button class="btn btn-secondary" onclick="atualizarDados()">
+                🔄 Atualizar Dados
+            </button>
+            
+            <button class="btn btn-warning" onclick="mostrarInfo()">
+                ℹ️ Informações do Sistema
+            </button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <script>
+        // Detectar automaticamente o servidor
+        const currentHost = window.location.hostname;
+        const currentPort = window.location.port;
+        
+        // URLs possíveis para testar
+        const servidoresPossiveis = [
+            `http://${currentHost}:8080`,
+            `http://${currentHost}:9000`,
+            `http://${currentHost}:3000`,
+            `http://192.168.1.6:8080`,
+            `http://192.168.1.6:9000`,
+            `http://192.168.1.6:3000`,
+            `http://localhost:8080`,
+            `http://localhost:9000`,
+            `http://localhost:3000`
+        ];
+
+        let servidorAtivo = null;
+
+        function mostrarLoading(mostrar = true) {
+            document.getElementById('loading').style.display = mostrar ? 'block' : 'none';
+        }
+
+        async function encontrarServidorAtivo() {
+            console.log('🔍 Procurando servidor ativo...');
+            
+            for (const url of servidoresPossiveis) {
+                try {
+                    console.log(`Testando: ${url}`);
+                    const response = await fetch(`${url}/api/health`, { 
+                        method: 'GET',
+                        mode: 'cors',
+                        timeout: 3000
+                    });
+                    
+                    if (response.ok) {
+                        servidorAtivo = url;
+                        console.log(`✅ Servidor encontrado: ${url}`);
+                        return url;
+                    }
+                } catch (error) {
+                    console.log(`❌ Falhou: ${url} - ${error.message}`);
+                }
+            }
+            
+            console.log('❌ Nenhum servidor encontrado');
+            return null;
+        }
+
+        async function testarConexao() {
+            mostrarLoading(true);
+            
+            try {
+                const servidor = await encontrarServidorAtivo();
+                
+                if (servidor) {
+                    document.getElementById('serverStatus').textContent = 'Online ✅';
+                    document.getElementById('serverStatus').className = 'status-value success';
+                    alert(`✅ Conexão OK!\n\nServidor: ${servidor}\nStatus: Online`);
+                } else {
+                    document.getElementById('serverStatus').textContent = 'Offline ❌';
+                    document.getElementById('serverStatus').className = 'status-value error';
+                    alert('❌ Nenhum servidor encontrado!\n\nVerifique se algum servidor está rodando.');
+                }
+            } catch (error) {
+                console.error('Erro ao testar conexão:', error);
+                alert('❌ Erro ao testar conexão:\n' + error.message);
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        async function carregarDados() {
+            if (!servidorAtivo) {
+                servidorAtivo = await encontrarServidorAtivo();
+            }
+            
+            if (!servidorAtivo) {
+                console.log('Nenhum servidor ativo encontrado');
+                return;
+            }
+
+            const endpoints = [
+                { id: 'productCount', url: '/api/products' },
+                { id: 'supplierCount', url: '/api/suppliers' },
+                { id: 'quoteCount', url: '/api/quotes' },
+                { id: 'orderCount', url: '/api/orders' }
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${servidorAtivo}${endpoint.url}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const count = Array.isArray(data) ? data.length : (data.count || 0);
+                        document.getElementById(endpoint.id).textContent = count;
+                    } else {
+                        document.getElementById(endpoint.id).textContent = 'N/A';
+                    }
+                } catch (error) {
+                    document.getElementById(endpoint.id).textContent = 'N/A';
+                }
+            }
+        }
+
+        async function atualizarDados() {
+            mostrarLoading(true);
+            await carregarDados();
+            mostrarLoading(false);
+            alert('🔄 Dados atualizados!');
+        }
+
+        function mostrarInfo() {
+            const info = `
+📱 Informações do Sistema
+
+🌐 Host: ${window.location.hostname}
+🔌 Porta: ${window.location.port || 'padrão'}
+🖥️ URL: ${window.location.href}
+🔧 Servidor Ativo: ${servidorAtivo || 'Não encontrado'}
+
+📊 User Agent:
+${navigator.userAgent}
+
+🕒 Última atualização: ${new Date().toLocaleString()}
+            `;
+            alert(info);
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('📱 Mobile Dashboard carregado');
+            
+            // Tentar encontrar servidor e carregar dados
+            await encontrarServidorAtivo();
+            if (servidorAtivo) {
+                document.getElementById('serverStatus').textContent = 'Online ✅';
+                document.getElementById('serverStatus').className = 'status-value success';
+                await carregarDados();
+            } else {
+                document.getElementById('serverStatus').textContent = 'Offline ❌';
+                document.getElementById('serverStatus').className = 'status-value error';
+            }
+        });
+
+        // Tratamento de erros
+        window.addEventListener('error', function(event) {
+            console.error('Erro na página:', event.error);
+        });
+    </script>
+</body>
+</html>

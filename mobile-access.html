@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Mobile - Gestão de Suprimentos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .access-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .ip-address {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 1.2em;
+            margin: 10px 0;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn.secondary {
+            background: #2196F3;
+        }
+        .btn.secondary:hover {
+            background: #1976D2;
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: bold;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.online {
+            background: rgba(76, 175, 80, 0.3);
+        }
+        .status.offline {
+            background: rgba(244, 67, 54, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Acesso Mobile</h1>
+        
+        <div class="status" id="serverStatus">
+            <span id="statusText">Verificando servidor...</span>
+        </div>
+
+        <div class="access-info">
+            <h3>🌐 Endereços de Acesso:</h3>
+            <div class="ip-address" id="primaryIP">http://192.168.1.6:3000</div>
+            <div class="ip-address" id="secondaryIP">http://192.168.56.1:3000</div>
+        </div>
+
+        <a href="http://192.168.1.6:3000" class="btn" target="_blank">
+            🚀 Acessar Sistema (IP Principal)
+        </a>
+        
+        <a href="http://192.168.56.1:3000" class="btn secondary" target="_blank">
+            🔄 Acessar Sistema (IP Alternativo)
+        </a>
+
+        <div class="instructions">
+            <h3>📋 Instruções para Celular:</h3>
+            <div class="step">
+                <strong>1.</strong> Conecte o celular na mesma rede Wi-Fi do computador
+            </div>
+            <div class="step">
+                <strong>2.</strong> Abra o navegador do celular (Chrome, Safari, etc.)
+            </div>
+            <div class="step">
+                <strong>3.</strong> Digite um dos endereços acima
+            </div>
+            <div class="step">
+                <strong>4.</strong> Se não funcionar, verifique o firewall do Windows
+            </div>
+        </div>
+
+        <div class="access-info">
+            <h3>🔧 Solução de Problemas:</h3>
+            <p><strong>Se não conseguir acessar:</strong></p>
+            <ul>
+                <li>Verifique se está na mesma rede Wi-Fi</li>
+                <li>Tente desabilitar temporariamente o firewall</li>
+                <li>Execute como administrador: <code>netsh advfirewall firewall add rule name="Node.js Server Port 3000" dir=in action=allow protocol=TCP localport=3000</code></li>
+                <li>Reinicie o roteador se necessário</li>
+            </ul>
+        </div>
+
+        <div class="qr-placeholder">
+            QR Code<br>
+            (Escaneie com o celular)
+        </div>
+    </div>
+
+    <script>
+        // Verificar status do servidor
+        async function checkServerStatus() {
+            const statusElement = document.getElementById('serverStatus');
+            const statusText = document.getElementById('statusText');
+            
+            try {
+                const response = await fetch('http://localhost:3000');
+                if (response.ok) {
+                    statusElement.className = 'status online';
+                    statusText.textContent = '✅ Servidor Online - Pronto para acesso mobile!';
+                } else {
+                    throw new Error('Servidor não respondeu');
+                }
+            } catch (error) {
+                statusElement.className = 'status offline';
+                statusText.textContent = '❌ Servidor Offline - Verifique se está rodando';
+            }
+        }
+
+        // Gerar QR Code simples (placeholder)
+        function generateQRCode() {
+            const qrElement = document.querySelector('.qr-placeholder');
+            const url = 'http://192.168.1.6:3000';
+            
+            // Em uma implementação real, você usaria uma biblioteca de QR Code
+            qrElement.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 12px; margin-bottom: 10px;">Escaneie para acessar:</div>
+                    <div style="font-size: 10px; word-break: break-all;">${url}</div>
+                </div>
+            `;
+        }
+
+        // Inicializar
+        checkServerStatus();
+        generateQRCode();
+        
+        // Verificar status a cada 30 segundos
+        setInterval(checkServerStatus, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Mobile Dashboard - Gestão de Suprimentos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            opacity: 0.8;
+        }
+
+        .status-value {
+            font-weight: 600;
+            color: #4ade80;
+        }
+
+        .actions {
+            display: grid;
+            gap: 15px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover, .btn:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(33, 150, 243, 0.3);
+            border-color: rgba(33, 150, 243, 0.5);
+        }
+
+        .btn-info {
+            background: rgba(255, 193, 7, 0.3);
+            border-color: rgba(255, 193, 7, 0.5);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success {
+            color: #4ade80;
+        }
+
+        .error {
+            color: #ef4444;
+        }
+
+        .warning {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚀</div>
+            <div class="title">Mobile Dashboard</div>
+            <div class="subtitle">Gestão de Suprimentos</div>
+        </div>
+
+        <div class="status-card">
+            <div class="status-title">
+                📊 Status do Sistema
+            </div>
+            <div class="status-item">
+                <span class="status-label">Servidor</span>
+                <span class="status-value" id="serverStatus">Verificando...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Produtos</span>
+                <span class="status-value" id="productCount">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Fornecedores</span>
+                <span class="status-value" id="supplierCount">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Cotações</span>
+                <span class="status-value" id="quoteCount">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Pedidos</span>
+                <span class="status-value" id="orderCount">-</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="testAPI()">
+                🔍 Testar API
+            </button>
+            
+            <button class="btn btn-secondary" onclick="showDiagnostic()">
+                🛠️ Diagnóstico
+            </button>
+            
+            <button class="btn btn-info" onclick="refreshData()">
+                🔄 Atualizar Dados
+            </button>
+            
+            <a href="/diagnostic" class="btn btn-secondary">
+                📋 Relatório Completo
+            </a>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <script>
+        let serverPort = window.location.port || '9000';
+        let serverHost = window.location.hostname;
+        let baseURL = `http://${serverHost}:${serverPort}`;
+
+        console.log('🔧 Configuração:', { serverHost, serverPort, baseURL });
+
+        // Função para mostrar loading
+        function showLoading(show = true) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        // Função para testar API
+        async function testAPI() {
+            showLoading(true);
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                document.getElementById('serverStatus').textContent = 'Online ✅';
+                document.getElementById('serverStatus').className = 'status-value success';
+                
+                alert('✅ API funcionando!\n\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                console.error('Erro na API:', error);
+                document.getElementById('serverStatus').textContent = 'Offline ❌';
+                document.getElementById('serverStatus').className = 'status-value error';
+                
+                alert('❌ Erro na API:\n' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Função para mostrar diagnóstico
+        function showDiagnostic() {
+            alert('📋 Abrindo diagnóstico...\n\nVocê será redirecionado para a página de diagnóstico completo.');
+            window.open('/diagnostic', '_blank');
+        }
+
+        // Função para atualizar dados
+        async function refreshData() {
+            showLoading(true);
+            await loadSystemData();
+            showLoading(false);
+            alert('🔄 Dados atualizados!');
+        }
+
+        // Função para carregar dados do sistema
+        async function loadSystemData() {
+            try {
+                // Verificar status do servidor
+                try {
+                    const statusResponse = await fetch('/api/status');
+                    if (statusResponse.ok) {
+                        document.getElementById('serverStatus').textContent = 'Online ✅';
+                        document.getElementById('serverStatus').className = 'status-value success';
+                    } else {
+                        throw new Error('Status não OK');
+                    }
+                } catch (error) {
+                    document.getElementById('serverStatus').textContent = 'Offline ❌';
+                    document.getElementById('serverStatus').className = 'status-value error';
+                }
+
+                // Tentar carregar dados (pode não estar disponível)
+                const endpoints = [
+                    { id: 'productCount', url: '/api/products' },
+                    { id: 'supplierCount', url: '/api/suppliers' },
+                    { id: 'quoteCount', url: '/api/quotes' },
+                    { id: 'orderCount', url: '/api/orders' }
+                ];
+
+                for (const endpoint of endpoints) {
+                    try {
+                        const response = await fetch(endpoint.url);
+                        if (response.ok) {
+                            const data = await response.json();
+                            document.getElementById(endpoint.id).textContent = Array.isArray(data) ? data.length : '0';
+                        } else {
+                            document.getElementById(endpoint.id).textContent = 'N/A';
+                        }
+                    } catch (error) {
+                        document.getElementById(endpoint.id).textContent = 'N/A';
+                    }
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        // Carregar dados quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📱 Mobile Dashboard carregado');
+            loadSystemData();
+        });
+
+        // Tratamento de erros
+        window.addEventListener('error', function(event) {
+            console.error('Erro na página:', event.error);
+        });
+    </script>
+</body>
+</html>

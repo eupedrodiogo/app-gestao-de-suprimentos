@@ -10,14 +10,18 @@ const log = require('../utils/logger');
 class SecurityMiddleware {
     
     /**
-     * Configura CORS com políticas restritivas
+     * Configura CORS com políticas otimizadas para mobile
      */
     static configureCORS() {
         const allowedOrigins = [
             'http://localhost:3000',
             'http://localhost:8080',
             'http://127.0.0.1:3000',
-            'http://127.0.0.1:8080'
+            'http://127.0.0.1:8080',
+            // Permitir acesso via IP local para dispositivos móveis
+            'http://192.168.1.6:3000',
+            'http://192.168.137.1:3000',
+            'http://192.168.137.55:3000'
         ];
         
         // Adiciona origens do ambiente de produção
@@ -25,14 +29,35 @@ class SecurityMiddleware {
             allowedOrigins.push(process.env.FRONTEND_URL);
         }
         
+        // Função mais permissiva para redes locais
+        const isLocalNetwork = (origin) => {
+            if (!origin) return true; // Permite requests sem origin (mobile apps, Postman, etc.)
+            
+            // Permite qualquer IP da rede local nas portas 3000 e 8080
+            const localPatterns = [
+                /^https?:\/\/192\.168\.\d+\.\d+:(3000|8080)$/,
+                /^https?:\/\/10\.\d+\.\d+\.\d+:(3000|8080)$/,
+                /^https?:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+:(3000|8080)$/,
+                /^https?:\/\/localhost:(3000|8080)$/,
+                /^https?:\/\/127\.0\.0\.1:(3000|8080)$/
+            ];
+            
+            return localPatterns.some(pattern => pattern.test(origin));
+        };
+        
         return cors({
             origin: function (origin, callback) {
-                // Permite requests sem origin (mobile apps, etc.)
+                // Sempre permite requests sem origin (mobile apps, etc.)
                 if (!origin) return callback(null, true);
                 
-                if (allowedOrigins.indexOf(origin) !== -1) {
+                // Verifica se está na lista de origens permitidas ou é rede local
+                if (allowedOrigins.indexOf(origin) !== -1 || isLocalNetwork(origin)) {
                     callback(null, true);
                 } else {
+                    // Log para debug em desenvolvimento
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.log(`CORS bloqueado para origem: ${origin}`);
+                    }
                     callback(new Error('Não permitido pelo CORS'));
                 }
             },
@@ -97,7 +122,7 @@ class SecurityMiddleware {
                 directives: {
                     defaultSrc: ["'self'"],
                     styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-                    scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+                    scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
                     imgSrc: ["'self'", "data:", "https:"],
                     connectSrc: ["'self'"],
                     fontSrc: ["'self'", "https://fonts.gstatic.com"],

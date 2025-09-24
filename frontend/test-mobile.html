@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Acesso Mobile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4CAF50;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: left;
+        }
+        .emoji {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">📱</div>
+        <h1>Teste de Acesso Mobile</h1>
+        
+        <div class="status success">
+            <h2>✅ Sucesso!</h2>
+            <p>Se você está vendo esta página, o acesso mobile está funcionando!</p>
+        </div>
+
+        <a href="/" class="btn">🏠 Ir para o Sistema Principal</a>
+        <a href="/dashboard.html" class="btn">📊 Dashboard</a>
+
+        <div class="info">
+            <h3>📋 Informações do Dispositivo:</h3>
+            <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+            <p><strong>Largura da Tela:</strong> <span id="screenWidth"></span>px</p>
+            <p><strong>Altura da Tela:</strong> <span id="screenHeight"></span>px</p>
+            <p><strong>É Mobile:</strong> <span id="isMobile"></span></p>
+            <p><strong>Suporte a Touch:</strong> <span id="touchSupport"></span></p>
+        </div>
+
+        <div class="info">
+            <h3>🌐 Endereços de Acesso:</h3>
+            <p>Se este endereço funcionar, use-o para acessar o sistema:</p>
+            <p><strong id="currentUrl"></strong></p>
+        </div>
+
+        <div class="info">
+            <h3>📞 Suporte:</h3>
+            <p>Se tiver problemas:</p>
+            <ul style="text-align: left;">
+                <li>Verifique se está na mesma rede Wi-Fi</li>
+                <li>Tente recarregar a página</li>
+                <li>Execute o script setup-mobile-access.ps1</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Detectar informações do dispositivo
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('screenWidth').textContent = screen.width;
+        document.getElementById('screenHeight').textContent = screen.height;
+        document.getElementById('currentUrl').textContent = window.location.href;
+        
+        // Detectar se é mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        document.getElementById('isMobile').textContent = isMobile ? 'Sim' : 'Não';
+        
+        // Detectar suporte a touch
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        document.getElementById('touchSupport').textContent = hasTouch ? 'Sim' : 'Não';
+        
+        // Log para debug
+        console.log('Teste Mobile - Página carregada com sucesso!');
+        console.log('Device Info:', {
+            userAgent: navigator.userAgent,
+            screen: { width: screen.width, height: screen.height },
+            isMobile: isMobile,
+            hasTouch: hasTouch,
+            url: window.location.href
+        });
+    </script>
+</body>
+</html>

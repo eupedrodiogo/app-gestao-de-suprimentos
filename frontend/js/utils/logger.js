@@ -178,5 +178,3 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Exportar para uso global
 window.log = log;
-
-export default log;

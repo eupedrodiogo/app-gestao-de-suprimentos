@@ -1,0 +1,75 @@
+{
+  "networkInterfaces": [
+    {
+      "interface": "VirtualBox Host-Only Network",
+      "ip": "192.168.56.1",
+      "netmask": "255.255.255.0",
+      "isWiFi": false,
+      "isEthernet": false
+    },
+    {
+      "interface": "Wi-Fi",
+      "ip": "192.168.1.6",
+      "netmask": "255.255.255.0",
+      "isWiFi": true,
+      "isEthernet": false
+    }
+  ],
+  "firewall": {
+    "port3000": "Não configurado",
+    "port8080": "Não configurado",
+    "status": "Inativo"
+  },
+  "connectivity": {
+    "192.168.56.1:3000": {
+      "status": "Inacessível",
+      "interface": "VirtualBox Host-Only Network",
+      "isWiFi": false
+    },
+    "192.168.56.1:8080": {
+      "status": "Inacessível",
+      "interface": "VirtualBox Host-Only Network",
+      "isWiFi": false
+    },
+    "192.168.1.6:3000": {
+      "status": "Inacessível",
+      "interface": "Wi-Fi",
+      "isWiFi": true
+    },
+    "192.168.1.6:8080": {
+      "status": "Inacessível",
+      "interface": "Wi-Fi",
+      "isWiFi": true
+    }
+  },
+  "cors": {
+    "192.168.56.1": {
+      "allowOrigin": "CORS_ERROR",
+      "status": "Erro"
+    },
+    "192.168.1.6": {
+      "allowOrigin": "CORS_ERROR",
+      "status": "Erro"
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "issue": "Firewall não configurado para porta 3000",
+      "solution": "Execute: netsh advfirewall firewall add rule name=\"Gestao Suprimentos - Porta 3000\" dir=in action=allow protocol=TCP localport=3000",
+      "category": "Firewall"
+    },
+    {
+      "priority": "MEDIUM",
+      "issue": "Firewall não configurado para porta 8080",
+      "solution": "Execute: netsh advfirewall firewall add rule name=\"Gestao Suprimentos - Porta 8080\" dir=in action=allow protocol=TCP localport=8080",
+      "category": "Firewall"
+    },
+    {
+      "priority": "HIGH",
+      "issue": "Portas inacessíveis: 192.168.56.1:3000, 192.168.56.1:8080, 192.168.1.6:3000, 192.168.1.6:8080",
+      "solution": "Verifique se os servidores estão rodando e configure o firewall",
+      "category": "Conectividade"
+    }
+  ]
+}

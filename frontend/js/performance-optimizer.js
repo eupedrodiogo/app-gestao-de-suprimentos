@@ -260,14 +260,38 @@ document.addEventListener('DOMContentLoaded', () => {
     ServiceWorkerManager.register();
     
     // Optimize navigation links for prefetching
-    document.querySelectorAll('a[href]').forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            const href = link.getAttribute('href');
-            if (href && href.endsWith('.html')) {
+    // Use touchstart for mobile devices, mouseenter for desktop
+    const isMobile = 'ontouchstart' in window;
+    const eventType = isMobile ? 'touchstart' : 'mouseenter';
+    
+    document.querySelectorAll('a[href], [data-route]').forEach(link => {
+        link.addEventListener(eventType, () => {
+            const href = link.getAttribute('href') || link.getAttribute('data-route');
+            if (href && (href.endsWith('.html') || href.includes('/'))) {
                 ResourcePreloader.preloadNextPage(href);
             }
-        });
+        }, { passive: true });
     });
+    
+    // Mobile-specific optimizations
+    if (isMobile) {
+        // Reduce animation duration for better performance
+        document.documentElement.style.setProperty('--animation-duration', '0.2s');
+        
+        // Optimize touch scrolling
+        document.body.style.webkitOverflowScrolling = 'touch';
+        
+        // Disable hover effects on mobile
+        const style = document.createElement('style');
+        style.textContent = `
+            @media (hover: none) and (pointer: coarse) {
+                *:hover {
+                    transition: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 });
 
 // Export for global use

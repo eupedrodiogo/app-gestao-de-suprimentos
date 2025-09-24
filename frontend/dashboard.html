@@ -2,7 +2,13 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="msapplication-navbutton-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-title" content="Dashboard">
     <title>Dashboard - Sistema de Gestão de Suprimentos</title>
     
     <!-- Bootstrap CSS -->
@@ -17,6 +23,10 @@
     
     <!-- Icons CSS -->
     <link href="css/components/icons.css" rel="stylesheet">
+    
+    <!-- Mobile CSS -->
+    <link href="css/mobile.css" rel="stylesheet">
+    <link href="css/touch-improvements.css" rel="stylesheet">
     
     <!-- Custom CSS for Navigation -->
     <style>
@@ -441,6 +451,17 @@
             font-weight: 500;
         }
         
+        /* Mobile Styles - Garantir que o botão seja visível em telas menores */
+        @media (max-width: 991.98px) {
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+            
+            .brand-text {
+                display: none;
+            }
+        }
+        
         /* Desktop Styles - Usando uma abordagem mais robusta */
         @media (min-width: 992px) and (pointer: fine) {
             .brand-text {
@@ -693,6 +714,89 @@
             
             .nav-link span {
                 font-size: 0.8rem;
+            }
+            
+            /* ===== GRÁFICOS MOBILE ===== */
+            
+            /* Containers de gráficos responsivos */
+            .col-md-8, .col-md-4 {
+                padding: 0 3px;
+            }
+            
+            /* Cards de gráficos mobile */
+            .card {
+                margin-bottom: 8px;
+                border-radius: 10px;
+            }
+            
+            .card-header {
+                padding: 0.5rem;
+                border-radius: 10px 10px 0 0;
+            }
+            
+            .card-header h5 {
+                font-size: 0.9rem;
+                margin: 0;
+                line-height: 1.2;
+            }
+            
+            .card-body {
+                padding: 0.5rem;
+            }
+            
+            /* Canvas dos gráficos mobile */
+            #salesChart, #stockChart {
+                max-width: 100% !important;
+                height: auto !important;
+                min-height: 200px !important;
+                display: block !important;
+            }
+            
+            /* Ajuste específico para gráfico de vendas */
+            #salesChart {
+                height: 250px !important;
+                min-height: 250px !important;
+            }
+            
+            /* Ajuste específico para gráfico de estoque */
+            #stockChart {
+                height: 200px !important;
+                min-height: 200px !important;
+            }
+        }
+        
+        /* ===== GRÁFICOS TABLETS ===== */
+        @media (max-width: 767.98px) {
+            /* Layout de gráficos em tablets */
+            .col-md-8, .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0 5px;
+            }
+            
+            /* Canvas responsivo para tablets */
+            #salesChart {
+                height: 280px !important;
+                min-height: 280px !important;
+            }
+            
+            #stockChart {
+                height: 220px !important;
+                min-height: 220px !important;
+            }
+        }
+        
+        /* ===== GRÁFICOS DESKTOP MÉDIO ===== */
+        @media (max-width: 991.98px) {
+            .col-md-8 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
             }
         }
     </style>
@@ -1127,211 +1231,7 @@
             </div>
         </div>
 
-        <!-- Advanced Analytics & AI Tools -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card border-primary">
-                    <div class="card-header bg-primary text-white">
-                        <h5>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="white"/>
-                                <path d="M8 12h8M12 8v8" stroke="#007bff" stroke-width="2" stroke-linecap="round"/>
-                                <circle cx="8" cy="8" r="1" fill="#007bff"/>
-                                <circle cx="16" cy="8" r="1" fill="#007bff"/>
-                                <path d="M8 16s2-2 4-2 4 2 4 2" stroke="#007bff" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                            Ferramentas Avançadas de Analytics & IA
-                        </h5>
-                        <small>Acesse funcionalidades de análise preditiva e automação</small>
-                    </div>
-                    <div class="card-body">
-                        <!-- Analytics Section -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h6 class="text-primary">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M18 9l-5 5-4-4-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    Analytics Avançado
-                                </h6>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="getAnalyticsSummary()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="currentColor"/>
-                                        <path d="M8 12h8M8 8h8M8 16h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg><br>
-                                    <small>Resumo Geral</small>
-                                </button>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="getAnalyticsTrends()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M18 9l-5 5-4-4-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg><br>
-                                    <small>Análise de Tendências</small>
-                                </button>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="getPerformanceMetrics()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="currentColor"/>
-                                        <path d="M8 12h8M8 8h8M8 16h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg><br>
-                                    <small>Métricas Performance</small>
-                                </button>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="getSupplierAnalysis()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="currentColor"/>
-                                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg><br>
-                                    <small>Análise Fornecedores</small>
-                                </button>
-                            </div>
-                        </div>
 
-                        <!-- Predictions Section -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h6 class="text-success">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="12" cy="12" r="10" fill="currentColor"/>
-                                        <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <circle cx="12" cy="12" r="2" fill="white"/>
-                                    </svg>
-                                    Predições & Otimização
-                                </h6>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-success w-100" onclick="getDemandForecast()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M18 9l-5 5-4-4-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg><br>
-                                    <small>Previsão Demanda</small>
-                                </button>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-success w-100" onclick="getStockOptimization()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="currentColor"/>
-                                        <polyline points="7.5,4.21 12,6.81 16.5,4.21" stroke="white" stroke-width="1.5"/>
-                                        <polyline points="7.5,19.79 7.5,14.6 3,12" stroke="white" stroke-width="1.5"/>
-                                        <polyline points="21,12 16.5,14.6 16.5,19.79" stroke="white" stroke-width="1.5"/>
-                                        <polyline points="12,22.81 12,17" stroke="white" stroke-width="1.5"/>
-                                    </svg><br>
-                                    <small>Otimização Estoque</small>
-                                </button>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-success w-100" onclick="getPriceOptimization()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="12" cy="12" r="10" fill="currentColor"/>
-                                        <path d="M12 6v12M9 9h6M9 15h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                                    </svg><br>
-                                    <small>Otimização Preços</small>
-                                </button>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <button type="button" class="btn btn-outline-success w-100" onclick="getSupplierRecommendations()">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
-                                    </svg><br>
-                                    <small>Recomendações</small>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Visualization Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h6 class="text-warning">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
-                        <circle cx="12" cy="10" r="3" fill="white"/>
-                    </svg>
-                    Dashboards & Visualizações
-                </h6>
-            </div>
-            <div class="col-md-4 mb-2">
-                <button type="button" class="btn btn-outline-warning w-100" onclick="generateInventoryDashboard()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="currentColor"/>
-                        <path d="M8 12h8M8 8h8M8 16h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg><br>
-                    <small>Dashboard Inventário</small>
-                </button>
-            </div>
-            <div class="col-md-4 mb-2">
-                <button type="button" class="btn btn-outline-warning w-100" onclick="generateSalesDashboard()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M18 17l-5-5-4 4-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg><br>
-                    <small>Dashboard Vendas</small>
-                </button>
-            </div>
-            <div class="col-md-4 mb-2">
-                <button type="button" class="btn btn-outline-warning w-100" onclick="openExportsFolder()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" fill="currentColor"/>
-                        <path d="M8 12h8M12 8v8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg><br>
-                    <small>Ver Relatórios</small>
-                </button>
-            </div>
-        </div>
-
-        <!-- Automation Section -->
-        <div class="row">
-            <div class="col-12">
-                <h6 class="text-info">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="3" fill="currentColor"/>
-                        <path d="M12 1v6m0 6v6" stroke="currentColor" stroke-width="2"/>
-                        <path d="M21 12h-6m-6 0H3" stroke="currentColor" stroke-width="2"/>
-                        <path d="M18.364 5.636l-4.243 4.243m-4.242 4.242l-4.243 4.243" stroke="currentColor" stroke-width="2"/>
-                        <path d="M5.636 5.636l4.243 4.243m4.242 4.242l4.243 4.243" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Automação & Controles
-                </h6>
-            </div>
-            <div class="col-md-4 mb-2">
-                <button type="button" class="btn btn-outline-info w-100" onclick="runAutomatedReorder()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M23 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg><br>
-                    <small>Reposição Automática</small>
-                </button>
-            </div>
-            <div class="col-md-4 mb-2">
-                <button type="button" class="btn btn-outline-info w-100" onclick="runPriceUpdate()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 17l10-10M17 7H7v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="17" cy="7" r="2" fill="currentColor"/>
-                    </svg><br>
-                    <small>Atualização Preços</small>
-                </button>
-            </div>
-            <div class="col-md-4 mb-2">
-                <button type="button" class="btn btn-outline-info w-100" onclick="openPythonDocs()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 1.5 17V7A2.5 2.5 0 0 1 4 4.5h16A2.5 2.5 0 0 1 22.5 7v10a2.5 2.5 0 0 1-2.5 2.5H4z" fill="currentColor"/>
-                        <path d="M8 12h8M8 8h8M8 16h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg><br>
-                    <small>Documentação API</small>
-                </button>
-            </div>
-        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- System Status -->
         <div class="row mt-5">

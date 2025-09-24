@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Servidor Node.js</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .error-btn {
+            background: #dc3545;
+        }
+        .success-btn {
+            background: #28a745;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔧 Debug - Servidor Node.js (localhost:3000)</h1>
+        
+        <div class="info-box">
+            <strong>Objetivo:</strong> Identificar por que os botões não funcionam no servidor Node.js mas funcionam no Live Server (127.0.0.1:5500)
+        </div>
+        
+        <div class="test-section">
+            <h3>📍 Informações do Ambiente</h3>
+            <div id="env-info"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Testes de Redirecionamento</h3>
+            
+            <button class="test-btn" onclick="testMethod1()">
+                Teste 1: window.location.href = 'products.html'
+            </button>
+            
+            <button class="test-btn" onclick="testMethod2()">
+                Teste 2: window.location.assign('products.html')
+            </button>
+            
+            <button class="test-btn" onclick="testMethod3()">
+                Teste 3: window.location.replace('products.html')
+            </button>
+            
+            <button class="test-btn" onclick="testMethod4()">
+                Teste 4: window.open('products.html', '_self')
+            </button>
+            
+            <button class="test-btn" onclick="testMethod5()">
+                Teste 5: Link programático
+            </button>
+            
+            <button class="test-btn" onclick="testMethod6()">
+                Teste 6: history.pushState + location.reload
+            </button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Links Diretos</h3>
+            <a href="products.html" style="display: block; padding: 10px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; margin: 5px 0; text-align: center;">
+                Link HTML Direto - Produtos
+            </a>
+            <a href="dashboard.html" style="display: block; padding: 10px; background: #17a2b8; color: white; text-decoration: none; border-radius: 5px; margin: 5px 0; text-align: center;">
+                Link HTML Direto - Dashboard
+            </a>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔍 Verificações de Arquivos</h3>
+            <button class="test-btn" onclick="checkFiles()">
+                Verificar Existência dos Arquivos
+            </button>
+            <div id="file-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Console e Erros</h3>
+            <div id="log" class="log">
+                <strong>Log de Debug:</strong><br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função de log
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logDiv.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span><br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        // Capturar erros globais
+        window.addEventListener('error', function(e) {
+            log(`ERRO GLOBAL: ${e.message} em ${e.filename}:${e.lineno}`, 'error');
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            log(`PROMISE REJEITADA: ${e.reason}`, 'error');
+        });
+        
+        // Informações do ambiente
+        function loadEnvironmentInfo() {
+            const envDiv = document.getElementById('env-info');
+            const info = {
+                'URL Atual': window.location.href,
+                'Host': window.location.host,
+                'Protocolo': window.location.protocol,
+                'User Agent': navigator.userAgent.substring(0, 100) + '...',
+                'Cookies Habilitados': navigator.cookieEnabled,
+                'JavaScript Habilitado': true,
+                'Referrer': document.referrer || 'Nenhum'
+            };
+            
+            let html = '<table style="width: 100%; border-collapse: collapse;">';
+            for (const [key, value] of Object.entries(info)) {
+                html += `<tr><td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">${key}</td><td style="border: 1px solid #ddd; padding: 5px;">${value}</td></tr>`;
+            }
+            html += '</table>';
+            envDiv.innerHTML = html;
+        }
+        
+        // Testes de redirecionamento
+        function testMethod1() {
+            log('Testando: window.location.href');
+            try {
+                window.location.href = 'products.html';
+            } catch (e) {
+                log(`Erro no Teste 1: ${e.message}`, 'error');
+            }
+        }
+        
+        function testMethod2() {
+            log('Testando: window.location.assign');
+            try {
+                window.location.assign('products.html');
+            } catch (e) {
+                log(`Erro no Teste 2: ${e.message}`, 'error');
+            }
+        }
+        
+        function testMethod3() {
+            log('Testando: window.location.replace');
+            try {
+                window.location.replace('products.html');
+            } catch (e) {
+                log(`Erro no Teste 3: ${e.message}`, 'error');
+            }
+        }
+        
+        function testMethod4() {
+            log('Testando: window.open');
+            try {
+                window.open('products.html', '_self');
+            } catch (e) {
+                log(`Erro no Teste 4: ${e.message}`, 'error');
+            }
+        }
+        
+        function testMethod5() {
+            log('Testando: Link programático');
+            try {
+                const link = document.createElement('a');
+                link.href = 'products.html';
+                link.target = '_self';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (e) {
+                log(`Erro no Teste 5: ${e.message}`, 'error');
+            }
+        }
+        
+        function testMethod6() {
+            log('Testando: history.pushState + reload');
+            try {
+                history.pushState(null, '', 'products.html');
+                location.reload();
+            } catch (e) {
+                log(`Erro no Teste 6: ${e.message}`, 'error');
+            }
+        }
+        
+        // Verificar arquivos
+        async function checkFiles() {
+            const files = ['products.html', 'dashboard.html', 'suppliers.html', 'orders.html', 'reports.html'];
+            const statusDiv = document.getElementById('file-status');
+            statusDiv.innerHTML = '<p>Verificando arquivos...</p>';
+            
+            let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+            html += '<tr><th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Arquivo</th><th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Status</th><th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Código</th></tr>';
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    const status = response.ok ? '✅ OK' : '❌ Erro';
+                    const color = response.ok ? 'green' : 'red';
+                    html += `<tr><td style="border: 1px solid #ddd; padding: 5px;">${file}</td><td style="border: 1px solid #ddd; padding: 5px; color: ${color};">${status}</td><td style="border: 1px solid #ddd; padding: 5px;">${response.status}</td></tr>`;
+                    log(`Arquivo ${file}: ${response.status} ${response.ok ? 'OK' : 'ERRO'}`, response.ok ? 'success' : 'error');
+                } catch (e) {
+                    html += `<tr><td style="border: 1px solid #ddd; padding: 5px;">${file}</td><td style="border: 1px solid #ddd; padding: 5px; color: red;">❌ Erro de Rede</td><td style="border: 1px solid #ddd; padding: 5px;">-</td></tr>`;
+                    log(`Erro ao verificar ${file}: ${e.message}`, 'error');
+                }
+            }
+            
+            html += '</table>';
+            statusDiv.innerHTML = html;
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Página de debug carregada no servidor Node.js');
+            loadEnvironmentInfo();
+            
+            // Verificar se estamos no servidor correto
+            if (window.location.port === '3000') {
+                log('✅ Confirmado: Executando no servidor Node.js (porta 3000)', 'success');
+            } else {
+                log(`⚠️ Atenção: Porta atual é ${window.location.port}, esperado 3000`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

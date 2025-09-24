@@ -2,9 +2,17 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SupplyChain Pro - Sistema ERP</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="msapplication-navbutton-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-title" content="Gestão Suprimentos">
+    <title>Sistema de Gestão de Suprimentos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/touch-improvements.css">
     <style>
         * {
             margin: 0;
@@ -63,9 +71,12 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
             margin: 3rem 0;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .feature-card {
@@ -221,27 +232,37 @@
 </head>
 <body>
     <div class="welcome-container">
-        <div class="logo" onclick="goToHome()">🚀</div>
+        <div class="logo" data-route="/">🚀</div>
         <h1 class="title">SupplyChain Pro</h1>
         <p class="subtitle">Sistema Completo de Gestão de Suprimentos e ERP</p>
 
         <div class="features-grid">
-            <div class="feature-card" onclick="navigateToSection('products')">
+            <div class="feature-card" data-route="/dashboard">
+                <div class="feature-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div class="feature-title">Dashboard</div>
+                <div class="feature-desc">Visão geral e métricas do sistema</div>
+            </div>
+            <div class="feature-card" data-route="/products">
                 <div class="feature-icon"><i class="fas fa-boxes"></i></div>
                 <div class="feature-title">Gestão de Produtos</div>
                 <div class="feature-desc">Controle completo do seu estoque</div>
             </div>
-            <div class="feature-card" onclick="navigateToSection('suppliers')">
+            <div class="feature-card" data-route="/suppliers">
                 <div class="feature-icon"><i class="fas fa-truck"></i></div>
                 <div class="feature-title">Fornecedores</div>
                 <div class="feature-desc">Gerencie sua rede de fornecedores</div>
             </div>
-            <div class="feature-card" onclick="navigateToSection('orders')">
+            <div class="feature-card" data-route="/quotes">
+                <div class="feature-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="feature-title">Cotações</div>
+                <div class="feature-desc">Solicite e gerencie cotações</div>
+            </div>
+            <div class="feature-card" data-route="/orders">
                 <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
                 <div class="feature-title">Pedidos</div>
                 <div class="feature-desc">Controle de pedidos e compras</div>
             </div>
-            <div class="feature-card" onclick="navigateToSection('reports')">
+            <div class="feature-card" data-route="/reports">
                 <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="feature-title">Relatórios</div>
                 <div class="feature-desc">Análises e insights detalhados</div>
@@ -258,6 +279,10 @@
                 <div class="stat-label">Fornecedores</div>
             </div>
             <div class="stat-item">
+                <span class="stat-number" id="quoteCount">-</span>
+                <div class="stat-label">Cotações</div>
+            </div>
+            <div class="stat-item">
                 <span class="stat-number" id="orderCount">-</span>
                 <div class="stat-label">Pedidos</div>
             </div>
@@ -268,14 +293,14 @@
         </div>
 
         <div class="actions">
-            <button class="btn btn-primary" onclick="accessSystem()">
+            <button class="btn btn-primary" data-route="/dashboard">
                 <i class="fas fa-sign-in-alt"></i>
                 Acessar Sistema
             </button>
-            <a href="../debug.html" class="btn btn-secondary">
+            <button class="btn btn-secondary" data-route="/debug.html">
                 <i class="fas fa-tools"></i>
                 Diagnóstico
-            </a>
+            </button>
         </div>
 
         <div class="loading" id="loading">
@@ -285,9 +310,61 @@
     </div>
 
     <script>
-        // Função para ir para a página inicial (logo clicável)
-        function goToHome() {
-            window.location.href = '/frontend/';
+        // Sistema de navegação robusto com suporte mobile
+        function initializeNavigation() {
+            // Selecionar todos os elementos com data-route
+            const navigableElements = document.querySelectorAll('[data-route]');
+            
+            navigableElements.forEach(element => {
+                element.style.cursor = 'pointer';
+                
+                // Melhorar área de toque para mobile
+                element.style.minHeight = '44px';
+                element.style.minWidth = '44px';
+                
+                // Evento principal de navegação
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const route = this.getAttribute('data-route');
+                    
+                    if (route) {
+                        console.log('Navegando para:', route);
+                        
+                        // Adicionar feedback visual
+                        this.style.opacity = '0.7';
+                        setTimeout(() => {
+                            this.style.opacity = '1';
+                        }, 150);
+                        
+                        // Navegar após o feedback visual
+                        setTimeout(() => {
+                            window.location.href = route;
+                        }, 200);
+                    }
+                });
+                
+                // Touch events para dispositivos móveis
+                element.addEventListener('touchstart', function(e) {
+                    this.style.transform = 'scale(0.98)';
+                    this.style.opacity = '0.8';
+                }, { passive: true });
+                
+                element.addEventListener('touchend', function(e) {
+                    this.style.transform = 'scale(1)';
+                    this.style.opacity = '1';
+                }, { passive: true });
+                
+                // Hover effects apenas para dispositivos não-touch
+                if (!('ontouchstart' in window)) {
+                    element.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.02)';
+                    });
+                    
+                    element.addEventListener('mouseleave', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                }
+            });
         }
 
         // Função para carregar estatísticas
@@ -329,6 +406,22 @@
                     document.getElementById('supplierCount').textContent = '0';
                 }
 
+                // Carregar cotações
+                try {
+                    const quotesResponse = await fetch('/api/quotes', { 
+                        signal: controller.signal,
+                        headers: { 'Cache-Control': 'no-cache' }
+                    });
+                    if (quotesResponse.ok) {
+                        const quotes = await quotesResponse.json();
+                        document.getElementById('quoteCount').textContent = quotes.length || 0;
+                    } else {
+                        document.getElementById('quoteCount').textContent = '0';
+                    }
+                } catch (err) {
+                    document.getElementById('quoteCount').textContent = '0';
+                }
+
                 // Carregar pedidos
                 try {
                     const ordersResponse = await fetch('/api/orders', { 
@@ -351,22 +444,9 @@
                 // Definir valores padrão se houver erro
                 document.getElementById('productCount').textContent = '0';
                 document.getElementById('supplierCount').textContent = '0';
+                document.getElementById('quoteCount').textContent = '0';
                 document.getElementById('orderCount').textContent = '0';
             }
-        }
-
-        // Função para acessar o sistema
-        function accessSystem() {
-            const loading = document.getElementById('loading');
-            const container = document.querySelector('.welcome-container');
-            
-            loading.style.display = 'block';
-            container.style.opacity = '0.7';
-            
-            // Simular carregamento e redirecionar
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1500);
         }
 
         // Variável para controlar se já foi carregado
@@ -374,6 +454,9 @@
 
         // Carregar estatísticas quando a página carregar
         document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar sistema de navegação
+            initializeNavigation();
+            
             if (!statsLoaded) {
                 statsLoaded = true;
                 loadStats();
@@ -392,28 +475,9 @@
             }
         });
 
-        // Função para navegação entre seções
-        function navigateToSection(section) {
-            const sectionMap = {
-                'products': 'products.html',
-                'suppliers': 'suppliers.html',
-                'orders': 'orders.html',
-                'reports': 'reports.html'
-            };
-            
-            const targetPage = sectionMap[section];
-            if (targetPage) {
-                window.location.href = targetPage;
-            }
-        }
-
-        // Tratamento de erros globais
+        // Apenas tratamento de erros básico
         window.addEventListener('error', function(event) {
             console.error('Erro na página:', event.error);
-        });
-
-        window.addEventListener('unhandledrejection', function(event) {
-            console.error('Promise rejeitada:', event.reason);
         });
     </script>
     

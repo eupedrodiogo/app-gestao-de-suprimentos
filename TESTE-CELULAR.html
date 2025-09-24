@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 TESTE CELULAR - IP CORRETO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(255,255,255,0.15);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .ip-box {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+        button {
+            background: #FF5722;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #E64A19;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            word-break: break-all;
+            text-align: left;
+            font-size: 14px;
+        }
+        .success { 
+            background: rgba(76, 175, 80, 0.3) !important;
+            border: 2px solid #4CAF50;
+        }
+        .error { 
+            background: rgba(244, 67, 54, 0.3) !important;
+            border: 2px solid #f44336;
+        }
+        .emoji {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🎯</div>
+        <h1>TESTE CELULAR</h1>
+        
+        <div class="card">
+            <h2>✅ IP CORRETO DETECTADO!</h2>
+            <div class="ip-box">192.168.1.6:8888</div>
+            <p>Este é o IP correto do seu Wi-Fi!</p>
+        </div>
+
+        <div class="card">
+            <h3>🧪 TESTES RÁPIDOS</h3>
+            <button onclick="testAPI()">🔥 TESTAR API</button>
+            <button onclick="testMobile()">📱 TESTAR MOBILE</button>
+            <button onclick="testConnection()">🌐 TESTAR CONEXÃO</button>
+            <div id="result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="card">
+            <h3>📋 INSTRUÇÕES</h3>
+            <p><strong>1.</strong> Celular na mesma rede Wi-Fi</p>
+            <p><strong>2.</strong> Acesse este endereço:</p>
+            <div class="ip-box">http://192.168.1.6:8888/mobile</div>
+            <p><strong>3.</strong> Se não funcionar, tente:</p>
+            <div class="ip-box">http://192.168.1.6:8888/TESTE-CELULAR.html</div>
+        </div>
+
+        <div class="card">
+            <h3>🚨 SE NÃO FUNCIONAR</h3>
+            <p>1. Verifique se está na mesma rede Wi-Fi</p>
+            <p>2. Tente desligar/ligar o Wi-Fi do celular</p>
+            <p>3. Teste se consegue acessar outros sites</p>
+            <p>4. Firewall já foi configurado ✅</p>
+        </div>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess = true) {
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            result.className = 'result ' + (isSuccess ? 'success' : 'error');
+            result.innerHTML = message;
+        }
+
+        async function testAPI() {
+            try {
+                showResult('🔄 Testando API...', true);
+                const response = await fetch('http://192.168.1.6:8888/api/test');
+                const data = await response.json();
+                showResult('✅ API FUNCIONANDO!<br><br>' + JSON.stringify(data, null, 2), true);
+            } catch (error) {
+                showResult('❌ ERRO NA API:<br>' + error.message + '<br><br>Verifique se o servidor está rodando!', false);
+            }
+        }
+
+        async function testMobile() {
+            try {
+                showResult('🔄 Testando mobile check...', true);
+                const response = await fetch('http://192.168.1.6:8888/api/mobile-check');
+                const data = await response.json();
+                showResult('📱 MOBILE CHECK OK!<br><br>' + JSON.stringify(data, null, 2), true);
+            } catch (error) {
+                showResult('❌ ERRO NO MOBILE CHECK:<br>' + error.message, false);
+            }
+        }
+
+        async function testConnection() {
+            try {
+                showResult('🔄 Testando conectividade...', true);
+                const start = Date.now();
+                const response = await fetch('http://192.168.1.6:8888/api/test');
+                const end = Date.now();
+                const time = end - start;
+                
+                if (response.ok) {
+                    showResult(`🌐 CONEXÃO OK!<br>Tempo de resposta: ${time}ms<br>Status: ${response.status}<br>Rede funcionando perfeitamente!`, true);
+                } else {
+                    showResult(`⚠️ Resposta recebida mas com erro:<br>Status: ${response.status}`, false);
+                }
+            } catch (error) {
+                showResult('❌ ERRO DE CONEXÃO:<br>' + error.message + '<br><br>Possíveis causas:<br>• Não está na mesma rede Wi-Fi<br>• Firewall bloqueando<br>• Servidor não está rodando', false);
+            }
+        }
+
+        // Teste automático ao carregar
+        window.onload = function() {
+            setTimeout(() => {
+                testConnection();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

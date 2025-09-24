@@ -679,6 +679,42 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
+// Rotas específicas para páginas HTML do frontend
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
+});
+
+app.get('/products', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'products.html'));
+});
+
+app.get('/suppliers', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'suppliers.html'));
+});
+
+app.get('/quotes', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'quotes.html'));
+});
+
+app.get('/orders', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'orders.html'));
+});
+
+app.get('/reports', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'reports.html'));
+});
+
+// Rota para arquivos HTML diretamente (fallback)
+app.get('*.html', (req, res) => {
+    const fileName = path.basename(req.path);
+    const filePath = path.join(__dirname, 'frontend', fileName);
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            res.status(404).send('Página não encontrada');
+        }
+    });
+});
+
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
     res.status(404).json({ 
