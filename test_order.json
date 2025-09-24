@@ -1,0 +1,14 @@
+{
+  "supplier_id": 1,
+  "delivery_date": "2025-01-15",
+  "status": "pendente",
+  "priority": "media",
+  "notes": "Teste de pedido",
+  "items": [
+    {
+      "product": "Mouse",
+      "quantity": 1,
+      "price": 75.00
+    }
+  ]
+}

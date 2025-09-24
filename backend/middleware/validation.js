@@ -20,8 +20,9 @@ class ValidationMiddleware {
             stripIgnoreTagBody: ['script']
         });
         
-        // Remove caracteres perigosos para SQL
-        sanitized = sanitized.replace(/['"\\;]/g, '');
+        // Remove caracteres perigosos para SQL, mas preserva aspas em contextos válidos
+        // Remove apenas ponto e vírgula que é claramente perigoso
+        sanitized = sanitized.replace(/[;]/g, '');
         
         // Trim espaços
         return sanitized.trim();
@@ -58,27 +59,21 @@ class ValidationMiddleware {
      */
     static sanitizeInput(req, res, next) {
         try {
-            // Sanitiza body
             if (req.body) {
                 req.body = ValidationMiddleware.sanitizeObject(req.body);
             }
-            
-            // Sanitiza query parameters
             if (req.query) {
                 req.query = ValidationMiddleware.sanitizeObject(req.query);
             }
-            
-            // Sanitiza params
             if (req.params) {
                 req.params = ValidationMiddleware.sanitizeObject(req.params);
             }
-            
             next();
         } catch (error) {
-            return res.status(400).json({
-                success: false,
-                message: 'Dados de entrada inválidos',
-                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            console.error('Erro na sanitização:', error);
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Dados de entrada inválidos' 
             });
         }
     }

@@ -1,38 +1,66 @@
 // Orders Page JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página de Pedidos carregada');
-    
     // Initialize orders functionality
     initializeOrders();
     
-    // Load orders data
+    // Make showAddOrderModal available globally for onclick (compatibility)
+    window.showAddOrderModal = showAddOrderModal;
+    
+    // Setup button click listener
+    const addOrderBtn = document.getElementById('addOrderBtn');
+    if (addOrderBtn) {
+        addOrderBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAddOrderModal();
+        });
+    }
+
+    // Load orders on page load
     loadOrders();
 });
 
 function initializeOrders() {
-    // Add event listeners for order forms and buttons
+    console.log('🔧 DEBUG: initializeOrders chamada');
+    console.log('🔧 DEBUG: User Agent:', navigator.userAgent);
+    console.log('🔧 DEBUG: Screen width:', window.screen.width);
+    console.log('🔧 DEBUG: Window width:', window.innerWidth);
+    
+    // Add event listener for the add order button
     const addOrderBtn = document.getElementById('addOrderBtn');
     if (addOrderBtn) {
         addOrderBtn.addEventListener('click', showAddOrderModal);
+        console.log('🔧 DEBUG: Event listener adicionado ao addOrderBtn');
+        
+        // Test if button is clickable
+        console.log('🔧 DEBUG: Button styles:', window.getComputedStyle(addOrderBtn));
+        console.log('🔧 DEBUG: Button display:', window.getComputedStyle(addOrderBtn).display);
+        console.log('🔧 DEBUG: Button pointer-events:', window.getComputedStyle(addOrderBtn).pointerEvents);
+        console.log('🔧 DEBUG: Button z-index:', window.getComputedStyle(addOrderBtn).zIndex);
+    } else {
+        console.log('🔧 DEBUG: addOrderBtn não encontrado');
     }
-    
+
+    // Also look for buttons with onclick attribute
+    const onclickButtons = document.querySelectorAll('button[onclick*="showAddOrderModal"]');
+    console.log('🔧 DEBUG: Botões com onclick encontrados:', onclickButtons.length);
+    onclickButtons.forEach((btn, index) => {
+        console.log(`🔧 DEBUG: Botão ${index}:`, btn);
+        console.log(`🔧 DEBUG: Botão ${index} display:`, window.getComputedStyle(btn).display);
+        console.log(`🔧 DEBUG: Botão ${index} pointer-events:`, window.getComputedStyle(btn).pointerEvents);
+    });
+
     // Initialize search functionality
     const searchInput = document.getElementById('searchOrders');
     if (searchInput) {
         searchInput.addEventListener('input', filterOrders);
     }
-    
-    // Add event listeners for existing order items
-    const quantityInputs = document.querySelectorAll('#orderItems input[name="quantity"]');
-    const priceInputs = document.querySelectorAll('#orderItems input[name="price"]');
-    
-    quantityInputs.forEach(input => {
-        input.addEventListener('input', calculateItemTotal);
-    });
-    
-    priceInputs.forEach(input => {
-        input.addEventListener('input', calculateItemTotal);
+
+    // Add event listeners for quantity and price inputs
+    document.addEventListener('input', function(e) {
+        if (e.target.name === 'quantity' || e.target.name === 'price') {
+            calculateItemTotal(e);
+        }
     });
 }
 
@@ -70,8 +98,8 @@ function showAddOrderModal() {
     if (form) form.reset();
     
     // Clear hidden ID field
-    const orderIdField = document.getElementById('orderId');
-    if (orderIdField) orderIdField.value = '';
+    const hiddenId = document.getElementById('orderId');
+    if (hiddenId) hiddenId.value = '';
     
     // Set current date
     const dateField = document.getElementById('orderDate');
@@ -119,15 +147,31 @@ function showAddOrderModal() {
     const totalElement = document.getElementById('orderTotal');
     if (totalElement) totalElement.textContent = 'R$ 0,00';
     
-    // Set modal title
+    // Load suppliers and products for the modal
+    loadSuppliersForModal();
+    loadProductsForModal();
+    
+    // Get modal elements
     const modalTitle = document.getElementById('orderModalTitle');
+    const orderModal = document.getElementById('orderModal');
+    
     if (modalTitle) modalTitle.textContent = 'Novo Pedido';
     
     // Show modal
-    const modal = document.getElementById('orderModal');
-    if (modal) {
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
+    if (orderModal) {
+        try {
+            // Check if Bootstrap is available
+            if (typeof bootstrap !== 'undefined') {
+                const bsModal = new bootstrap.Modal(orderModal);
+                bsModal.show();
+            } else {
+                // Fallback: show modal manually
+                orderModal.style.display = 'block';
+                orderModal.classList.add('show');
+            }
+        } catch (error) {
+            console.error('Erro ao exibir modal:', error);
+        }
     }
 }
 
@@ -220,45 +264,135 @@ function viewOrder(id) {
 }
 
 function editOrder(id) {
-    console.log('Editando pedido:', id);
+    console.log('🔧 DEBUG: Editando pedido:', id);
+    console.log('🔧 DEBUG: Tipo do ID:', typeof id);
     
-    // Fetch order data from API
-    fetch(`/api/orders/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const order = data.data || data;
-            
-            // Populate form with order data
-            document.getElementById('orderId').value = order.id || id;
-            document.getElementById('orderSupplier').value = order.supplier_id || '';
-            document.getElementById('orderDate').value = order.date || '';
-            document.getElementById('orderStatus').value = order.status || 'Pendente';
-            document.getElementById('orderNotes').value = order.notes || '';
-            
-            // Update modal title
-            const modalTitle = document.getElementById('orderModalTitle');
-            if (modalTitle) modalTitle.textContent = 'Editar Pedido';
-            
-            // Show modal
-            const modal = document.getElementById('orderModal');
-            if (modal && typeof bootstrap !== 'undefined') {
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
+    // Primeiro, carregar fornecedores e produtos
+    loadSuppliersForModal();
+    loadProductsForModal();
+    
+    // Aguardar um pouco para os dados carregarem e então buscar o pedido
+    setTimeout(() => {
+        fetch(`/api/orders/${id}`)
+        .then(orderResponse => {
+        console.log('🔧 DEBUG: Response status:', orderResponse.status);
+        console.log('🔧 DEBUG: Response ok:', orderResponse.ok);
+        
+        if (!orderResponse.ok) {
+            throw new Error(`HTTP error! status: ${orderResponse.status}`);
+        }
+        return orderResponse.json();
+    })
+    .then(data => {
+        console.log('🔧 DEBUG: Dados recebidos da API:', data);
+        const order = data.data || data;
+        console.log('🔧 DEBUG: Objeto order extraído:', order);
+        
+        // Verificar se os elementos existem antes de tentar preenchê-los
+        const orderIdField = document.getElementById('orderId');
+        const orderSupplierField = document.getElementById('orderSupplier');
+        const orderDateField = document.getElementById('orderDate');
+        const orderDeliveryDateField = document.getElementById('orderDeliveryDate');
+        const orderStatusField = document.getElementById('orderStatus');
+        const orderPriorityField = document.getElementById('orderPriority');
+        const orderNotesField = document.getElementById('orderNotes');
+        const orderTotalField = document.getElementById('orderTotal');
+        
+        console.log('🔧 DEBUG: Campos encontrados:', {
+            orderId: !!orderIdField,
+            orderSupplier: !!orderSupplierField,
+            orderDate: !!orderDateField,
+            orderDeliveryDate: !!orderDeliveryDateField,
+            orderStatus: !!orderStatusField,
+            orderPriority: !!orderPriorityField,
+            orderNotes: !!orderNotesField,
+            orderTotal: !!orderTotalField
+        });
+        
+        // Populate form with order data
+        if (orderIdField) {
+            orderIdField.value = order.id || id;
+            console.log('🔧 DEBUG: orderId preenchido com:', order.id || id);
+        }
+        
+        if (orderSupplierField) {
+            orderSupplierField.value = order.supplier_id || '';
+            console.log('🔧 DEBUG: orderSupplier preenchido com:', order.supplier_id || '');
+        }
+        
+        if (orderDateField) {
+            const dateValue = order.order_date || order.date || '';
+            orderDateField.value = dateValue;
+            console.log('🔧 DEBUG: orderDate preenchido com:', dateValue);
+        }
+        
+        if (orderDeliveryDateField) {
+            const deliveryDateValue = order.delivery_date || '';
+            orderDeliveryDateField.value = deliveryDateValue;
+            console.log('🔧 DEBUG: orderDeliveryDate preenchido com:', deliveryDateValue);
+        }
+        
+        if (orderStatusField) {
+            const statusValue = order.status || 'pendente';
+            orderStatusField.value = statusValue;
+            console.log('🔧 DEBUG: orderStatus preenchido com:', statusValue);
+        }
+        
+        if (orderPriorityField) {
+            const priorityValue = order.priority || 'media';
+            orderPriorityField.value = priorityValue;
+            console.log('🔧 DEBUG: orderPriority preenchido com:', priorityValue);
+        }
+        
+        if (orderNotesField) {
+            const notesValue = order.notes || order.observations || '';
+            orderNotesField.value = notesValue;
+            console.log('🔧 DEBUG: orderNotes preenchido com:', notesValue);
+        }
+        
+        if (orderTotalField) {
+            const totalValue = order.total_value || 0;
+            orderTotalField.textContent = `R$ ${totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            console.log('🔧 DEBUG: orderTotal preenchido com:', totalValue);
+        }
+        
+        // Populate order items
+        populateOrderItems(order.items || []);
+        
+        // Update modal title
+        const modalTitle = document.getElementById('orderModalTitle');
+        if (modalTitle) {
+            modalTitle.textContent = 'Editar Pedido';
+            console.log('🔧 DEBUG: Título do modal atualizado');
+        }
+        
+        // Show modal
+        const modal = document.getElementById('orderModal');
+        console.log('🔧 DEBUG: Modal encontrado:', !!modal);
+        console.log('🔧 DEBUG: Bootstrap disponível:', typeof bootstrap !== 'undefined');
+        
+        if (modal && typeof bootstrap !== 'undefined') {
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            console.log('🔧 DEBUG: Modal exibido');
+        } else if (modal) {
+            // Fallback para mostrar modal sem Bootstrap
+            modal.style.display = 'block';
+                modal.classList.add('show');
+                console.log('🔧 DEBUG: Modal exibido via fallback');
             }
         })
         .catch(error => {
-            log.error({
-                message: error.message,
-                stack: error.stack,
-                component: 'orders-load'
-            });
-            showToast('Erro', 'Erro ao carregar dados do pedido.', 'error');
+            console.error('🔧 DEBUG: Erro na requisição:', error);
+            console.error('🔧 DEBUG: Stack trace:', error.stack);
+            
+            if (typeof showToast === 'function') {
+                showToast('Erro', 'Erro ao carregar dados do pedido.', 'error');
+            } else {
+                alert('Erro ao carregar dados do pedido: ' + error.message);
+            }
         });
+    }, 500); // Aguardar 500ms para os dados carregarem
 }
 
 function deleteOrder(id) {
@@ -308,8 +442,13 @@ function deleteOrder(id) {
 }
 
 function saveOrder() {
+    console.log('🔧 DEBUG: saveOrder() chamada');
+    
     const form = document.getElementById('orderForm');
     const orderId = document.getElementById('orderId').value;
+    
+    console.log('🔧 DEBUG: Form encontrado:', !!form);
+    console.log('🔧 DEBUG: Order ID:', orderId);
     
     // Get form data
     const orderData = {
@@ -321,37 +460,61 @@ function saveOrder() {
         notes: document.getElementById('orderNotes').value.trim()
     };
     
+    console.log('🔧 DEBUG: Order data:', orderData);
+    
     // Collect order items
     const items = [];
     const rows = document.querySelectorAll('#orderItems tr');
     
-    rows.forEach(row => {
-        const product = row.querySelector('select[name="product"]').value;
-        const quantity = parseFloat(row.querySelector('input[name="quantity"]').value) || 0;
-        const price = parseFloat(row.querySelector('input[name="price"]').value) || 0;
+    console.log('🔧 DEBUG: Linhas de itens encontradas:', rows.length);
+    
+    rows.forEach((row, index) => {
+        const productSelect = row.querySelector('select[name="product"]');
+        const quantityInput = row.querySelector('input[name="quantity"]');
+        const priceInput = row.querySelector('input[name="price"]');
         
-        if (product && quantity > 0 && price > 0) {
-            items.push({
-                product_id: product,
-                quantity: quantity,
-                unit_price: price,
-                total: quantity * price
-            });
+        console.log(`🔧 DEBUG: Item ${index}:`, {
+            productSelect: !!productSelect,
+            quantityInput: !!quantityInput,
+            priceInput: !!priceInput
+        });
+        
+        if (productSelect && quantityInput && priceInput) {
+            const product = productSelect.value;
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            
+            console.log(`🔧 DEBUG: Item ${index} valores:`, { product, quantity, price });
+            
+            if (product && quantity > 0 && price > 0) {
+                items.push({
+                    product_id: product,
+                    quantity: quantity,
+                    unit_price: price,
+                    total: quantity * price
+                });
+            }
         }
     });
     
     orderData.items = items;
     
+    console.log('🔧 DEBUG: Items coletados:', items);
+    
     // Validate required fields
     if (!orderData.supplier_id || !orderData.date) {
+        console.log('🔧 DEBUG: Validação falhou - campos obrigatórios');
         showToast('Erro', 'Por favor, preencha todos os campos obrigatórios.', 'error');
         return;
     }
     
     if (items.length === 0) {
+        console.log('🔧 DEBUG: Validação falhou - nenhum item');
         showToast('Erro', 'Por favor, adicione pelo menos um item ao pedido.', 'error');
         return;
     }
+    
+    console.log('🔧 DEBUG: Validação passou, prosseguindo com salvamento');
     
     // Show loading state
     const saveBtn = document.querySelector('#orderModal .btn-primary');
@@ -364,6 +527,8 @@ function saveOrder() {
     const url = isUpdate ? `/api/orders/${orderId}` : '/api/orders';
     const method = isUpdate ? 'PUT' : 'POST';
     
+    console.log('🔧 DEBUG: Fazendo requisição:', { url, method, orderData });
+    
     // Make API call
     fetch(url, {
         method: method,
@@ -373,8 +538,13 @@ function saveOrder() {
         body: JSON.stringify(orderData)
     })
     .then(response => {
+        console.log('🔧 DEBUG: Resposta recebida:', response.status, response.statusText);
+        
         if (!response.ok) {
-            return response.json().then(err => Promise.reject(err));
+            return response.json().then(err => {
+                console.log('🔧 DEBUG: Erro na resposta:', err);
+                return Promise.reject(err);
+            });
         }
         return response.json();
     })
@@ -480,6 +650,28 @@ function addOrderItem() {
     
     tbody.appendChild(newRow);
     
+    // Load products for this new row
+    const productSelect = newRow.querySelector('select[name="product"]');
+    if (window.availableProducts && window.availableProducts.length > 0) {
+        window.availableProducts.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = `${product.name} - R$ ${product.price}`;
+            option.dataset.price = product.price;
+            productSelect.appendChild(option);
+        });
+    }
+    
+    // Add event listener for product selection to auto-fill price
+    productSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.dataset.price) {
+            const priceInput = newRow.querySelector('input[name="price"]');
+            priceInput.value = selectedOption.dataset.price;
+            calculateItemTotal({ target: priceInput });
+        }
+    });
+    
     // Add event listeners for calculation
     const quantityInput = newRow.querySelector('input[name="quantity"]');
     const priceInput = newRow.querySelector('input[name="price"]');
@@ -524,5 +716,169 @@ function calculateOrderTotal() {
     const totalElement = document.getElementById('orderTotal');
     if (totalElement) {
         totalElement.textContent = `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+}
+
+// Load suppliers for the modal
+function loadSuppliersForModal() {
+    console.log('🔧 DEBUG: Carregando fornecedores para o modal');
+    
+    fetch('/api/suppliers')
+        .then(response => response.json())
+        .then(suppliers => {
+            console.log('🔧 DEBUG: Fornecedores carregados:', suppliers.length);
+            const supplierSelect = document.getElementById('orderSupplier');
+            if (supplierSelect) {
+                supplierSelect.innerHTML = '<option value="">Selecione um fornecedor</option>';
+                suppliers.forEach(supplier => {
+                    const option = document.createElement('option');
+                    option.value = supplier.id;
+                    option.textContent = supplier.name;
+                    supplierSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('🔧 DEBUG: Erro ao carregar fornecedores:', error);
+        });
+}
+
+// Load products for the modal
+function loadProductsForModal() {
+    console.log('🔧 DEBUG: Carregando produtos para o modal');
+    
+    fetch('/api/products')
+        .then(response => response.json())
+        .then(products => {
+            console.log('🔧 DEBUG: Produtos carregados:', products.length);
+            // Store products globally for use in order items
+            window.availableProducts = products;
+            
+            // Update any existing product selects in order items
+            const productSelects = document.querySelectorAll('#orderItems select[name="product"]');
+            productSelects.forEach(select => {
+                select.innerHTML = '<option value="">Selecione um produto</option>';
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = `${product.name} - R$ ${product.price}`;
+                    option.dataset.price = product.price;
+                    select.appendChild(option);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('🔧 DEBUG: Erro ao carregar produtos:', error);
+        });
+}
+
+// Populate order items in the table
+function populateOrderItems(items) {
+    console.log('🔧 DEBUG: Populando itens do pedido:', items);
+    
+    const orderItemsContainer = document.getElementById('orderItems');
+    if (!orderItemsContainer) {
+        console.error('🔧 DEBUG: Container de itens não encontrado');
+        return;
+    }
+    
+    // Clear existing items
+    orderItemsContainer.innerHTML = '';
+    
+    if (!items || items.length === 0) {
+        console.log('🔧 DEBUG: Nenhum item para popular, adicionando linha vazia');
+        addOrderItem();
+        return;
+    }
+    
+    items.forEach((item, index) => {
+        console.log(`🔧 DEBUG: Populando item ${index + 1}:`, item);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <select class="form-control" name="product" required>
+                    <option value="">Selecione um produto</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" name="quantity" min="1" value="${item.quantity || 1}" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" name="price" step="0.01" min="0" value="${item.unit_price || 0}" required>
+            </td>
+            <td>
+                <span class="item-total">R$ ${(item.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeOrderItem(this)">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3,6 5,6 21,6"/>
+                        <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2,2h4a2,2,0,0,1,2,2V6"/>
+                        <line x1="10" y1="11" x2="10" y2="17"/>
+                        <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                </button>
+            </td>
+        `;
+        
+        orderItemsContainer.appendChild(row);
+        
+        // Populate product select with available products
+        const productSelect = row.querySelector('select[name="product"]');
+        if (window.availableProducts && productSelect) {
+            window.availableProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} - R$ ${product.price}`;
+                option.dataset.price = product.price;
+                
+                // Select the current product
+                if (product.id == item.product_id) {
+                    option.selected = true;
+                }
+                
+                productSelect.appendChild(option);
+            });
+        }
+        
+        // Add event listeners for calculations
+        const quantityInput = row.querySelector('input[name="quantity"]');
+        const priceInput = row.querySelector('input[name="price"]');
+        
+        [quantityInput, priceInput].forEach(input => {
+            if (input) {
+                input.addEventListener('input', () => {
+                    updateItemTotal(row);
+                    calculateOrderTotal();
+                });
+            }
+        });
+        
+        if (productSelect) {
+            productSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption && selectedOption.dataset.price) {
+                    priceInput.value = selectedOption.dataset.price;
+                    updateItemTotal(row);
+                    calculateOrderTotal();
+                }
+            });
+        }
+    });
+    
+    // Recalculate total
+    calculateOrderTotal();
+}
+
+// Update individual item total
+function updateItemTotal(row) {
+    const quantity = parseFloat(row.querySelector('input[name="quantity"]').value) || 0;
+    const price = parseFloat(row.querySelector('input[name="price"]').value) || 0;
+    const total = quantity * price;
+    
+    const totalSpan = row.querySelector('.item-total');
+    if (totalSpan) {
+        totalSpan.textContent = `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 }

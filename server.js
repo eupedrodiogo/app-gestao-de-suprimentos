@@ -165,6 +165,13 @@ app.post('/api/test', (req, res) => {
     res.json({ success: true, message: 'Rota de teste funcionando', data: req.body });
 });
 
+// Rota de teste para orders sem middleware
+app.post('/api/orders-test', async (req, res) => {
+    console.log('📦 Rota de teste /api/orders-test chamada');
+    console.log('📋 Body recebido:', req.body);
+    res.json({ success: true, message: 'Rota de teste funcionando', body: req.body });
+});
+
 app.post('/api/products', 
     rateLimiters.create,
     ValidationMiddleware.validateProduct,
@@ -355,6 +362,18 @@ app.post('/api/orders',
         try {
             const orderId = await OrderController.create(db, req.body);
             res.status(201).json({ success: true, data: { id: orderId } });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+);
+
+app.put('/api/orders/:id', 
+    ValidationMiddleware.validateOrder,
+    async (req, res) => {
+        try {
+            await OrderController.update(db, req.params.id, req.body);
+            res.json({ success: true, message: 'Order updated successfully' });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }

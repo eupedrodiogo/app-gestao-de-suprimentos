@@ -296,6 +296,103 @@ app.get('/api/orders/count', async (req, res) => {
     }
 });
 
+// Criar pedido
+app.post('/api/orders', async (req, res) => {
+    try {
+        console.log('📦 Recebida requisição POST /api/orders');
+        console.log('📋 Dados recebidos:', req.body);
+        
+        await db.ensureConnection();
+        
+        // Transformar os dados para o formato esperado pelo OrderController
+        const orderData = {
+            supplier_id: parseInt(req.body.supplier_id),
+            delivery_date: req.body.delivery_date,
+            items: req.body.items.map(item => ({
+                product_id: parseInt(item.product_id),
+                quantity: parseInt(item.quantity),
+                unit_price: parseFloat(item.unit_price)
+            })),
+            notes: req.body.notes || '',
+            status: req.body.status || 'pendente'
+        };
+        
+        // Criar pedido usando o método estático
+        const orderId = await OrderController.create(db, orderData);
+        console.log('📝 Pedido criado com ID:', orderId);
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Pedido criado com sucesso',
+            orderId: orderId
+        });
+        
+    } catch (error) {
+        console.error('❌ Erro ao criar pedido:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor',
+            error: error.message 
+        });
+    }
+});
+
+// Buscar pedido específico por ID
+app.get('/api/orders/:id', async (req, res) => {
+    try {
+        console.log('🔧 DEBUG: Buscando pedido ID:', req.params.id);
+        await db.ensureConnection();
+        console.log('🔧 DEBUG: Conexão com banco estabelecida');
+        
+        const order = await OrderController.getById(db, req.params.id);
+        console.log('🔧 DEBUG: Resultado da consulta:', order);
+        
+        if (!order) {
+            console.log('🔧 DEBUG: Pedido não encontrado para ID:', req.params.id);
+            return res.status(404).json({ success: false, message: 'Pedido não encontrado' });
+        }
+        
+        console.log('🔧 DEBUG: Pedido encontrado, enviando resposta');
+        res.json({ success: true, data: order });
+    } catch (error) {
+        console.error('❌ Erro ao buscar pedido:', error);
+        res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+    }
+});
+
+// Atualizar pedido
+app.put('/api/orders/:id', async (req, res) => {
+    try {
+        await db.ensureConnection();
+        
+        // Transformar dados da requisição para o formato esperado pelo OrderController
+        const orderData = {
+            supplier_id: req.body.supplier_id,
+            status: req.body.status || 'Pendente',
+            priority: req.body.priority || 'Média',
+            observations: req.body.observations || '',
+            items: req.body.items || []
+        };
+
+        console.log('📝 Atualizando pedido ID:', req.params.id, 'com dados:', orderData);
+        
+        await OrderController.update(db, req.params.id, orderData);
+        
+        res.json({ 
+            success: true, 
+            message: 'Pedido atualizado com sucesso'
+        });
+        
+    } catch (error) {
+        console.error('❌ Erro ao atualizar pedido:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor',
+            error: error.message 
+        });
+    }
+});
+
 // Dashboard stats
 app.get('/api/dashboard/stats', async (req, res) => {
     try {
