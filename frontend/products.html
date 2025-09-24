@@ -49,11 +49,27 @@
             font-size: 1.25rem;
             font-weight: 600;
             transition: opacity 0.3s ease;
+            /* Melhorias para dispositivos móveis */
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0.5rem;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
         }
         
         .nav-brand .brand-link:hover {
             opacity: 0.9;
             color: white;
+        }
+        
+        /* Touch feedback para mobile */
+        @media (max-width: 768px) {
+            .nav-brand .brand-link:active {
+                transform: scale(0.95);
+                opacity: 0.7;
+                transition: all 0.1s ease;
+            }
         }
         
         .nav-brand i {
