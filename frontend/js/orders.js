@@ -54,7 +54,7 @@ function loadOrders() {
             console.log('Pedidos carregados:', data);
             hideLoadingState();
             // Extract the orders array from the API response
-            const orders = data.data || [];
+            const orders = data.orders || data || [];
             displayOrders(orders);
         })
         .catch(error => {

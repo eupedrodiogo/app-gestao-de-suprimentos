@@ -65,7 +65,7 @@ function loadQuotes() {
             console.log('Cotações carregadas:', data);
             hideLoadingState();
             // Extract the quotes array from the API response
-            const quotes = data.data || [];
+            const quotes = data.quotes || data || [];
             displayQuotes(quotes);
         })
         .catch(error => {

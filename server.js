@@ -160,6 +160,11 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
+// Rota de teste temporária
+app.post('/api/test', (req, res) => {
+    res.json({ success: true, message: 'Rota de teste funcionando', data: req.body });
+});
+
 app.post('/api/products', 
     rateLimiters.create,
     ValidationMiddleware.validateProduct,

@@ -181,6 +181,41 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+// Criar produto
+app.post('/api/products', async (req, res) => {
+    try {
+        console.log('📦 Recebida requisição POST /api/products');
+        console.log('📋 Dados recebidos:', req.body);
+        
+        await db.ensureConnection();
+        
+        const { name, price, category, description, unit, initial_stock, minimum_stock } = req.body;
+        
+        // Validação básica
+        if (!name || !price || !category) {
+            console.log('❌ Validação falhou: campos obrigatórios ausentes');
+            return res.status(400).json({
+                success: false,
+                message: 'Nome, preço e categoria são obrigatórios'
+            });
+        }
+        
+        console.log('✅ Validação passou, chamando controller...');
+        
+        // Criar produto usando o controller
+        const result = await productController.createProduct(req, res);
+        console.log('📝 Resultado do controller:', result);
+        
+    } catch (error) {
+        console.error('❌ Erro ao criar produto:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor',
+            error: error.message 
+        });
+    }
+});
+
 app.get('/api/products/count', async (req, res) => {
     try {
         await db.ensureConnection();

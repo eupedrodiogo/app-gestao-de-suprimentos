@@ -42,7 +42,7 @@ function loadProducts() {
             console.log('Produtos carregados:', data);
             hideLoadingState();
             // Extract the products array from the API response
-            const products = data.data || [];
+            const products = Array.isArray(data) ? data : (data.products || data.data || []);
             displayProducts(products);
         })
   .catch(error => {

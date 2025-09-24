@@ -379,7 +379,7 @@ function initializeDashboard() {
     
     // Initialize other dashboard components
     checkSystemHealth();
-    loadRecentSuppliers();
+    loadOrdersData();
 }
 
 
@@ -398,7 +398,7 @@ function loadDashboardData() {
         loadKPIData(),
         loadChartData(),
         loadAlertData(),
-        loadRecentSuppliers()
+        loadOrdersData()
     ]).then(() => {
         console.log('Dados do dashboard carregados com sucesso');
     }).catch(error => {
@@ -1033,79 +1033,216 @@ function openNewSupplierModal() {
     modal.show();
 }
 
-// Função para carregar fornecedores recentes
-async function loadRecentSuppliers() {
+// Variável global para armazenar o período atual
+let currentPeriod = 7;
+
+// Função para filtrar pedidos por período
+function filterOrdersByPeriod(days) {
+    currentPeriod = days;
+    
+    // Atualizar botões ativos
+    document.querySelectorAll('.btn-group button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById(`filter-${days}d`).classList.add('active');
+    
+    // Recarregar dados
+    loadOrdersData();
+}
+
+// Função para mostrar modal de data personalizada
+function showCustomDateModal() {
+    const modal = new bootstrap.Modal(document.getElementById('customDateModal'));
+    
+    // Definir datas padrão (últimos 30 dias)
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30);
+    
+    document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+    document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+    
+    modal.show();
+}
+
+// Função para aplicar filtro de data personalizada
+function applyCustomDateFilter() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    if (!startDate || !endDate) {
+        showToast('Por favor, selecione ambas as datas', 'error');
+        return;
+    }
+    
+    if (new Date(startDate) > new Date(endDate)) {
+        showToast('A data inicial deve ser anterior à data final', 'error');
+        return;
+    }
+    
+    // Atualizar botões ativos
+    document.querySelectorAll('.btn-group button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById('filter-custom').classList.add('active');
+    
+    // Definir período personalizado
+    currentPeriod = 'custom';
+    
+    // Fechar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('customDateModal'));
+    modal.hide();
+    
+    // Recarregar dados
+    loadOrdersData(startDate, endDate);
+}
+
+// Função para carregar dados dos pedidos
+async function loadOrdersData(startDate = null, endDate = null) {
     try {
-        const response = await fetch('/api/suppliers?limit=5');
+        const response = await fetch('/api/orders');
         
         if (response.ok) {
-            const data = await response.json();
-            const suppliers = data.success ? data.data : data.data || [];
-            displayRecentSuppliers(suppliers);
-        } else {
-            log.error({
-                message: `Erro ao carregar fornecedores: ${response.statusText}`,
-                component: 'dashboard-suppliers-load'
+            const orders = await response.json();
+            console.log('Pedidos carregados:', orders);
+            
+            // Filtrar pedidos por período se especificado
+            let filteredOrders = orders;
+            
+            if (currentPeriod === 'custom' && startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                filteredOrders = orders.filter(order => {
+                    const orderDate = new Date(order.order_date || order.created_at);
+                    return orderDate >= start && orderDate <= end;
+                });
+            } else if (typeof currentPeriod === 'number') {
+                const cutoffDate = new Date();
+                cutoffDate.setDate(cutoffDate.getDate() - currentPeriod);
+                filteredOrders = orders.filter(order => {
+                    const orderDate = new Date(order.order_date || order.created_at);
+                    return orderDate >= cutoffDate;
+                });
+            }
+            
+            // Processar dados para estatísticas de status
+            const statusCounts = {
+                pending: 0,
+                processing: 0,
+                shipped: 0,
+                completed: 0
+            };
+            
+            filteredOrders.forEach(order => {
+                const status = order.status?.toLowerCase();
+                if (status === 'pendente' || status === 'pending') {
+                    statusCounts.pending++;
+                } else if (status === 'processando' || status === 'processing' || status === 'em processamento') {
+                    statusCounts.processing++;
+                } else if (status === 'enviado' || status === 'shipped') {
+                    statusCounts.shipped++;
+                } else if (status === 'concluido' || status === 'completed' || status === 'entregue') {
+                    statusCounts.completed++;
+                }
             });
-            displayRecentSuppliers([]);
+            
+            updateOrdersStatus(statusCounts);
+            displayRecentOrders(filteredOrders.slice(0, 5)); // Mostrar apenas os 5 mais recentes
+        } else {
+            console.error('Erro ao carregar dados dos pedidos:', response.statusText);
+            updateOrdersStatus({});
+            displayRecentOrders([]);
         }
     } catch (error) {
-        console.error('Erro ao carregar fornecedores recentes:', {
-            message: error.message,
-            stack: error.stack,
-            component: 'dashboard-suppliers-load'
-        });
-        displayRecentSuppliers([]);
+        console.error('Erro ao carregar dados dos pedidos:', error);
+        updateOrdersStatus({});
+        displayRecentOrders([]);
     }
 }
 
-// Função para exibir fornecedores recentes
-function displayRecentSuppliers(suppliers) {
-    const container = document.getElementById('recent-suppliers-list');
+// Função para atualizar os cards de status dos pedidos
+function updateOrdersStatus(status) {
+    document.getElementById('pending-orders').textContent = status.pending || 0;
+    document.getElementById('processing-orders').textContent = status.processing || 0;
+    document.getElementById('shipped-orders').textContent = status.shipped || 0;
+    document.getElementById('completed-orders').textContent = status.completed || 0;
+}
+
+// Função para exibir pedidos recentes
+function displayRecentOrders(orders) {
+    const container = document.getElementById('recent-orders-list');
     
-    if (!suppliers || suppliers.length === 0) {
+    if (!orders || orders.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted py-3">
-                🏢
-                <p class="mb-0">Nenhum fornecedor cadastrado ainda.</p>
-                <button class="btn btn-sm btn-primary mt-2" onclick="openNewSupplierModal()">
-                    ➕ Adicionar Primeiro Fornecedor
-                </button>
+                📦
+                <p class="mb-0">Nenhum pedido encontrado no período selecionado.</p>
+                <a href="orders.html" class="btn btn-sm btn-primary mt-2">
+                    ➕ Criar Novo Pedido
+                </a>
             </div>
         `;
         return;
     }
     
-    const suppliersHtml = suppliers.map(supplier => `
-        <div class="row align-items-center py-2 border-bottom">
-            <div class="col-md-4">
-                <div class="d-flex align-items-center">
-                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                        🏢
-                    </div>
-                    <div>
-                        <h6 class="mb-0">${supplier.name || 'Nome não informado'}</h6>
-                        <small class="text-muted">${supplier.cnpj || 'CNPJ não informado'}</small>
+    const ordersHtml = orders.map(order => {
+        const statusConfig = getOrderStatusConfig(order.status);
+        const orderDate = new Date(order.created_at || order.date).toLocaleDateString('pt-BR');
+        
+        return `
+            <div class="row align-items-center py-2 border-bottom">
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            📦
+                        </div>
+                        <div>
+                            <h6 class="mb-0">#${order.id || order.order_number}</h6>
+                            <small class="text-muted">${orderDate}</small>
+                        </div>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <small class="text-muted">Fornecedor:</small><br>
+                    <span>${order.supplier_name || 'Não informado'}</span>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted">Total:</small><br>
+                    <span class="fw-bold">R$ ${(order.total || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                </div>
+                <div class="col-md-2">
+                    <span class="badge ${statusConfig.class}">
+                        ${statusConfig.text}
+                    </span>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewOrder(${order.id})">
+                        Ver Detalhes
+                    </button>
+                </div>
             </div>
-            <div class="col-md-3">
-                <small class="text-muted">Contato:</small><br>
-                <span>${supplier.contact_name || supplier.contact || 'Não informado'}</span>
-            </div>
-            <div class="col-md-3">
-                <small class="text-muted">Email:</small><br>
-                <span>${supplier.email || 'Não informado'}</span>
-            </div>
-            <div class="col-md-2 text-end">
-                <span class="badge ${supplier.status === 'ativo' ? 'bg-success' : 'bg-secondary'}">
-                    ${supplier.status || 'ativo'}
-                </span>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
     
-    container.innerHTML = suppliersHtml;
+    container.innerHTML = ordersHtml;
+}
+
+// Função para obter configuração de status do pedido
+function getOrderStatusConfig(status) {
+    const configs = {
+        'pending': { class: 'bg-warning', text: 'Pendente' },
+        'processing': { class: 'bg-info', text: 'Em Processamento' },
+        'shipped': { class: 'bg-primary', text: 'Enviado' },
+        'completed': { class: 'bg-success', text: 'Concluído' },
+        'cancelled': { class: 'bg-danger', text: 'Cancelado' }
+    };
+    
+    return configs[status] || { class: 'bg-secondary', text: 'Desconhecido' };
+}
+
+// Função para visualizar detalhes do pedido
+function viewOrder(orderId) {
+    window.location.href = `orders.html?id=${orderId}`;
 }
 
 // Função para salvar fornecedor
@@ -1161,8 +1298,8 @@ async function saveSupplier() {
             // Mostrar toast de sucesso
             showToast('Fornecedor adicionado com sucesso!', 'success');
             
-            // Recarregar fornecedores recentes
-            loadRecentSuppliers();
+            // Recarregar dados dos pedidos
+            loadOrdersData();
             
             // Limpar formulário
             form.reset();

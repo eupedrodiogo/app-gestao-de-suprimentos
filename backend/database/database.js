@@ -404,7 +404,11 @@ class Database {
     }
 
     async listarCotacoes() {
-        return await this.query('SELECT * FROM quotes ORDER BY request_date DESC');
+        const sql = `SELECT q.*, s.name as supplier_name 
+                     FROM quotes q 
+                     LEFT JOIN suppliers s ON q.supplier_id = s.id 
+                     ORDER BY q.request_date DESC`;
+        return await this.query(sql);
     }
 
     // Métodos específicos para pedidos
