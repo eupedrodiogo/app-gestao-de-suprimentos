@@ -145,6 +145,30 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Database health check
+app.get('/api/health/database', async (req, res) => {
+    try {
+        await db.ensureConnection();
+        // Teste simples de consulta para verificar se o BD está funcionando
+        const testQuery = await db.listarProdutos();
+        res.json({
+            status: 'OK',
+            database: 'connected',
+            timestamp: new Date().toISOString(),
+            message: 'Database connection successful'
+        });
+    } catch (error) {
+        console.error('Database health check failed:', error);
+        res.status(500).json({
+            status: 'ERROR',
+            database: 'disconnected',
+            timestamp: new Date().toISOString(),
+            message: 'Database connection failed',
+            error: error.message
+        });
+    }
+});
+
 // Produtos
 app.get('/api/products', async (req, res) => {
     try {
@@ -291,11 +315,9 @@ app.get('/desktop', (req, res) => {
 });
 
 app.get('/dashboard', (req, res) => {
-    if (req.device.isMobile || req.device.isTablet) {
-        res.sendFile(path.join(__dirname, 'frontend', 'mobile-universal.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
-    }
+    console.log(`[${new Date().toISOString()}] Acesso ao dashboard - Device: ${req.device.type}`);
+    // Dashboard sempre serve dashboard.html independente do dispositivo
+    res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
 });
 
 app.get('/products', (req, res) => {
