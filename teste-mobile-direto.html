@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Mobile - Gestão de Suprimentos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .test-button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        .urls {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .urls h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .url-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .url-item strong {
+            color: #495057;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .url-item a {
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .instructions {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            color: #0c5460;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            color: #0c5460;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Teste Mobile</h1>
+            <p>Gestão de Suprimentos</p>
+        </div>
+        
+        <div id="connection-status" class="status warning">
+            📡 Testando conectividade...
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Testes de API:</h3>
+            <button class="test-button" onclick="testConnection()">🔍 Testar Conexão</button>
+            <button class="test-button" onclick="testAPI('/api/health')">❤️ Health Check</button>
+            <button class="test-button" onclick="testAPI('/api/produtos')">📦 Produtos</button>
+            <button class="test-button" onclick="testAPI('/api/dashboard')">📊 Dashboard</button>
+        </div>
+        
+        <div id="results"></div>
+        
+        <div class="urls">
+            <h3>🔗 URLs de Acesso</h3>
+            <div class="url-item">
+                <strong>🏠 Local:</strong>
+                <a href="http://localhost:4000/test" target="_blank">http://localhost:4000/test</a>
+            </div>
+            <div class="url-item">
+                <strong>📱 Mobile:</strong>
+                <a href="http://192.168.1.6:4000/test" target="_blank">http://192.168.1.6:4000/test</a>
+            </div>
+            <div class="url-item">
+                <strong>🌐 App Principal:</strong>
+                <a href="http://192.168.1.6:4000" target="_blank">http://192.168.1.6:4000</a>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instruções:</h3>
+            <ol>
+                <li>Conecte seu celular na mesma rede Wi-Fi</li>
+                <li>Abra este arquivo no navegador do celular</li>
+                <li>Clique em "Testar Conexão" primeiro</li>
+                <li>Se funcionar, teste as outras APIs</li>
+                <li>Se não funcionar, execute o arquivo <strong>firewall-porta-4000.bat</strong> como administrador</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        const baseURL = 'http://192.168.1.6:4000';
+        
+        async function testConnection() {
+            const statusDiv = document.getElementById('connection-status');
+            const resultsDiv = document.getElementById('results');
+            
+            statusDiv.innerHTML = '🔄 Testando conexão...';
+            statusDiv.className = 'status warning';
+            
+            try {
+                const response = await fetch(baseURL + '/api/health', {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '✅ Conexão estabelecida com sucesso!';
+                    statusDiv.className = 'status success';
+                    
+                    const data = await response.json();
+                    resultsDiv.innerHTML = '<div class="result"><strong>✅ Servidor Online:</strong><br>' + JSON.stringify(data, null, 2) + '</div>';
+                } else {
+                    throw new Error('Resposta não OK: ' + response.status);
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Falha na conexão - Verifique firewall';
+                statusDiv.className = 'status error';
+                
+                resultsDiv.innerHTML = '<div class="result" style="border-left-color: #dc3545;"><strong>❌ Erro de Conexão:</strong><br>' + error.message + '<br><br><strong>Soluções:</strong><br>1. Execute firewall-porta-4000.bat como administrador<br>2. Verifique se está na mesma rede Wi-Fi<br>3. Tente http://192.168.1.6:4000/test diretamente</div>';
+            }
+        }
+        
+        async function testAPI(endpoint) {
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                const response = await fetch(baseURL + endpoint);
+                const data = await response.json();
+                
+                resultsDiv.innerHTML += '<div class="result"><strong>✅ ' + endpoint + ':</strong><br>' + JSON.stringify(data, null, 2) + '</div>';
+            } catch (error) {
+                resultsDiv.innerHTML += '<div class="result" style="border-left-color: #dc3545;"><strong>❌ ' + endpoint + ':</strong><br>Erro: ' + error.message + '</div>';
+            }
+        }
+        
+        // Teste automático ao carregar a página
+        window.onload = function() {
+            setTimeout(testConnection, 1000);
+        };
+    </script>
+</body>
+</html>

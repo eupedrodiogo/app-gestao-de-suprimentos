@@ -37,7 +37,7 @@ function loadSuppliers() {
     tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando fornecedores...</td></tr>';
     
     // Fazer requisição para API
-    fetch('/api/suppliers')
+    fetch('/api/fornecedores')
         .then(response => {
             console.log('Response status:', response.status);
             console.log('Response ok:', response.ok);
@@ -69,15 +69,15 @@ function loadSuppliers() {
                 return;
             }
             
-            // Exibir dados simples
+            // Exibir dados usando nomes corretos das propriedades em português
             let html = '';
             suppliers.forEach(supplier => {
                 html += `
                     <tr>
                         <td>${supplier.id || 'N/A'}</td>
-                        <td>${supplier.name || 'N/A'}</td>
+                        <td>${supplier.nome || 'N/A'}</td>
                         <td>${supplier.cnpj || 'N/A'}</td>
-                        <td>${supplier.contact_name || 'N/A'}</td>
+                        <td>${supplier.contato || 'N/A'}</td>
                         <td>${supplier.email || 'N/A'}</td>
                         <td>
                             <span class="badge ${supplier.status === 'ativo' ? 'bg-success' : 'bg-secondary'}">
@@ -107,7 +107,7 @@ function editSupplier(id) {
     console.log('Editando fornecedor ID:', id);
     
     // Buscar dados do fornecedor
-    fetch(`http://localhost:3000/api/suppliers/${id}`)
+    fetch(`/api/fornecedores/${id}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.data) {
@@ -172,7 +172,7 @@ function saveSupplier() {
     };
 
     const isEdit = id && id !== '';
-    const url = isEdit ? `http://localhost:3000/api/suppliers/${id}` : 'http://localhost:3000/api/suppliers';
+    const url = isEdit ? `/api/fornecedores/${id}` : '/api/fornecedores';
     const method = isEdit ? 'PUT' : 'POST';
 
     fetch(url, {
@@ -218,7 +218,7 @@ function deleteSupplier(id) {
     console.log('Excluindo fornecedor ID:', id);
     
     if (confirm('Tem certeza que deseja excluir este fornecedor?')) {
-        fetch(`http://localhost:3000/api/suppliers/${id}`, {
+        fetch(`/api/fornecedores/${id}`, {
             method: 'DELETE'
         })
         .then(response => response.json())

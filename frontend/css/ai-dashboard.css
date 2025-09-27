@@ -355,8 +355,18 @@
 }
 
 .insight-icon {
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: #667eea;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.insight-icon svg {
+    width: 20px;
+    height: 20px;
 }
 
 .insight-content h6 {

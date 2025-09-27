@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Conexão Mobile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .status {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0,255,0,0.3);
+        }
+        .info {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 CONEXÃO MOBILE OK!</h1>
+        
+        <div class="status">
+            ✅ Servidor Funcionando
+        </div>
+        
+        <div class="info">
+            <strong>IP:</strong> <span id="ip">Carregando...</span>
+        </div>
+        
+        <div class="info">
+            <strong>Hora:</strong> <span id="time">Carregando...</span>
+        </div>
+        
+        <div class="info">
+            <strong>User Agent:</strong> <span id="userAgent">Carregando...</span>
+        </div>
+        
+        <button onclick="window.location.href='/'">
+            🏠 Ir para Dashboard
+        </button>
+        
+        <button onclick="testAPI()">
+            🔄 Testar API
+        </button>
+        
+        <div id="apiResult" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        // Atualizar informações
+        document.getElementById('time').textContent = new Date().toLocaleString('pt-BR');
+        document.getElementById('userAgent').textContent = navigator.userAgent.substring(0, 50) + '...';
+        
+        // Detectar IP
+        fetch('/api/test')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip').textContent = window.location.hostname;
+            })
+            .catch(error => {
+                document.getElementById('ip').textContent = window.location.hostname;
+            });
+        
+        function testAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<div style="color: yellow;">Testando API...</div>';
+            
+            fetch('/api/test')
+                .then(response => response.json())
+                .then(data => {
+                    resultDiv.innerHTML = '<div style="color: lightgreen;">✅ API OK: ' + JSON.stringify(data) + '</div>';
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '<div style="color: lightcoral;">❌ API Error: ' + error.message + '</div>';
+                });
+        }
+    </script>
+</body>
+</html>

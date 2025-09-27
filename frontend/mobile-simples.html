@@ -30,8 +30,16 @@
         }
 
         .logo {
-            font-size: 4rem;
             margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.3));
         }
 
         .title {
@@ -134,9 +142,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🚀</div>
-            <div class="title">Mobile Dashboard</div>
-            <div class="subtitle">Gestão de Suprimentos</div>
+            <div class="logo">
+                <img src="assets/logo.svg" alt="PD - Análise Estratégica de Dados" />
+            </div>
+            <div class="title">PD Analytics</div>
+            <div class="subtitle">Análise Estratégica de Dados</div>
         </div>
 
         <div class="card">

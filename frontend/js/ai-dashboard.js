@@ -65,7 +65,7 @@ class AIDashboard {
 
     async loadProducts() {
         try {
-            const response = await fetch('/api/products');
+            const response = await fetch('/api/produtos');
             const products = await response.json();
             
             const select = document.getElementById('productSelect');

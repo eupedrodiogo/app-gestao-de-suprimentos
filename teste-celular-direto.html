@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESTE DIRETO - CELULAR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .success {
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .info {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .timestamp {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFE066;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success">🎉</div>
+        <h1>CONECTIVIDADE OK!</h1>
+        
+        <div class="info">
+            <div class="status-indicator"></div>
+            <strong>SERVIDOR FUNCIONANDO</strong>
+        </div>
+        
+        <div class="timestamp" id="timestamp"></div>
+        
+        <div class="info">
+            <strong>Porta:</strong> 9000<br>
+            <strong>IP:</strong> 192.168.1.6<br>
+            <strong>Wi-Fi:</strong> Multilaser 5G
+        </div>
+        
+        <a href="/mobile" class="btn">📱 Dashboard</a>
+        <a href="/api/test" class="btn">🔧 API</a>
+        
+        <div class="test-results" id="testResults">
+            <strong>Testando conectividade...</strong>
+        </div>
+    </div>
+    
+    <script>
+        // Atualizar timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = 
+                now.toLocaleString('pt-BR');
+        }
+        
+        // Testar API
+        function testAPI() {
+            const results = document.getElementById('testResults');
+            results.innerHTML = '<strong>Testando API...</strong>';
+            
+            fetch('/api/test')
+                .then(response => response.json())
+                .then(data => {
+                    results.innerHTML = `
+                        <strong>✅ API FUNCIONANDO!</strong><br>
+                        <small>Resposta: ${data.message}</small>
+                    `;
+                })
+                .catch(error => {
+                    results.innerHTML = `
+                        <strong>❌ Erro na API:</strong><br>
+                        <small>${error.message}</small>
+                    `;
+                });
+        }
+        
+        // Inicializar
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        setTimeout(testAPI, 2000);
+        
+        // Informações do dispositivo
+        setTimeout(() => {
+            const info = document.querySelector('.info:last-of-type');
+            info.innerHTML += `<br><strong>User Agent:</strong><br><small>${navigator.userAgent}</small>`;
+        }, 1000);
+    </script>
+</body>
+</html>

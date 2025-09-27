@@ -144,7 +144,7 @@ class NotificationSystem {
             this.updateUI();
             this.updateSummary(data.summary);
         } catch (error) {
-            console.error('Erro ao carregar notificações:', error);
+            console.error('❌ Erro ao carregar notificações:', error);
         }
     }
 
@@ -186,7 +186,7 @@ class NotificationSystem {
 
         const notificationsHTML = this.notifications.map(notification => {
             const icon = this.getNotificationIcon(notification.type, notification.severity);
-            const timeAgo = this.formatTimeAgo(notification.created_at);
+            const timeAgo = this.formatTimeAgo(notification.createdAt);
             const actionLink = this.getActionLink(notification.type);
 
             return `
@@ -232,7 +232,7 @@ class NotificationSystem {
             const count = summary[severity] || 0;
             
             if (count > 0) {
-                element.textContent = element.querySelector('i').outerHTML + ` ${count}`;
+                element.innerHTML = element.querySelector('i').outerHTML + ` ${count}`;
                 element.style.display = 'inline-flex';
             } else {
                 element.style.display = 'none';
@@ -275,6 +275,12 @@ class NotificationSystem {
     formatTimeAgo(dateString) {
         const now = new Date();
         const date = new Date(dateString);
+        
+        // Verifica se a data é válida
+        if (isNaN(date.getTime())) {
+            return 'Data inválida';
+        }
+        
         const diffInSeconds = Math.floor((now - date) / 1000);
 
         if (diffInSeconds < 60) {
@@ -385,10 +391,19 @@ class NotificationSystem {
 document.addEventListener('DOMContentLoaded', () => {
     // Verifica se estamos em uma página que deve ter notificações
     const pagesWithNotifications = ['index.html', 'dashboard.html', 'products.html', 'orders.html', 'quotes.html', 'suppliers.html'];
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    let currentPage = window.location.pathname.split('/').pop() || 'index.html';
     
-    if (pagesWithNotifications.includes(currentPage)) {
-        window.notificationSystem = new NotificationSystem();
+    // Se a página atual está vazia (página raiz), considera como index.html
+    if (currentPage === '' || currentPage === '/') {
+        currentPage = 'index.html';
+    }
+    
+    if (pagesWithNotifications.includes(currentPage) || window.location.pathname === '/' || window.location.pathname === '') {
+        try {
+            window.notificationSystem = new NotificationSystem();
+        } catch (error) {
+            console.error('❌ Erro ao inicializar sistema de notificações:', error);
+        }
     }
 });
 

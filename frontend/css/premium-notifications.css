@@ -35,31 +35,36 @@
     top: 80px;
     right: 20px;
     width: 380px;
-    max-height: calc(100vh - 100px);
-    z-index: 1050;
-    pointer-events: none;
+    max-height: calc(100vh - 120px);
+    z-index: 99998;
+    pointer-events: all;
 }
 
+/* Container sempre ativo para interação */
 .notifications-container.active {
     pointer-events: all;
 }
 
 /* Botão de toggle das notificações */
 .notification-toggle {
-    position: relative;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     border: none;
     border-radius: 50%;
     width: 48px;
     height: 48px;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 1.2rem;
     cursor: pointer;
     transition: all var(--notification-duration) var(--notification-easing);
-    box-shadow: var(--notification-shadow);
+    box-shadow: 0 4px 20px rgba(0, 123, 255, 0.4);
+    z-index: 99999;
+    margin-left: auto;
 }
 
 .notification-toggle:hover {
@@ -90,20 +95,26 @@
 
 /* Panel de notificações */
 .notifications-panel {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 350px;
     background: var(--notification-bg);
     backdrop-filter: blur(20px);
     border-radius: var(--notification-border-radius);
     box-shadow: var(--notification-shadow);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 10px;
     max-height: 500px;
     overflow: hidden;
     transform: translateY(-20px) scale(0.95);
     opacity: 0;
     transition: all var(--notification-duration) var(--notification-easing);
+    z-index: 99998;
+    display: none;
 }
 
 .notifications-panel.show {
+    display: block;
     transform: translateY(0) scale(1);
     opacity: 1;
 }

@@ -573,6 +573,17 @@ function initializeCharts() {
         console.log('Sales canvas style:', salesCtx.style.cssText);
         
         try {
+            // Create gradient backgrounds for ultra-premium look
+            const salesGradient = salesCtx.createLinearGradient(0, 0, 0, 400);
+            salesGradient.addColorStop(0, 'rgba(103, 126, 234, 0.3)');
+            salesGradient.addColorStop(0.5, 'rgba(103, 126, 234, 0.1)');
+            salesGradient.addColorStop(1, 'rgba(103, 126, 234, 0.02)');
+            
+            const productsGradient = salesCtx.createLinearGradient(0, 0, 0, 400);
+            productsGradient.addColorStop(0, 'rgba(118, 75, 162, 0.3)');
+            productsGradient.addColorStop(0.5, 'rgba(118, 75, 162, 0.1)');
+            productsGradient.addColorStop(1, 'rgba(118, 75, 162, 0.02)');
+            
             salesChart = new Chart(salesCtx, {
             type: 'line',
             data: {
@@ -580,16 +591,36 @@ function initializeCharts() {
                 datasets: [{
                     label: 'Vendas (R$)',
                     data: [12000, 19000, 15000, 25000, 22000, 30000],
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderColor: 'rgba(103, 126, 234, 1)',
+                    backgroundColor: salesGradient,
+                    borderWidth: 3,
+                    fill: true,
                     tension: 0.4,
+                    pointBackgroundColor: 'rgba(103, 126, 234, 1)',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: 'rgba(103, 126, 234, 1)',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 3,
                     yAxisID: 'y'
                 }, {
                     label: 'Produtos Vendidos',
                     data: [65, 89, 72, 105, 98, 125],
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    borderColor: 'rgba(118, 75, 162, 1)',
+                    backgroundColor: productsGradient,
+                    borderWidth: 3,
+                    fill: true,
                     tension: 0.4,
+                    pointBackgroundColor: 'rgba(118, 75, 162, 1)',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: 'rgba(118, 75, 162, 1)',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 3,
                     yAxisID: 'y1'
                 }]
             },
@@ -696,14 +727,23 @@ function initializeCharts() {
                 datasets: [{
                     data: [35, 25, 20, 15, 5],
                     backgroundColor: [
-                        '#FF6384',
-                        '#36A2EB',
-                        '#FFCE56',
-                        '#4BC0C0',
-                        '#9966FF'
+                        'rgba(103, 126, 234, 0.8)',
+                        'rgba(17, 153, 142, 0.8)',
+                        'rgba(240, 147, 251, 0.8)',
+                        'rgba(252, 70, 107, 0.8)',
+                        'rgba(118, 75, 162, 0.8)'
                     ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
+                    borderWidth: 3,
+                    borderColor: 'rgba(255, 255, 255, 0.8)',
+                    hoverBackgroundColor: [
+                        'rgba(103, 126, 234, 1)',
+                        'rgba(17, 153, 142, 1)',
+                        'rgba(240, 147, 251, 1)',
+                        'rgba(252, 70, 107, 1)',
+                        'rgba(118, 75, 162, 1)'
+                    ],
+                    hoverBorderColor: 'rgba(255, 255, 255, 1)',
+                    hoverBorderWidth: 4
                 }]
             },
             options: {
@@ -985,7 +1025,7 @@ async function saveProduct() {
             description: formData.get('description')
         };
 
-        const response = await fetch('/api/products', {
+        const response = await fetch('/api/produtos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1100,7 +1140,7 @@ function applyCustomDateFilter() {
 // Função para carregar dados dos pedidos
 async function loadOrdersData(startDate = null, endDate = null) {
     try {
-        const response = await fetch('/api/orders');
+        const response = await fetch('/api/pedidos');
         
         if (response.ok) {
             const orders = await response.json();
@@ -1173,6 +1213,7 @@ function displayRecentOrders(orders) {
     const container = document.getElementById('recent-orders-list');
     
     if (!orders || orders.length === 0) {
+        console.log('Nenhum pedido encontrado, exibindo mensagem padrão');
         container.innerHTML = `
             <div class="text-center text-muted py-3">
                 📦
@@ -1185,9 +1226,11 @@ function displayRecentOrders(orders) {
         return;
     }
     
-    const ordersHtml = orders.map(order => {
+    console.log('Processando pedidos para exibição...');
+    const ordersHtml = orders.map((order, index) => {
+        console.log(`Pedido ${index}:`, order);
         const statusConfig = getOrderStatusConfig(order.status);
-        const orderDate = new Date(order.created_at || order.date).toLocaleDateString('pt-BR');
+        const orderDate = new Date(order.dataPedido || order.created_at || order.date).toLocaleDateString('pt-BR');
         
         return `
             <div class="row align-items-center py-2 border-bottom">
@@ -1197,18 +1240,18 @@ function displayRecentOrders(orders) {
                             📦
                         </div>
                         <div>
-                            <h6 class="mb-0">#${order.id || order.order_number}</h6>
+                            <h6 class="mb-0">#${order.numero || order.id}</h6>
                             <small class="text-muted">${orderDate}</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <small class="text-muted">Fornecedor:</small><br>
-                    <span>${order.supplier_name || 'Não informado'}</span>
+                    <span>${order.fornecedor || 'Não informado'}</span>
                 </div>
                 <div class="col-md-2">
                     <small class="text-muted">Total:</small><br>
-                    <span class="fw-bold">R$ ${(order.total || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                    <span class="fw-bold">R$ ${(order.valorTotal || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
                 </div>
                 <div class="col-md-2">
                     <span class="badge ${statusConfig.class}">
@@ -1224,7 +1267,9 @@ function displayRecentOrders(orders) {
         `;
     }).join('');
     
+    console.log('HTML gerado:', ordersHtml);
     container.innerHTML = ordersHtml;
+    console.log('=== FIM DEBUG displayRecentOrders ===');
 }
 
 // Função para obter configuração de status do pedido
@@ -1280,7 +1325,7 @@ async function saveSupplier() {
             return;
         }
 
-        const response = await fetch('/api/suppliers', {
+        const response = await fetch('/api/fornecedores', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1365,7 +1410,7 @@ async function saveQuote() {
             notes: formData.get('notes')
         };
 
-        const response = await fetch('/api/quotes', {
+        const response = await fetch('/api/cotacoes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -60,10 +60,10 @@ function loadSummaryStats() {
     
     // Make API calls to get summary data
     Promise.all([
-        fetch('/api/products/count'),
-        fetch('/api/suppliers/count'),
-        fetch('/api/orders/count'),
-        fetch('/api/quotes/count')
+        fetch('/api/produtos/count'),
+            fetch('/api/fornecedores/count'),
+            fetch('/api/pedidos/count'),
+            fetch('/api/cotacoes/count')
     ])
     .then(responses => Promise.all(responses.map(r => r.json())))
     .then(data => {
@@ -600,7 +600,7 @@ function generateSuppliersReport() {
 
 // Helper Functions
 function loadSuppliersForFilter(selectId) {
-    fetch('/api/suppliers')
+    fetch('/api/fornecedores')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById(selectId);

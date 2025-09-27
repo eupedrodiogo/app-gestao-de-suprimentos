@@ -31,7 +31,7 @@ function loadProducts() {
     showLoadingState();
     
     // Make API call to get products
-    fetch('/api/products')
+    fetch('/api/produtos')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -150,20 +150,20 @@ function displayProducts(products) {
     const tbody = document.querySelector('#products-table');
     if (tbody) {
         if (products.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum produto encontrado</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">Nenhum produto encontrado</td></tr>';
         } else {
-            // Display products
+            // Display products using correct Portuguese property names
             tbody.innerHTML = products.map(product => `
                 <tr>
-                    <td>${product.code || product.id}</td>
-                    <td>${product.name}</td>
-                    <td>${product.description || '-'}</td>
-                    <td>${product.category}</td>
-                    <td>${product.unit}</td>
-                    <td>R$ ${parseFloat(product.price).toFixed(2)}</td>
+                    <td>${product.codigo || product.id}</td>
+                    <td>${product.nome}</td>
+                    <td>${product.descricao || '-'}</td>
+                    <td>${product.categoria}</td>
+                    <td>${product.unidade || 'UN'}</td>
+                    <td>R$ ${parseFloat(product.preco || 0).toFixed(2)}</td>
                     <td>
-                        <span class="badge ${product.stock <= product.min_stock ? 'bg-danger' : 'bg-success'}">
-                            ${product.stock}
+                        <span class="badge ${(product.estoque || 0) <= (product.estoqueMinimo || 0) ? 'bg-danger' : 'bg-success'}">
+                            ${product.estoque || 0}
                         </span>
                     </td>
                     <td>

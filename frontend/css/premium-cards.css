@@ -446,6 +446,101 @@
     animation: premiumGlow 2s ease-in-out infinite;
 }
 
+/* === INSIGHT CARDS VARIANTS === */
+
+.insight-card.info {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.insight-card.secondary {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.insight-card.danger {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.insight-card.premium {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.insight-card.gradient {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Hover Effects for Insight Cards */
+.insight-card:hover {
+    transform: translateY(-2px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === INSIGHT ICONS === */
+
+.insight-card .insight-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.insight-card .insight-icon svg {
+    width: 20px;
+    height: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* === INSIGHT VALUE STATES === */
+
+.insight-value.positive {
+    color: #10b981 !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.insight-value.negative {
+    color: #ef4444 !important;
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+.insight-value.high-volatility {
+    color: #f59e0b !important;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+.insight-value.normal-volatility {
+    color: #10b981 !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.insight-value.score-a-plus,
+.insight-value.score-a {
+    color: #10b981 !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    font-weight: 700;
+}
+
+.insight-value.score-b-plus,
+.insight-value.score-b {
+    color: #3b82f6 !important;
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+    font-weight: 600;
+}
+
+.insight-value.score-c-plus,
+.insight-value.score-c {
+    color: #f59e0b !important;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+    font-weight: 500;
+}
+
+.insight-value.score-d,
+.insight-value.score-f {
+    color: #ef4444 !important;
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+    font-weight: 400;
+}
+
 /* === RESPONSIVIDADE === */
 
 @media (max-width: 768px) {
@@ -513,5 +608,1330 @@
     
     .premium-list-item-content {
         width: 100%;
+    }
+}
+
+/* ===== ULTRA PREMIUM CARDS ===== */
+
+.ultra-premium-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 32px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.5) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.05) inset;
+}
+
+.ultra-premium-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0.05) 50%, 
+        rgba(0, 0, 0, 0.02) 100%);
+    border-radius: 24px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.ultra-premium-card .card-background-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.ultra-premium-card .card-glow-effect {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        rgba(120, 119, 198, 0.3),
+        rgba(255, 119, 198, 0.3),
+        rgba(120, 219, 255, 0.3),
+        rgba(120, 119, 198, 0.3));
+    border-radius: 26px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    filter: blur(8px);
+}
+
+.ultra-premium-card:hover .card-glow-effect {
+    opacity: 1;
+}
+
+.ultra-premium-card:hover .card-background-pattern {
+    opacity: 0.8;
+}
+
+.hover-lift-ultra {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-ultra:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.card-header-ultra {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.icon-container-ultra {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.icon-container-ultra::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.icon-container-ultra:hover::before {
+    opacity: 1;
+}
+
+.icon-glow {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 24px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    filter: blur(12px);
+}
+
+.icon-container-ultra:hover .icon-glow {
+    opacity: 0.6;
+}
+
+.icon-ultra {
+    width: 32px;
+    height: 32px;
+    color: white;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
+}
+
+.icon-container-ultra:hover .icon-ultra {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Gradient Styles */
+.primary-gradient::before {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.primary-glow {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.success-gradient::before {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.success-glow {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.warning-gradient::before {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.warning-glow {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.danger-gradient::before {
+    background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+}
+
+.danger-glow {
+    background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+}
+
+.trend-indicator-ultra {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+}
+
+.trend-sparkline {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.ultra-premium-card:hover .trend-sparkline {
+    opacity: 1;
+}
+
+.trend-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.card-content-ultra {
+    position: relative;
+    z-index: 2;
+}
+
+.metric-container {
+    margin-bottom: 20px;
+}
+
+.metric-value {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.primary-gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.success-gradient-text {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.warning-gradient-text {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.danger-gradient-text {
+    background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.metric-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.label-period {
+    font-size: 12px;
+    color: #6b7280;
+    opacity: 0.8;
+}
+
+.progress-indicator {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    position: relative;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+.primary-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.success-gradient {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.warning-gradient {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.danger-gradient {
+    background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ultra-premium-card {
+        padding: 24px;
+        border-radius: 20px;
+    }
+    
+    .icon-container-ultra {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .icon-ultra {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .metric-value {
+        font-size: 36px;
+    }
+    
+    .hover-lift-ultra:hover {
+        transform: translateY(-8px) scale(1.01);
+    }
+}
+
+/* ===== ULTRA-PREMIUM CHART CONTAINERS ===== */
+
+.ultra-premium-chart-container {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ultra-premium-chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(103, 126, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.ultra-premium-chart-container:hover::before {
+    opacity: 1;
+}
+
+.hover-lift-ultra {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-ultra:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 8px 24px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Chart Header Ultra */
+.chart-header-ultra {
+    padding: 1.5rem 2rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.08) 0%, 
+        rgba(255, 255, 255, 0.02) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.chart-title-ultra {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.chart-icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-icon-ultra {
+    width: 48px;
+    height: 48px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+.chart-icon-ultra.primary-glow {
+    filter: drop-shadow(0 4px 12px rgba(103, 126, 234, 0.4));
+}
+
+.chart-icon-ultra.success-glow {
+    filter: drop-shadow(0 4px 12px rgba(17, 153, 142, 0.4));
+}
+
+.chart-icon-ultra.warning-glow {
+    filter: drop-shadow(0 4px 12px rgba(240, 147, 251, 0.4));
+}
+
+.chart-icon-ultra.danger-glow {
+    filter: drop-shadow(0 4px 12px rgba(252, 70, 107, 0.4));
+}
+
+.chart-title-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.chart-main-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+}
+
+.chart-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Chart Actions Ultra */
+.chart-actions-ultra {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-ultra-premium {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-ultra-premium.primary {
+    background: linear-gradient(135deg, rgba(103, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    color: white;
+    border: 1px solid rgba(103, 126, 234, 0.3);
+}
+
+.btn-ultra-premium.secondary {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem;
+}
+
+.btn-ultra-premium.success {
+    background: linear-gradient(135deg, rgba(17, 153, 142, 0.8) 0%, rgba(56, 239, 125, 0.8) 100%);
+    color: white;
+    border: 1px solid rgba(17, 153, 142, 0.3);
+    padding: 0.5rem;
+}
+
+.btn-ultra-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-ultra-premium .icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Chart Content Ultra */
+.chart-content-ultra {
+    padding: 0;
+    position: relative;
+}
+
+.chart-canvas-wrapper {
+    padding: 1.5rem 2rem;
+    position: relative;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.02) 0%, 
+        rgba(255, 255, 255, 0.01) 100%);
+}
+
+.chart-canvas-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(103, 126, 234, 0.05) 0%, transparent 70%),
+        radial-gradient(circle at 70% 70%, rgba(118, 75, 162, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.ultra-premium-chart-container:hover .chart-canvas-wrapper::before {
+    opacity: 1;
+}
+
+/* Chart Insights */
+.chart-insights {
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 2rem 1.5rem;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.05) 0%, 
+        rgba(255, 255, 255, 0.02) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.insight-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.insight-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.insight-value {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.insight-value.positive {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===== TEMPORAL COST CHART SPECIFIC STYLES ===== */
+
+/* Temporal Cost Chart Animations */
+@keyframes subtle-pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.002);
+        filter: brightness(1.05);
+    }
+}
+
+@keyframes chart-glow {
+    0%, 100% {
+        box-shadow: 
+            0 20px 60px rgba(102, 126, 234, 0.1),
+            0 8px 30px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    50% {
+        box-shadow: 
+            0 25px 80px rgba(102, 126, 234, 0.15),
+            0 12px 40px rgba(0, 0, 0, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+}
+
+@keyframes insight-card-entrance {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes button-hover-glow {
+    0% {
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+    100% {
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+}
+
+/* Temporal Cost Chart Styles */
+.temporal-cost-chart-container {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(248, 250, 252, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 24px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 
+        0 20px 60px rgba(102, 126, 234, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 2rem;
+    animation: chart-glow 6s ease-in-out infinite;
+}
+
+.temporal-cost-chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.temporal-cost-chart-container:hover::before {
+    opacity: 1;
+}
+
+.temporal-cost-chart-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 32px 80px rgba(102, 126, 234, 0.15),
+        0 12px 40px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Temporal Cost Chart Header */
+.temporal-cost-header {
+    padding: 2rem 2.5rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: linear-gradient(135deg, 
+        rgba(102, 126, 234, 0.05) 0%, 
+        rgba(118, 75, 162, 0.05) 100%);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    position: relative;
+}
+
+.temporal-cost-title-section {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+}
+
+.temporal-cost-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    transition: all 0.3s ease;
+}
+
+.temporal-cost-icon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+}
+
+.temporal-cost-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #667eea;
+}
+
+.temporal-cost-title-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.temporal-cost-main-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1e293b;
+    line-height: 1.2;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.temporal-cost-subtitle {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.3;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+/* Period Selector Buttons */
+.temporal-cost-period-selector {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 0.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+.btn-period {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    color: #64748b;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+/* Controles de zoom */
+.chart-zoom-controls {
+    display: flex;
+    gap: 8px;
+    margin: 0 12px;
+    padding: 0 12px;
+    border-left: 1px solid rgba(102, 126, 234, 0.2);
+    border-right: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.btn-zoom-control {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+    border: 1px solid rgba(102, 126, 234, 0.25);
+    color: #667eea;
+    padding: 8px;
+    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-zoom-control:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+    border-color: rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    animation: button-hover-glow 0.3s ease-in-out;
+}
+
+.btn-zoom-control:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+}
+
+.btn-zoom-control .icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.btn-zoom-control:hover .icon {
+    transform: scale(1.1);
+}
+
+.btn-period:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    animation: button-hover-glow 0.3s ease-in-out;
+}
+
+.btn-period.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-export-data {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, rgba(17, 153, 142, 0.9) 0%, rgba(56, 239, 125, 0.9) 100%);
+    color: white;
+    border: 1px solid rgba(17, 153, 142, 0.3);
+    margin-left: 0.5rem;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.btn-export-data:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(17, 153, 142, 0.3);
+}
+
+/* Chart Canvas Area */
+.temporal-cost-canvas-wrapper {
+    padding: 2rem 2.5rem;
+    position: relative;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8) 0%, 
+        rgba(248, 250, 252, 0.8) 100%);
+    min-height: 450px;
+}
+
+/* Estilos personalizados para tooltips do Chart.js */
+.chartjs-tooltip {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98)) !important;
+    border: 1px solid rgba(102, 126, 234, 0.2) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15), 
+                0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif !important;
+    max-width: 320px !important;
+    padding: 16px !important;
+}
+
+.chartjs-tooltip-title {
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1) !important;
+}
+
+.chartjs-tooltip-body {
+    color: #34495e !important;
+    font-size: 12px !important;
+    line-height: 1.6 !important;
+}
+
+.chartjs-tooltip-footer {
+    color: #667eea !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    margin-top: 8px !important;
+    padding-top: 8px !important;
+    border-top: 1px solid rgba(102, 126, 234, 0.1) !important;
+    font-style: italic !important;
+}
+
+#temporalCostChart {
+    width: 100% !important;
+    height: 400px !important;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Insights Cards */
+.temporal-cost-insights {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    padding: 2rem 2.5rem;
+    background: linear-gradient(135deg, 
+        rgba(102, 126, 234, 0.03) 0%, 
+        rgba(118, 75, 162, 0.03) 100%);
+    border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+/* Chart Insights Grid - Principal Definition */
+.chart-insights-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    background: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+}
+
+/* Responsive Grid for Tablets */
+@media (max-width: 1024px) {
+    .chart-insights-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        padding: 1.25rem 1.75rem;
+    }
+}
+
+.temporal-insight-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    text-align: center;
+    animation: insight-card-entrance 0.8s ease-out;
+    animation-fill-mode: both;
+}
+
+.temporal-insight-card:nth-child(1) { animation-delay: 0.1s; }
+.temporal-insight-card:nth-child(2) { animation-delay: 0.2s; }
+.temporal-insight-card:nth-child(3) { animation-delay: 0.3s; }
+.temporal-insight-card:nth-child(4) { animation-delay: 0.4s; }
+
+.temporal-insight-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.insight-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.insight-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.insight-value.positive {
+    color: #059669;
+}
+
+.insight-value.negative {
+    color: #dc2626;
+}
+
+/* Responsive Design for Temporal Cost Chart - Enhanced */
+@media (max-width: 1200px) {
+    .temporal-cost-chart-container {
+        margin: 1.5rem 1rem;
+    }
+    
+    .temporal-cost-header {
+        padding: 2rem;
+    }
+    
+    .temporal-cost-canvas-wrapper {
+        min-height: 380px;
+    }
+    
+    .temporal-cost-insights {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .temporal-cost-insights {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .temporal-cost-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    
+    .temporal-cost-period-selector {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 992px) {
+    .temporal-cost-chart-container {
+        margin: 1rem 0.75rem;
+        border-radius: 18px;
+    }
+    
+    .temporal-cost-header {
+        padding: 1.75rem;
+        flex-direction: column;
+        gap: 1.25rem;
+        align-items: stretch;
+    }
+    
+    .temporal-cost-title-section {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .temporal-cost-period-selector {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .temporal-cost-canvas-wrapper {
+        min-height: 350px;
+        padding: 1.75rem;
+    }
+    
+    .temporal-cost-insights {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .temporal-cost-chart-container {
+        margin: 0.75rem 0.5rem;
+        border-radius: 16px;
+    }
+    
+    .temporal-cost-header {
+        padding: 1.5rem 1.5rem 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .temporal-cost-title-section {
+        gap: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .temporal-cost-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+    }
+    
+    .temporal-cost-main-title {
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+    
+    .temporal-cost-subtitle {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+    
+    .temporal-cost-period-selector {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    .chart-zoom-controls {
+        border: none;
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+    }
+    
+    .btn-zoom-control {
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+    }
+    
+    .btn-zoom-control .icon {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .temporal-cost-canvas-wrapper {
+        padding: 1.5rem;
+        min-height: 350px;
+    }
+    
+    #temporalCostChart {
+        height: 300px !important;
+    }
+    
+    .temporal-cost-insights {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .temporal-insight-card {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+    
+    .btn-period {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+    
+    .btn-export-data {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .temporal-cost-chart-container {
+        margin: 0.5rem 0.25rem;
+        border-radius: 14px;
+    }
+    
+    .temporal-cost-header {
+        padding: 1.25rem;
+    }
+    
+    .temporal-cost-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+    }
+    
+    .temporal-cost-main-title {
+        font-size: 1.125rem;
+    }
+    
+    .temporal-cost-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .temporal-cost-canvas-wrapper {
+        padding: 1rem;
+        min-height: 280px;
+    }
+    
+    #temporalCostChart {
+        height: 250px !important;
+    }
+    
+    .temporal-cost-insights {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    
+    .temporal-insight-card {
+        padding: 0.875rem;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 360px) {
+    .temporal-cost-chart-container {
+        margin: 0.25rem;
+        border-radius: 12px;
+    }
+    
+    .temporal-cost-header {
+        padding: 1rem;
+    }
+    
+    .temporal-cost-main-title {
+        font-size: 1rem;
+    }
+    
+    .temporal-cost-canvas-wrapper {
+        padding: 0.875rem;
+        min-height: 250px;
+    }
+    
+    #temporalCostChart {
+        height: 220px !important;
+    }
+    
+    .temporal-cost-insights {
+        padding: 0.875rem;
+    }
+    
+    .temporal-insight-card {
+        padding: 0.75rem;
+    }
+}
+
+/* Responsive Design for Charts */
+@media (max-width: 768px) {
+    .ultra-premium-chart-container {
+        margin-bottom: 1.5rem;
+        border-radius: 20px;
+    }
+    
+    .chart-header-ultra {
+        padding: 1rem 1.5rem 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .chart-title-ultra {
+        gap: 0.75rem;
+    }
+    
+    .chart-icon-ultra {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .chart-main-title {
+        font-size: 1.125rem;
+    }
+    
+    .chart-canvas-wrapper {
+        padding: 1rem 1.5rem;
+    }
+    
+    .chart-insights {
+        padding: 0.75rem 1.5rem 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .chart-insights-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+    }
+    
+    .insight-card {
+        padding: 1rem;
+    }
+    
+    .insight-card:nth-child(n+5) {
+        grid-column: span 1;
+    }
+    
+    .insight-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .insight-label {
+        font-size: 0.75rem;
+    }
+    
+    .insight-value {
+        font-size: 1.1rem;
+    }
+    
+    .insight-item {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .btn-ultra-premium span {
+        display: none;
     }
 }

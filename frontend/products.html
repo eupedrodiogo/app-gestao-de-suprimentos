@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos - Sistema de Gestão de Suprimentos</title>
+    <title>Produtos - PD Analytics</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -408,7 +408,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h1>📦 Produtos</h1>
-                        <p class="text-muted">Gerencie o catálogo de produtos</p>
+                        <p class="text-muted">Análise Estratégica de Dados - Catálogo de produtos</p>
                     </div>
                     <button class="btn btn-primary" onclick="showAddProductModal()">
                         ➕ Novo Produto
@@ -564,6 +564,10 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Data Synchronization System -->
+    <script src="js/services/DataSyncService.js"></script>
+    <script src="js/services/ApiService.js"></script>
+    
     <!-- Global Functions JS -->
     <script src="js/global-functions.js"></script>
     
@@ -572,5 +576,30 @@
     
     <!-- Products JS -->
     <script src="js/products.js"></script>
+
+    <!-- Initialize Data Sync for Products -->
+    <script>
+        // Inicializa o sistema de sincronização
+        window.DataSyncService = new DataSyncService();
+        window.DataSyncService.startAutoSync();
+        
+        // Registra listener para atualizar a lista de produtos quando dados mudarem
+        window.DataSyncService.addListener('products', (data) => {
+            console.log('📦 Produtos sincronizados na página de produtos:', data.length);
+            
+            // Recarrega a lista de produtos se a função existir
+            if (typeof loadProducts === 'function') {
+                loadProducts();
+            }
+            
+            // Atualiza contadores se existirem
+            const productCount = document.querySelector('.product-count');
+            if (productCount) {
+                productCount.textContent = data.length;
+            }
+        });
+
+        console.log('🔄 Sistema de sincronização inicializado na página de Produtos');
+    </script>
 </body>
 </html>

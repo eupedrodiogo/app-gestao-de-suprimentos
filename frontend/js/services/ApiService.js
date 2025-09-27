@@ -2,9 +2,9 @@
  * Serviço de API - Centraliza todas as requisições HTTP
  */
 
-export class ApiService {
+class ApiService {
     constructor() {
-        this.baseURL = 'http://localhost:3000/api';
+        this.baseURL = '/api';
         this.timeout = 10000; // 10 segundos
         this.defaultHeaders = {
             'Content-Type': 'application/json',
@@ -19,7 +19,11 @@ export class ApiService {
         this.requestInterceptors = [];
         this.responseInterceptors = [];
         
+        // Integração com DataSyncService
+        this.syncService = window.DataSyncService;
+        
         this.setupInterceptors();
+        this.setupDataSync();
     }
 
     /**
@@ -47,6 +51,50 @@ export class ApiService {
                 return Promise.reject(error);
             }
         );
+    }
+
+    /**
+     * Configura integração com sistema de sincronização
+     */
+    setupDataSync() {
+        if (!this.syncService) {
+            console.warn('⚠️ DataSyncService não disponível');
+            return;
+        }
+
+        // Mapeia endpoints para tipos de dados
+        this.endpointToDataType = {
+            '/products': 'products',
+            '/suppliers': 'suppliers', 
+            '/quotes': 'quotes',
+            '/orders': 'orders'
+        };
+
+        console.log('🔄 ApiService integrado com DataSyncService');
+    }
+
+    /**
+     * Notifica sobre mudanças nos dados
+     */
+    notifyDataChange(endpoint, data, method = 'GET') {
+        if (!this.syncService) return;
+
+        const dataType = this.getDataTypeFromEndpoint(endpoint);
+        if (dataType && ['POST', 'PUT', 'DELETE'].includes(method)) {
+            // Para operações que modificam dados, força uma nova busca
+            setTimeout(() => {
+                this.syncService.forceSyncData(dataType);
+            }, 100);
+        }
+    }
+
+    /**
+     * Obtém o tipo de dados a partir do endpoint
+     */
+    getDataTypeFromEndpoint(endpoint) {
+        // Remove parâmetros e IDs do endpoint
+        const cleanEndpoint = endpoint.split('?')[0].replace(/\/\d+$/, '');
+        return this.endpointToDataType[cleanEndpoint] || null;
     }
 
     /**
@@ -206,23 +254,33 @@ export class ApiService {
      * Métodos de conveniência para diferentes tipos de requisição
      */
     async get(url, config = {}) {
-        return this.request({ ...config, method: 'GET', url });
+        const result = await this.request({ ...config, method: 'GET', url });
+        this.notifyDataChange(url, result, 'GET');
+        return result;
     }
 
     async post(url, data, config = {}) {
-        return this.request({ ...config, method: 'POST', url, data });
+        const result = await this.request({ ...config, method: 'POST', url, data });
+        this.notifyDataChange(url, result, 'POST');
+        return result;
     }
 
     async put(url, data, config = {}) {
-        return this.request({ ...config, method: 'PUT', url, data });
+        const result = await this.request({ ...config, method: 'PUT', url, data });
+        this.notifyDataChange(url, result, 'PUT');
+        return result;
     }
 
     async patch(url, data, config = {}) {
-        return this.request({ ...config, method: 'PATCH', url, data });
+        const result = await this.request({ ...config, method: 'PATCH', url, data });
+        this.notifyDataChange(url, result, 'PATCH');
+        return result;
     }
 
     async delete(url, config = {}) {
-        return this.request({ ...config, method: 'DELETE', url });
+        const result = await this.request({ ...config, method: 'DELETE', url });
+        this.notifyDataChange(url, result, 'DELETE');
+        return result;
     }
 
     /**

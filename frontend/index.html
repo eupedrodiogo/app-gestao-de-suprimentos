@@ -8,8 +8,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#2563eb">
     <meta name="msapplication-navbutton-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-title" content="Gestão Suprimentos">
-    <title>Sistema de Gestão de Suprimentos</title>
+    <meta name="apple-mobile-web-app-title" content="PD Analytics">
+    <title>PD Analytics - Análise Estratégica de Dados</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/premium-design.css">
     <link rel="stylesheet" href="css/premium-modals.css">
@@ -101,14 +101,26 @@
         }
 
         .logo {
-            font-size: 4rem;
             margin-bottom: 1rem;
             cursor: pointer;
             transition: transform 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 4px 20px rgba(212, 175, 55, 0.3));
         }
 
         .logo:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
+        }
+
+        .logo:hover img {
+            filter: drop-shadow(0 6px 25px rgba(212, 175, 55, 0.5));
         }
 
         .title {
@@ -483,13 +495,36 @@
                 transform: translateY(-2px) scale(1.01);
             }
         }
+        
+        /* Notificações com texto escuro apenas no index */
+        .notifications-panel .notification-title {
+            color: #1e293b !important; /* Cor escura para o título */
+        }
+        
+        .notifications-panel .notification-message {
+            color: #475569 !important; /* Cor escura para a mensagem */
+        }
+        
+        .notifications-panel .notification-time {
+            color: #64748b !important; /* Cor escura para o tempo */
+        }
+        
+        .notifications-panel .notifications-title {
+            color: #1e293b !important; /* Cor escura para o título do painel */
+        }
+        
+        .notifications-panel .notifications-summary {
+            color: #475569 !important; /* Cor escura para o resumo */
+        }
     </style>
 </head>
 <body>
     <div class="welcome-container">
-        <div class="logo" data-route="/">🚀</div>
-        <h1 class="title">SupplyChain Pro</h1>
-        <p class="subtitle">Sistema Completo de Gestão de Suprimentos e ERP</p>
+        <div class="logo" data-route="/">
+            <img src="assets/logo.svg" alt="PD - Análise Estratégica de Dados" />
+        </div>
+        <h1 class="title">PD Analytics</h1>
+        <p class="subtitle">Análise Estratégica de Dados - Sistema de Gestão de Suprimentos</p>
 
         <div class="features-grid">
             <div class="feature-card" data-route="dashboard.html">
@@ -556,6 +591,7 @@
                 <i class="fas fa-tools"></i>
                 Diagnóstico
             </button>
+
         </div>
 
         <div class="loading" id="loading">
@@ -631,7 +667,7 @@
 
                 // Carregar produtos
                 try {
-                    const productsResponse = await fetch('/api/products', { 
+                    const productsResponse = await fetch('/api/produtos', { 
                         signal: controller.signal,
                         headers: { 'Cache-Control': 'no-cache' }
                     });
@@ -647,7 +683,7 @@
 
                 // Carregar fornecedores
                 try {
-                    const suppliersResponse = await fetch('/api/suppliers', { 
+                    const suppliersResponse = await fetch('/api/fornecedores', { 
                         signal: controller.signal,
                         headers: { 'Cache-Control': 'no-cache' }
                     });
@@ -663,7 +699,7 @@
 
                 // Carregar cotações
                 try {
-                    const quotesResponse = await fetch('/api/quotes', { 
+                    const quotesResponse = await fetch('/api/cotacoes', { 
                         signal: controller.signal,
                         headers: { 'Cache-Control': 'no-cache' }
                     });
@@ -679,7 +715,7 @@
 
                 // Carregar pedidos
                 try {
-                    const ordersResponse = await fetch('/api/orders', { 
+                    const ordersResponse = await fetch('/api/pedidos', { 
                         signal: controller.signal,
                         headers: { 'Cache-Control': 'no-cache' }
                     });
@@ -728,6 +764,8 @@
                     console.warn('Sistema pode estar offline:', error);
                 });
             }
+
+
         });
 
         // Apenas tratamento de erros básico
@@ -736,8 +774,74 @@
         });
     </script>
     
+    <!-- Data Synchronization System -->
+    <script src="js/services/DataSyncService.js"></script>
+    <script src="js/services/ApiService.js"></script>
+    
     <!-- Notifications System JS -->
     <script src="js/notifications.js"></script>
+
+    <!-- Initialize Data Sync -->
+    <script>
+        // Verifica se as classes estão disponíveis
+        if (typeof DataSyncService === 'undefined') {
+            console.error('❌ DataSyncService não está disponível');
+        } else {
+            console.log('✅ DataSyncService disponível');
+        }
+        
+        if (typeof ApiService === 'undefined') {
+            console.error('❌ ApiService não está disponível');
+        } else {
+            console.log('✅ ApiService disponível');
+        }
+        
+        // Inicializa o sistema de sincronização
+        try {
+            window.DataSyncService = new DataSyncService();
+            window.DataSyncService.startAutoSync();
+            console.log('🔄 DataSyncService inicializado com sucesso');
+            
+            // Registra listeners para atualizar a interface quando dados mudarem
+            window.DataSyncService.addListener('products', (data) => {
+            console.log('📦 Produtos atualizados:', data.length);
+            // Atualiza contadores se existirem
+            const productCount = document.querySelector('[data-stat="products"]');
+            if (productCount) {
+                productCount.textContent = data.length;
+            }
+        });
+
+        window.DataSyncService.addListener('suppliers', (data) => {
+            console.log('🏢 Fornecedores atualizados:', data.length);
+            const supplierCount = document.querySelector('[data-stat="suppliers"]');
+            if (supplierCount) {
+                supplierCount.textContent = data.length;
+            }
+        });
+
+        window.DataSyncService.addListener('quotes', (data) => {
+            console.log('💰 Cotações atualizadas:', data.length);
+            const quoteCount = document.querySelector('[data-stat="quotes"]');
+            if (quoteCount) {
+                quoteCount.textContent = data.length;
+            }
+        });
+
+        window.DataSyncService.addListener('orders', (data) => {
+            console.log('📋 Pedidos atualizados:', data.length);
+            const orderCount = document.querySelector('[data-stat="orders"]');
+            if (orderCount) {
+                orderCount.textContent = data.length;
+            }
+        });
+
+         console.log('🔄 Sistema de sincronização inicializado no Dashboard');
+         
+        } catch (error) {
+            console.error('❌ Erro ao inicializar DataSyncService:', error);
+        }
+    </script>
 
 </body>
 </html>

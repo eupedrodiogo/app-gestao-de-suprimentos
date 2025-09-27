@@ -160,6 +160,18 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Rota de teste simples para mobile
+app.get('/api/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Conexão móvel funcionando!',
+        timestamp: new Date().toISOString(),
+        ip: req.ip || req.connection.remoteAddress,
+        device: req.device ? req.device.type : 'unknown',
+        userAgent: req.get('User-Agent')
+    });
+});
+
 // Database health check
 app.get('/api/health/database', async (req, res) => {
     try {
@@ -1146,6 +1158,12 @@ app.get('/sentiment-analysis', (req, res) => {
 app.get('/ar-inventory', (req, res) => {
     console.log(`[${new Date().toISOString()}] Acesso à Realidade Aumentada - Device: ${req.device.type}`);
     res.sendFile(path.join(__dirname, 'frontend', 'ar-inventory.html'));
+});
+
+// Rota de teste para conexão móvel
+app.get('/test-mobile', (req, res) => {
+    console.log(`[${new Date().toISOString()}] Teste de Conexão Mobile - Device: ${req.device.type}`);
+    res.sendFile(path.join(__dirname, 'test-mobile-connection.html'));
 });
 
 // Rota para arquivos HTML específicos
