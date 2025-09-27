@@ -299,23 +299,23 @@ class ApiService {
     // Produtos
     async getProducts(params = {}) {
         const queryString = new URLSearchParams(params).toString();
-        return this.get(`/products${queryString ? `?${queryString}` : ''}`);
+        return this.get(`/produtos${queryString ? `?${queryString}` : ''}`);
     }
 
     async getProduct(id) {
-        return this.get(`/products/${id}`);
+        return this.get(`/produtos/${id}`);
     }
 
     async createProduct(productData) {
-        return this.post('/products', productData);
+        return this.post('/produtos', productData);
     }
 
     async updateProduct(id, productData) {
-        return this.put(`/products/${id}`, productData);
+        return this.put(`/produtos/${id}`, productData);
     }
 
     async deleteProduct(id) {
-        return this.delete(`/products/${id}`);
+        return this.delete(`/produtos/${id}`);
     }
 
     // Fornecedores

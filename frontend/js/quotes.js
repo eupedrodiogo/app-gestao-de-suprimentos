@@ -101,6 +101,10 @@ function showAddQuoteModal() {
         const modalTitle = document.getElementById('addQuoteModalLabel');
         if (modalTitle) modalTitle.textContent = 'Nova Cotação';
         
+        // Load suppliers and products data
+        loadSuppliersForQuote();
+        loadProductsForQuote();
+        
         // Show modal
         const bsModal = new bootstrap.Modal(modal);
         bsModal.show();
@@ -182,7 +186,7 @@ function viewQuote(id) {
             alert(`Detalhes da Cotação #${quote.id || id}\n\nFornecedor: ${quote.supplier_name || 'N/A'}\nData: ${quote.request_date || 'N/A'}\nTotal: R$ ${quote.total_value || '0,00'}\nStatus: ${quote.status || 'N/A'}\nDescrição: ${quote.notes || 'N/A'}`);
         })
         .catch(error => {
-            log.error('Erro ao carregar cotação', { 
+            console.error('Erro ao carregar cotação', { 
                 error: error.message, 
                 stack: error.stack,
                 quoteId: id,
@@ -195,45 +199,86 @@ function viewQuote(id) {
 function editQuote(id) {
     console.log('Editando cotação:', id);
     
-    // Fetch quote data from API
-    fetch(`/api/cotacoes/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+    // First load suppliers and products, then fetch quote data
+    Promise.all([
+        loadSuppliersForQuote(),
+        loadProductsForQuote()
+    ]).then(() => {
+        // Fetch quote data from API
+        return fetch(`/api/cotacoes/${id}`);
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then(data => {
+        const quote = data.data || data;
+        
+        // Populate form with quote data
+        document.getElementById('quoteId').value = quote.id || id;
+        
+        // Set supplier - wait a bit for the select to be populated
+        setTimeout(() => {
+            const supplierField = document.getElementById('quoteSupplier');
+            if (supplierField) {
+                supplierField.value = quote.fornecedorId || '';
             }
-            return response.json();
-        })
-        .then(data => {
-            const quote = data.data || data;
-            
-            // Populate form with quote data
-            document.getElementById('quoteId').value = quote.id || id;
-            document.getElementById('quoteSupplier').value = quote.supplier_id || '';
-            document.getElementById('quoteDate').value = quote.request_date || '';
-            document.getElementById('quoteTotal').value = quote.total || '';
-            document.getElementById('quoteStatus').value = quote.status || 'Pendente';
-            document.getElementById('quoteDescription').value = quote.description || '';
-            
-            // Update modal title
-            const modalTitle = document.getElementById('quoteModalTitle');
-            if (modalTitle) modalTitle.textContent = 'Editar Cotação';
-            
-            // Show modal
-            const modal = document.getElementById('addQuoteModal');
-            if (modal && typeof bootstrap !== 'undefined') {
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
+        }, 100);
+        
+        document.getElementById('quoteDate').value = quote.dataCotacao || '';
+        document.getElementById('quoteTotal').value = quote.precoTotal || '';
+        
+        // Set product - wait a bit for the select to be populated
+        setTimeout(() => {
+            const productField = document.getElementById('quoteProduct');
+            if (productField) {
+                productField.value = quote.produtoId || '';
             }
-        })
-        .catch(error => {
-            log.error('Erro ao carregar cotação', { 
-                error: error.message, 
-                stack: error.stack,
-                quoteId: id,
-                component: 'quotes-edit'
-            });
-            showToast('Erro', 'Erro ao carregar dados da cotação.', 'error');
+        }, 100);
+        
+        // Set quantity if field exists
+        const quantityField = document.getElementById('quoteQuantity');
+        if (quantityField) {
+            quantityField.value = quote.quantidade || '';
+        }
+        
+        // Set unit price if field exists
+        const unitPriceField = document.getElementById('quoteUnitPrice');
+        if (unitPriceField) {
+            unitPriceField.value = quote.precoUnitario || '';
+        }
+        
+        // Set status if field exists
+        const statusField = document.getElementById('quoteStatus');
+        if (statusField) {
+            statusField.value = quote.status || 'Pendente';
+        }
+        
+        // Check if notes field exists before setting it
+        const notesField = document.getElementById('quoteNotes');
+        if (notesField) {
+            notesField.value = quote.observacoes || '';
+        }
+        
+        // Update modal title
+        const modalTitle = document.getElementById('addQuoteModalLabel') || document.getElementById('quoteModalTitle');
+        if (modalTitle) modalTitle.textContent = 'Editar Cotação';
+        
+        // Show modal
+        const modal = document.getElementById('addQuoteModal');
+        if (modal && typeof bootstrap !== 'undefined') {
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        }
+    }).catch(error => {
+        console.error('Erro ao carregar cotação', { 
+            error: error.message, 
+            stack: error.stack,
+            quoteId: id,
+            component: 'quotes-edit'
         });
+        showToast('Erro', 'Erro ao carregar dados da cotação.', 'error');
+    });
 }
 
 function deleteQuote(id) {
@@ -265,12 +310,13 @@ function deleteQuote(id) {
         loadQuotes();
     })
     .catch(error => {
-        log.error('Erro ao excluir cotação', { 
+        console.error('Erro ao excluir cotação', { 
                 error: error.message, 
                 stack: error.stack,
                 quoteId: id,
                 component: 'quotes-delete'
             });
+            const errorMessage = error.message || 'Erro desconhecido';
             showToast('Erro', `Erro ao excluir cotação: ${errorMessage}`, 'error');
     });
 }
@@ -288,13 +334,11 @@ function saveQuote() {
     const total = quantity * unitPrice;
     
     const quoteData = {
-        supplier_id: supplier,
-        product_id: product,
-        date: date,
-        quantity: quantity,
-        unit_price: unitPrice,
-        total: total,
-        notes: notes,
+        fornecedorId: supplier,
+        produtoId: product,
+        quantidade: quantity,
+        precoUnitario: unitPrice,
+        observacoes: notes,
         status: 'Pendente'
     };
     
@@ -345,13 +389,9 @@ function saveQuote() {
         loadQuotes();
     })
     .catch(error => {
-        log.error('Erro ao salvar cotação', { 
-                error: error.message, 
-                stack: error.stack,
-                quoteData: quoteData,
-                component: 'quotes-save'
-            });
-            showToast('Erro', `Erro ao salvar cotação: ${errorMessage}`, 'error');
+        console.error('Erro ao salvar cotação:', error);
+        const errorMessage = error.message || 'Erro desconhecido';
+        showToast('Erro', `Erro ao salvar cotação: ${errorMessage}`, 'error');
     })
     .finally(() => {
         // Restore button state
@@ -391,4 +431,70 @@ function showToast(title, message, type = 'info') {
     // Show toast
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
+}
+
+// Function to load suppliers for quote dropdown
+async function loadSuppliersForQuote() {
+    try {
+        const response = await fetch('/api/fornecedores');
+        if (response.ok) {
+            const suppliers = await response.json();
+            const supplierSelect = document.getElementById('quoteSupplier');
+            
+            if (supplierSelect) {
+                // Clear existing options except the first one
+                supplierSelect.innerHTML = '<option value="">Selecione um fornecedor</option>';
+                
+                // Add suppliers to dropdown
+                suppliers.forEach(supplier => {
+                    const option = document.createElement('option');
+                    option.value = supplier.id;
+                    option.textContent = supplier.nome;
+                    supplierSelect.appendChild(option);
+                });
+            }
+            return suppliers;
+        } else {
+            console.error('Erro ao carregar fornecedores:', response.statusText);
+            showToast('Erro', 'Erro ao carregar lista de fornecedores', 'error');
+            throw new Error('Erro ao carregar fornecedores');
+        }
+    } catch (error) {
+        console.error('Erro ao carregar fornecedores:', error);
+        showToast('Erro', 'Erro ao carregar lista de fornecedores', 'error');
+        throw error;
+    }
+}
+
+// Function to load products for quote dropdown
+async function loadProductsForQuote() {
+    try {
+        const response = await fetch('/api/produtos');
+        if (response.ok) {
+            const products = await response.json();
+            const productSelect = document.getElementById('quoteProduct');
+            
+            if (productSelect) {
+                // Clear existing options except the first one
+                productSelect.innerHTML = '<option value="">Selecione um produto</option>';
+                
+                // Add products to dropdown
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = `${product.nome} - ${product.codigo}`;
+                    productSelect.appendChild(option);
+                });
+            }
+            return products;
+        } else {
+            console.error('Erro ao carregar produtos:', response.statusText);
+            showToast('Erro', 'Erro ao carregar lista de produtos', 'error');
+            throw new Error('Erro ao carregar produtos');
+        }
+    } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        showToast('Erro', 'Erro ao carregar lista de produtos', 'error');
+        throw error;
+    }
 }

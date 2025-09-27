@@ -195,7 +195,7 @@ function editProduct(id) {
     console.log('Editando produto:', id);
     
     // Fetch product data from API
-    fetch(`/api/products/${id}`)
+    fetch(`/api/produtos/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -246,7 +246,7 @@ function deleteProduct(id) {
     }
     
     // Make API call to delete product
-    fetch(`/api/products/${id}`, {
+    fetch(`/api/produtos/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -301,7 +301,7 @@ function saveProduct() {
     };
     
     // Validate required fields
-    if (!productData.code || !productData.name || !productData.category || !productData.unit || !productData.price) {
+    if (!productData.code || !productData.name || !productData.category || !productData.unit || isNaN(productData.price)) {
         showToast('Erro', 'Por favor, preencha todos os campos obrigatórios.', 'error');
         return;
     }
@@ -313,8 +313,8 @@ function saveProduct() {
     }
     
     // Validate price
-    if (isNaN(productData.price) || productData.price <= 0) {
-        showToast('Erro', 'O preço deve ser um número maior que zero.', 'error');
+    if (isNaN(productData.price) || productData.price < 0) {
+        showToast('Erro', 'O preço deve ser um número válido maior ou igual a zero.', 'error');
         return;
     }
     
@@ -338,7 +338,7 @@ function saveProduct() {
     
     // Determine if it's create or update
     const isUpdate = productId && productId.trim() !== '';
-    const url = isUpdate ? `/api/products/${productId}` : '/api/products';
+    const url = isUpdate ? `/api/produtos/${productId}` : '/api/produtos';
     const method = isUpdate ? 'PUT' : 'POST';
     
     // Make API call

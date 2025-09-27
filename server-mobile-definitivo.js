@@ -309,6 +309,345 @@ app.get('/api/pedidos', (req, res) => {
     res.json(pedidos);
 });
 
+// Rotas POST para criação de dados
+app.post('/api/produtos', (req, res) => {
+    try {
+        const novoProduto = req.body;
+        
+        // Validação básica - aceita campos em português e inglês
+        const nome = novoProduto.nome || novoProduto.name;
+        const codigo = novoProduto.codigo || novoProduto.code;
+        const preco = novoProduto.preco || novoProduto.price;
+        
+        if (!nome || !codigo || preco === undefined || preco === null) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Nome, código e preço são obrigatórios' 
+            });
+        }
+        
+        // Verificar se o código já existe
+        const codigoExiste = produtos.find(p => p.codigo === codigo);
+        if (codigoExiste) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Código do produto já existe' 
+            });
+        }
+        
+        // Gerar novo ID
+        const novoId = Math.max(...produtos.map(p => p.id)) + 1;
+        
+        // Criar produto com valores padrão - aceita campos em português e inglês
+        const produto = {
+            id: novoId,
+            nome: nome,
+            codigo: codigo,
+            preco: parseFloat(preco),
+            categoria: novoProduto.categoria || novoProduto.category || 'Geral',
+            subcategoria: novoProduto.subcategoria || novoProduto.subcategory || '',
+            marca: novoProduto.marca || novoProduto.brand || '',
+            descricao: novoProduto.descricao || novoProduto.description || '',
+            estoque: parseInt(novoProduto.estoque || novoProduto.stock) || 0,
+            estoqueMinimo: parseInt(novoProduto.estoqueMinimo || novoProduto.min_stock) || 5,
+            unidade: novoProduto.unidade || novoProduto.unit || 'UN',
+            status: novoProduto.status || 'Ativo',
+            dataUltimaCompra: new Date().toISOString().split('T')[0],
+            fornecedorPrincipal: novoProduto.fornecedorPrincipal || novoProduto.supplier || ''
+        };
+        
+        // Adicionar à lista
+        produtos.push(produto);
+        
+        res.json({ 
+            success: true, 
+            message: 'Produto criado com sucesso!', 
+            produto: produto 
+        });
+        
+    } catch (error) {
+        console.error('Erro ao criar produto:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor' 
+        });
+    }
+});
+
+app.post('/api/fornecedores', (req, res) => {
+    try {
+        const novoFornecedor = req.body;
+        
+        // Mapear campos para aceitar tanto português quanto inglês
+        const nome = novoFornecedor.nome || novoFornecedor.name;
+        const cnpj = novoFornecedor.cnpj;
+        const email = novoFornecedor.email;
+        const telefone = novoFornecedor.telefone || novoFornecedor.phone;
+        const endereco = novoFornecedor.endereco || novoFornecedor.address;
+        const contato = novoFornecedor.contato || novoFornecedor.contact_name;
+        const status = novoFornecedor.status;
+        const observacoes = novoFornecedor.observacoes || novoFornecedor.notes;
+        
+        // Validação básica
+        if (!nome || !cnpj || !email) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Nome, CNPJ e email são obrigatórios' 
+            });
+        }
+        
+        // Verificar se o CNPJ já existe
+        const cnpjExiste = fornecedores.find(f => f.cnpj === cnpj);
+        if (cnpjExiste) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'CNPJ já cadastrado' 
+            });
+        }
+        
+        // Gerar novo ID
+        const novoId = Math.max(...fornecedores.map(f => f.id)) + 1;
+        
+        // Criar fornecedor
+        const fornecedor = {
+            id: novoId,
+            nome: nome,
+            razaoSocial: novoFornecedor.razaoSocial || nome,
+            cnpj: cnpj,
+            email: email,
+            telefone: telefone || '',
+            celular: novoFornecedor.celular || '',
+            endereco: endereco || '',
+            cep: novoFornecedor.cep || '',
+            contato: contato || '',
+            categoria: novoFornecedor.categoria || 'Geral',
+            status: status || 'Ativo',
+            prazoEntrega: novoFornecedor.prazoEntrega || '5-7 dias úteis',
+            condicoesPagamento: novoFornecedor.condicoesPagamento || '30 dias',
+            avaliacaoQualidade: parseFloat(novoFornecedor.avaliacaoQualidade) || 0,
+            dataUltimaCompra: null
+        };
+        
+        // Adicionar à lista
+        fornecedores.push(fornecedor);
+        
+        res.json({ 
+            success: true, 
+            message: 'Fornecedor criado com sucesso!', 
+            fornecedor: fornecedor 
+        });
+        
+    } catch (error) {
+        console.error('Erro ao criar fornecedor:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor' 
+        });
+    }
+});
+
+app.post('/api/cotacoes', (req, res) => {
+    try {
+        const novaCotacao = req.body;
+        
+        // Validação básica
+        if (!novaCotacao.fornecedorId || !novaCotacao.produtoId || !novaCotacao.quantidade) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Fornecedor, produto e quantidade são obrigatórios' 
+            });
+        }
+        
+        // Buscar fornecedor e produto
+        const fornecedor = fornecedores.find(f => f.id === parseInt(novaCotacao.fornecedorId));
+        const produto = produtos.find(p => p.id === parseInt(novaCotacao.produtoId));
+        
+        if (!fornecedor || !produto) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Fornecedor ou produto não encontrado' 
+            });
+        }
+        
+        // Gerar novo ID e número
+        const novoId = Math.max(...cotacoes.map(c => c.id)) + 1;
+        const numeroSequencial = String(novoId).padStart(3, '0');
+        const ano = new Date().getFullYear();
+        
+        // Criar cotação
+        const cotacao = {
+            id: novoId,
+            numero: `COT-${ano}-${numeroSequencial}`,
+            fornecedor: fornecedor.nome,
+            fornecedorId: fornecedor.id,
+            produto: produto.nome,
+            produtoId: produto.id,
+            quantidade: parseInt(novaCotacao.quantidade),
+            precoUnitario: parseFloat(novaCotacao.precoUnitario) || produto.preco,
+            precoTotal: parseInt(novaCotacao.quantidade) * (parseFloat(novaCotacao.precoUnitario) || produto.preco),
+            prazoEntrega: novaCotacao.prazoEntrega || fornecedor.prazoEntrega,
+            condicoesPagamento: novaCotacao.condicoesPagamento || fornecedor.condicoesPagamento,
+            validadeCotacao: novaCotacao.validadeCotacao || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            status: novaCotacao.status || 'Pendente',
+            observacoes: novaCotacao.observacoes || '',
+            dataCotacao: new Date().toISOString().split('T')[0],
+            responsavel: novaCotacao.responsavel || 'Sistema'
+        };
+        
+        // Adicionar à lista
+        cotacoes.push(cotacao);
+        
+        res.json({ 
+            success: true, 
+            message: 'Cotação criada com sucesso!', 
+            cotacao: cotacao 
+        });
+        
+    } catch (error) {
+        console.error('Erro ao criar cotação:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor' 
+        });
+    }
+});
+
+// Rota GET para cotação individual
+app.get('/api/cotacoes/:id', (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const cotacao = cotacoes.find(c => c.id === id);
+        
+        if (!cotacao) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Cotação não encontrada' 
+            });
+        }
+        
+        res.json({ 
+            success: true, 
+            data: cotacao 
+        });
+        
+    } catch (error) {
+        console.error('Erro ao buscar cotação:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor' 
+        });
+    }
+});
+
+// Rota DELETE para cotação individual
+app.delete('/api/cotacoes/:id', (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const index = cotacoes.findIndex(c => c.id === id);
+        
+        if (index === -1) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Cotação não encontrada' 
+            });
+        }
+        
+        // Verificar se a cotação pode ser excluída (não pode excluir cotações aprovadas)
+        const cotacao = cotacoes[index];
+        if (cotacao.status === 'Aprovada') {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Não é possível excluir cotações aprovadas' 
+            });
+        }
+        
+        // Remover cotação da lista
+        cotacoes.splice(index, 1);
+        
+        res.json({ 
+            success: true, 
+            message: 'Cotação excluída com sucesso!' 
+        });
+        
+    } catch (error) {
+        console.error('Erro ao excluir cotação:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor' 
+        });
+    }
+});
+
+app.post('/api/pedidos', (req, res) => {
+    try {
+        const novoPedido = req.body;
+        
+        // Validação básica
+        if (!novoPedido.fornecedorId || !novoPedido.produtoId || !novoPedido.quantidade) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Fornecedor, produto e quantidade são obrigatórios' 
+            });
+        }
+        
+        // Buscar fornecedor e produto
+        const fornecedor = fornecedores.find(f => f.id === parseInt(novoPedido.fornecedorId));
+        const produto = produtos.find(p => p.id === parseInt(novoPedido.produtoId));
+        
+        if (!fornecedor || !produto) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Fornecedor ou produto não encontrado' 
+            });
+        }
+        
+        // Gerar novo ID e número
+        const novoId = Math.max(...pedidos.map(p => p.id)) + 1;
+        const numeroSequencial = String(novoId).padStart(3, '0');
+        const ano = new Date().getFullYear();
+        
+        // Calcular datas
+        const dataPedido = new Date().toISOString().split('T')[0];
+        const previsaoEntrega = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        // Criar pedido
+        const pedido = {
+            id: novoId,
+            numero: `PED-${ano}-${numeroSequencial}`,
+            fornecedor: fornecedor.nome,
+            fornecedorId: fornecedor.id,
+            produto: produto.nome,
+            produtoId: produto.id,
+            quantidade: parseInt(novoPedido.quantidade),
+            precoUnitario: parseFloat(novoPedido.precoUnitario) || produto.preco,
+            valorTotal: parseInt(novoPedido.quantidade) * (parseFloat(novoPedido.precoUnitario) || produto.preco),
+            dataPedido: dataPedido,
+            previsaoEntrega: novoPedido.previsaoEntrega || previsaoEntrega,
+            status: novoPedido.status || 'Em Andamento',
+            observacoes: novoPedido.observacoes || '',
+            responsavel: novoPedido.responsavel || 'Sistema',
+            numeroNF: '',
+            dataEntrega: null
+        };
+        
+        // Adicionar à lista
+        pedidos.push(pedido);
+        
+        res.json({ 
+            success: true, 
+            message: 'Pedido criado com sucesso!', 
+            pedido: pedido 
+        });
+        
+    } catch (error) {
+        console.error('Erro ao criar pedido:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erro interno do servidor' 
+        });
+    }
+});
+
 // Rotas de notificações
 app.get('/api/notifications', (req, res) => {
     const notifications = [
