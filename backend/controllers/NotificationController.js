@@ -170,6 +170,60 @@ class NotificationController {
                 });
             });
 
+            // 5. Verificar pedidos entregues recentemente (últimas 24 horas)
+            const deliveredOrdersQuery = `
+                SELECT 
+                    o.id,
+                    o.number,
+                    o.received_date,
+                    o.total_value,
+                    s.name as supplier_name,
+                    COUNT(oi.id) as total_items
+                FROM orders o
+                INNER JOIN suppliers s ON o.supplier_id = s.id
+                LEFT JOIN order_items oi ON o.id = oi.order_id
+                WHERE o.status = 'entregue'
+                AND o.received_date IS NOT NULL
+                AND julianday('now') - julianday(o.received_date) <= 1
+                GROUP BY o.id, o.number, o.received_date, o.total_value, s.name
+                ORDER BY o.received_date DESC
+            `;
+
+            const deliveredOrders = await this.db.query(deliveredOrdersQuery);
+            
+            deliveredOrders.forEach(order => {
+                const deliveryDate = new Date(order.received_date);
+                const formattedDate = deliveryDate.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                const formattedTime = deliveryDate.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                notifications.push({
+                    id: `delivered-${order.id}`,
+                    type: 'order_delivered',
+                    severity: 'low',
+                    title: 'Pedido Entregue',
+                    message: `${order.number} - ${order.supplier_name} entregue em ${formattedDate} às ${formattedTime}`,
+                    data: {
+                        orderId: order.id,
+                        orderNumber: order.number,
+                        supplierName: order.supplier_name,
+                        totalValue: order.total_value,
+                        totalItems: order.total_items,
+                        deliveredAt: order.received_date,
+                        deliveredDate: formattedDate,
+                        deliveredTime: formattedTime
+                    },
+                    actionUrl: `/orders/${order.id}`,
+                    createdAt: order.received_date
+                });
+            });
+
             // Ordenar notificações por severidade e timestamp
             const severityOrder = { 'critical': 0, 'high': 1, 'medium': 2, 'low': 3 };
             notifications.sort((a, b) => {
@@ -252,6 +306,134 @@ class NotificationController {
                 message: 'Erro interno do servidor',
                 error: error.message
             });
+        }
+    }
+
+    /**
+     * Métodos estáticos para gerenciar notificações na base de dados
+     */
+
+    /**
+     * Cria uma nova notificação
+     */
+    static async create(db, notificationData) {
+        const {
+            type,
+            title,
+            message,
+            order_id = null,
+            supplier_id = null,
+            product_id = null,
+            priority = 'medium',
+            metadata = null
+        } = notificationData;
+
+        const sql = `
+            INSERT INTO notifications (
+                type, title, message, order_id, supplier_id, product_id, priority, metadata
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        try {
+            const result = await db.run(sql, [
+                type, title, message, order_id, supplier_id, product_id, priority,
+                metadata ? JSON.stringify(metadata) : null
+            ]);
+
+            console.log('✅ Notificação criada:', {
+                id: result.lastID,
+                type,
+                title,
+                order_id,
+                supplier_id
+            });
+
+            return result.lastID;
+        } catch (error) {
+            console.error('❌ Erro ao criar notificação:', error.message, notificationData);
+            throw error;
+        }
+    }
+
+    /**
+     * Cria notificação de pedido entregue
+     */
+    static async createOrderDeliveredNotification(db, order) {
+        const supplierName = await this.getSupplierName(db, order.supplier_id);
+        
+        // Formatando a data e hora no estilo brasileiro
+        const deliveryDate = new Date(order.received_date);
+        const formattedDate = deliveryDate.toLocaleDateString('pt-BR');
+        const formattedTime = deliveryDate.toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        const title = 'Pedido Entregue';
+        const message = `${order.number}: ${supplierName} com entrega realizada em ${formattedDate} às ${formattedTime}`;
+        
+        const metadata = {
+            order_number: order.number,
+            supplier_name: supplierName,
+            delivery_date: order.received_date,
+            formatted_delivery_date: formattedDate,
+            formatted_delivery_time: formattedTime,
+            total_value: order.total_value
+        };
+
+        return await this.create(db, {
+            type: 'order_delivered',
+            title,
+            message,
+            order_id: order.id,
+            supplier_id: order.supplier_id,
+            priority: 'medium',
+            metadata
+        });
+    }
+
+    /**
+     * Busca notificações por tipo
+     */
+    static async getByType(db, type, limit = 50) {
+        const sql = `
+            SELECT n.*, 
+                   s.name as supplier_name,
+                   o.number as order_number,
+                   p.name as product_name
+            FROM notifications n
+            LEFT JOIN suppliers s ON n.supplier_id = s.id
+            LEFT JOIN orders o ON n.order_id = o.id
+            LEFT JOIN products p ON n.product_id = p.id
+            WHERE n.type = ?
+            ORDER BY n.created_at DESC
+            LIMIT ?
+        `;
+
+        try {
+            const notifications = await db.all(sql, [type, limit]);
+            
+            // Parse metadata JSON
+            return notifications.map(notification => ({
+                ...notification,
+                metadata: notification.metadata ? JSON.parse(notification.metadata) : null
+            }));
+        } catch (error) {
+            console.error('❌ Erro ao buscar notificações por tipo:', error.message, type);
+            throw error;
+        }
+    }
+
+    /**
+     * Helper para buscar nome do fornecedor
+     */
+    static async getSupplierName(db, supplierId) {
+        try {
+            const supplier = await db.get('SELECT name FROM suppliers WHERE id = ?', [supplierId]);
+            return supplier ? supplier.name : 'Fornecedor Desconhecido';
+        } catch (error) {
+            console.error('❌ Erro ao buscar nome do fornecedor:', error.message, supplierId);
+            return 'Fornecedor Desconhecido';
         }
     }
 }

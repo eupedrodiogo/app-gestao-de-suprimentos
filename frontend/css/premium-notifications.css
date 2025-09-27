@@ -327,6 +327,29 @@
     text-decoration: none;
 }
 
+/* Informações específicas de entrega */
+.notification-delivery-info {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: rgba(var(--bs-success-rgb), 0.1);
+    border-radius: 6px;
+    border-left: 3px solid var(--bs-success);
+}
+
+.notification-delivery-info small {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    line-height: 1.4;
+}
+
+.notification-delivery-info i {
+    color: var(--bs-success);
+    width: 12px;
+    text-align: center;
+}
+
 /* Estado vazio */
 .notifications-empty {
     padding: 2rem 1.25rem;

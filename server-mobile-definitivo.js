@@ -327,7 +327,7 @@ app.get('/api/notifications', (req, res) => {
         {
             id: 2,
             title: 'Pedido Entregue',
-            message: 'PED-2024-002: 50 unidades de Mouse Óptico Logitech M100 entregues com sucesso',
+            message: 'PED-2024-002: 50 unidades de Mouse Óptico Logitech M100 entregues com sucesso em 25/01/24 às 14:30',
             type: 'success',
             severity: 'medium',
             timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 horas atrás

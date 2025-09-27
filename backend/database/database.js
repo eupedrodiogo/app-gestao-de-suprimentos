@@ -336,6 +336,25 @@ class Database {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
+            )`,
+
+            // Tabela de notificações (notifications)
+            `CREATE TABLE IF NOT EXISTS notifications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT NOT NULL CHECK (type IN ('order_delivered', 'order_pending', 'stock_low', 'quote_received', 'general')),
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                order_id INTEGER,
+                supplier_id INTEGER,
+                product_id INTEGER,
+                priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
+                status TEXT DEFAULT 'unread' CHECK (status IN ('unread', 'read', 'archived')),
+                metadata TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (order_id) REFERENCES orders(id),
+                FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
+                FOREIGN KEY (product_id) REFERENCES products(id)
             )`
         ];
 

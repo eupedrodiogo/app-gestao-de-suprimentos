@@ -336,13 +336,18 @@ class OrderController {
             throw new Error('Order not found');
         }
 
-        // If changing to delivered, update inventory
+        // If changing to delivered, update inventory and set received_date
         if (status === 'entregue' && order.status !== 'entregue') {
             await this.processDelivery(db, id);
+            
+            // Update status and set received_date
+            const sql = 'UPDATE orders SET status = ?, received_date = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+            await db.run(sql, [status, id]);
+        } else {
+            // For other status changes, just update status
+            const sql = 'UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+            await db.run(sql, [status, id]);
         }
-
-        const sql = 'UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
-        await db.run(sql, [status, id]);
 
         return true;
     }
@@ -354,8 +359,6 @@ class OrderController {
         }
 
         try {
-            await db.beginTransaction();
-
             // Import ProductController for stock updates
             const ProductController = require('./ProductController');
 
@@ -365,23 +368,27 @@ class OrderController {
                 
                 // Get current product stock
                 const product = await db.get('SELECT stock FROM products WHERE id = ?', [item.product_id]);
-                const newStock = product.stock + receivedQty;
-                
-                // Update product stock
-                await ProductController.updateStock(
-                    db, 
-                    item.product_id, 
-                    newStock, 
-                    `Recebimento do pedido ${order.number}`,
-                    orderId,
-                    'order'
-                );
+                if (product) {
+                    const newStock = product.stock + receivedQty;
+                    
+                    // Update product stock
+                    await db.run(
+                        'UPDATE products SET stock = ? WHERE id = ?',
+                        [newStock, item.product_id]
+                    );
+                    
+                    log.info('Stock updated for product', {
+                        productId: item.product_id,
+                        oldStock: product.stock,
+                        newStock: newStock,
+                        receivedQty: receivedQty,
+                        orderId: orderId
+                    });
+                }
             }
 
-            await db.commit();
-
         } catch (error) {
-            await db.rollback();
+            log.error('Error processing delivery', { error: error.message, orderId });
             throw error;
         }
     }
@@ -414,6 +421,17 @@ class OrderController {
         const allItemsReceived = await this.checkAllItemsReceived(db, orderId);
         if (allItemsReceived) {
             await this.updateStatus(db, orderId, 'entregue');
+            
+            // Criar notificação de entrega
+            try {
+                const NotificationController = require('./NotificationController');
+                const updatedOrder = await this.getById(db, orderId);
+                await NotificationController.createOrderDeliveredNotification(db, updatedOrder);
+                log.info('Notificação de entrega criada', { orderId, orderNumber: updatedOrder.number });
+            } catch (error) {
+                log.error('Erro ao criar notificação de entrega', { error: error.message, orderId });
+                // Não falha o processo se a notificação falhar
+            }
         }
 
         return true;

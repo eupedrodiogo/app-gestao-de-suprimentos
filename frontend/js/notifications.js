@@ -189,6 +189,21 @@ class NotificationSystem {
             const timeAgo = this.formatTimeAgo(notification.createdAt);
             const actionLink = this.getActionLink(notification.type);
 
+            // Informações específicas para pedidos entregues
+            let additionalInfo = '';
+            if (notification.type === 'order_delivered' && notification.data) {
+                const { deliveredDate, deliveredTime, totalValue, totalItems } = notification.data;
+                additionalInfo = `
+                    <div class="notification-delivery-info">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-check"></i> ${deliveredDate} às ${deliveredTime}
+                            ${totalValue ? ` • <i class="fas fa-dollar-sign"></i> R$ ${parseFloat(totalValue).toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : ''}
+                            ${totalItems ? ` • <i class="fas fa-box"></i> ${totalItems} ${totalItems === 1 ? 'item' : 'itens'}` : ''}
+                        </small>
+                    </div>
+                `;
+            }
+
             return `
                 <div class="notification-item ${notification.severity}" data-id="${notification.id}">
                     <div class="notification-content">
@@ -198,6 +213,7 @@ class NotificationSystem {
                         <div class="notification-body">
                             <h6 class="notification-title">${notification.title}</h6>
                             <p class="notification-message">${notification.message}</p>
+                            ${additionalInfo}
                             <div class="notification-meta">
                                 <span class="notification-time">${timeAgo}</span>
                                 ${actionLink ? `<a href="${actionLink}" class="notification-action">Ver detalhes</a>` : ''}
@@ -246,9 +262,11 @@ class NotificationSystem {
     getNotificationIcon(type, severity) {
         const icons = {
             'low_stock': 'fas fa-box',
+            'order_delay': 'fas fa-clock',
             'pending_orders': 'fas fa-clock',
             'quote_expiring': 'fas fa-calendar-times',
-            'inactive_supplier': 'fas fa-user-times',
+            'supplier_inactive': 'fas fa-user-times',
+            'order_delivered': 'fas fa-check-circle',
             'system': 'fas fa-cog'
         };
 
@@ -261,9 +279,11 @@ class NotificationSystem {
     getActionLink(type) {
         const links = {
             'low_stock': '/products.html',
+            'order_delay': '/orders.html',
             'pending_orders': '/orders.html',
             'quote_expiring': '/quotes.html',
-            'inactive_supplier': '/suppliers.html'
+            'supplier_inactive': '/suppliers.html',
+            'order_delivered': '/orders.html'
         };
 
         return links[type] || null;
@@ -273,27 +293,64 @@ class NotificationSystem {
      * Formata o tempo decorrido desde a criação da notificação
      */
     formatTimeAgo(dateString) {
-        const now = new Date();
-        const date = new Date(dateString);
-        
-        // Verifica se a data é válida
-        if (isNaN(date.getTime())) {
-            return 'Data inválida';
-        }
-        
-        const diffInSeconds = Math.floor((now - date) / 1000);
+        try {
+            // Verifica se dateString existe e não é nulo/undefined
+            if (!dateString) {
+                return 'Agora mesmo';
+            }
 
-        if (diffInSeconds < 60) {
+            const now = new Date();
+            let date;
+
+            // Tenta diferentes formatos de data
+            if (typeof dateString === 'string') {
+                // Se for uma string ISO, usa diretamente
+                date = new Date(dateString);
+            } else if (typeof dateString === 'number') {
+                // Se for timestamp
+                date = new Date(dateString);
+            } else {
+                // Se for um objeto Date
+                date = new Date(dateString);
+            }
+            
+            // Verifica se a data é válida
+            if (isNaN(date.getTime())) {
+                console.warn('Data inválida recebida:', dateString);
+                return 'Agora mesmo';
+            }
+
+            // Verifica se a data não é no futuro (com margem de 1 minuto)
+            if (date.getTime() > now.getTime() + 60000) {
+                console.warn('Data no futuro detectada:', dateString);
+                return 'Agora mesmo';
+            }
+            
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            // Se a diferença for negativa ou muito pequena
+            if (diffInSeconds < 0 || diffInSeconds < 60) {
+                return 'Agora mesmo';
+            } else if (diffInSeconds < 3600) {
+                const minutes = Math.floor(diffInSeconds / 60);
+                return `${minutes} min atrás`;
+            } else if (diffInSeconds < 86400) {
+                const hours = Math.floor(diffInSeconds / 3600);
+                return `${hours}h atrás`;
+            } else if (diffInSeconds < 2592000) { // 30 dias
+                const days = Math.floor(diffInSeconds / 86400);
+                return `${days}d atrás`;
+            } else {
+                // Para datas muito antigas, mostra a data formatada
+                return date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao formatar data:', error, 'Data recebida:', dateString);
             return 'Agora mesmo';
-        } else if (diffInSeconds < 3600) {
-            const minutes = Math.floor(diffInSeconds / 60);
-            return `${minutes} min atrás`;
-        } else if (diffInSeconds < 86400) {
-            const hours = Math.floor(diffInSeconds / 3600);
-            return `${hours}h atrás`;
-        } else {
-            const days = Math.floor(diffInSeconds / 86400);
-            return `${days}d atrás`;
         }
     }
 
