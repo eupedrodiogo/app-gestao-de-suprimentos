@@ -71,7 +71,7 @@ function loadOrders() {
     showLoadingState();
     
     // Make API call to get orders
-    fetch('/api/orders')
+    fetch('/api/pedidos')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -82,7 +82,7 @@ function loadOrders() {
             console.log('Pedidos carregados:', data);
             hideLoadingState();
             // Extract the orders array from the API response
-            const orders = data.orders || data || [];
+            const orders = data.data || data.orders || data || [];
             displayOrders(orders);
         })
         .catch(error => {
@@ -187,15 +187,15 @@ function displayOrders(orders) {
         if (orders.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum pedido encontrado</td></tr>';
         } else {
-            // Display orders
+            // Display orders using correct Portuguese property names
             tbody.innerHTML = orders.map(order => `
                 <tr>
-                    <td>${order.order_number || order.id}</td>
-                    <td>${order.supplier_name || order.supplier}</td>
-                    <td>${order.order_date ? new Date(order.order_date).toLocaleDateString('pt-BR') : 'N/A'}</td>
-                    <td>${order.delivery_date ? new Date(order.delivery_date).toLocaleDateString('pt-BR') : 'N/A'}</td>
-                    <td>R$ ${parseFloat(order.total_value || order.total).toFixed(2)}</td>
-                    <td><span class="badge bg-${getStatusColor(order.status)}">${order.status}</span></td>
+                    <td>${order.numero || order.id}</td>
+                    <td>${order.fornecedor || 'N/A'}</td>
+                    <td>${order.dataPedido ? new Date(order.dataPedido).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>${order.previsaoEntrega ? new Date(order.previsaoEntrega).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>R$ ${parseFloat(order.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td><span class="badge bg-${getStatusColor(order.status)}">${order.status || 'N/A'}</span></td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="viewOrder(${order.id})">
                             👁️
@@ -239,7 +239,7 @@ function viewOrder(id) {
     console.log('Visualizando pedido:', id);
     
     // Fetch order data from API
-    fetch(`/api/orders/${id}`)
+    fetch(`/api/pedidos/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -273,7 +273,7 @@ function editOrder(id) {
     
     // Aguardar um pouco para os dados carregarem e então buscar o pedido
     setTimeout(() => {
-        fetch(`/api/orders/${id}`)
+        fetch(`/api/pedidos/${id}`)
         .then(orderResponse => {
         console.log('🔧 DEBUG: Response status:', orderResponse.status);
         console.log('🔧 DEBUG: Response ok:', orderResponse.ok);
@@ -404,7 +404,7 @@ function deleteOrder(id) {
     }
     
     // Make API call to delete order
-    fetch(`/api/orders/${id}`, {
+    fetch(`/api/pedidos/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -524,7 +524,7 @@ function saveOrder() {
     
     // Determine if it's create or update
     const isUpdate = orderId && orderId.trim() !== '';
-    const url = isUpdate ? `/api/orders/${orderId}` : '/api/orders';
+    const url = isUpdate ? `/api/pedidos/${orderId}` : '/api/pedidos';
     const method = isUpdate ? 'PUT' : 'POST';
     
     console.log('🔧 DEBUG: Fazendo requisição:', { url, method, orderData });
@@ -723,7 +723,7 @@ function calculateOrderTotal() {
 function loadSuppliersForModal() {
     console.log('🔧 DEBUG: Carregando fornecedores para o modal');
     
-    fetch('/api/suppliers')
+    fetch('/api/fornecedores')
         .then(response => response.json())
         .then(suppliers => {
             console.log('🔧 DEBUG: Fornecedores carregados:', suppliers.length);
@@ -747,7 +747,7 @@ function loadSuppliersForModal() {
 function loadProductsForModal() {
     console.log('🔧 DEBUG: Carregando produtos para o modal');
     
-    fetch('/api/products')
+    fetch('/api/produtos')
         .then(response => response.json())
         .then(products => {
             console.log('🔧 DEBUG: Produtos carregados:', products.length);

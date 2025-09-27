@@ -54,7 +54,7 @@ function loadQuotes() {
     showLoadingState();
     
     // Make API call to get quotes
-    fetch('/api/quotes')
+    fetch('/api/cotacoes')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -65,7 +65,7 @@ function loadQuotes() {
             console.log('Cotações carregadas:', data);
             hideLoadingState();
             // Extract the quotes array from the API response
-            const quotes = data.quotes || data || [];
+            const quotes = data.data || data.quotes || data || [];
             displayQuotes(quotes);
         })
         .catch(error => {
@@ -119,14 +119,14 @@ function displayQuotes(quotes) {
         if (quotes.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhuma cotação encontrada</td></tr>';
         } else {
-            // Display quotes
+            // Display quotes using correct Portuguese property names
             tbody.innerHTML = quotes.map(quote => `
                 <tr>
-                    <td>${quote.quote_number || quote.id}</td>
-                    <td>${quote.supplier_name || quote.supplier}</td>
-                    <td>${quote.request_date ? new Date(quote.request_date).toLocaleDateString('pt-BR') : 'N/A'}</td>
-                    <td>R$ ${parseFloat(quote.total_value || quote.total).toFixed(2)}</td>
-                    <td><span class="badge bg-${getStatusColor(quote.status)}">${quote.status}</span></td>
+                    <td>${quote.numero || quote.id}</td>
+                    <td>${quote.fornecedor || 'N/A'}</td>
+                    <td>${quote.dataCotacao ? new Date(quote.dataCotacao).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>R$ ${parseFloat(quote.precoTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td><span class="badge bg-${getStatusColor(quote.status)}">${quote.status || 'N/A'}</span></td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="viewQuote(${quote.id})">
                             👁️
@@ -168,7 +168,7 @@ function viewQuote(id) {
     console.log('Visualizando cotação:', id);
     
     // Fetch quote data from API
-    fetch(`/api/quotes/${id}`)
+    fetch(`/api/cotacoes/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -196,7 +196,7 @@ function editQuote(id) {
     console.log('Editando cotação:', id);
     
     // Fetch quote data from API
-    fetch(`/api/quotes/${id}`)
+    fetch(`/api/cotacoes/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -245,7 +245,7 @@ function deleteQuote(id) {
     }
     
     // Make API call to delete quote
-    fetch(`/api/quotes/${id}`, {
+    fetch(`/api/cotacoes/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -311,7 +311,7 @@ function saveQuote() {
     saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Salvando...';
     
     // Create new quote
-    const url = '/api/quotes';
+    const url = '/api/cotacoes';
     const method = 'POST';
     
     // Make API call
