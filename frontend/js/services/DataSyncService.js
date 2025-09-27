@@ -11,7 +11,7 @@ class DataSyncService {
         
         // Configurações
         this.config = {
-            syncIntervalMs: 2000, // Sincronização a cada 2 segundos
+            syncIntervalMs: 30000, // Sincronização a cada 30 segundos
             storagePrefix: 'supply_sync_',
             eventPrefix: 'supply_data_'
         };

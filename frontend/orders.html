@@ -684,19 +684,38 @@
         window.DataSyncService = new DataSyncService();
         window.DataSyncService.startAutoSync();
         
+        // Variável para armazenar o último hash dos dados
+        let lastOrdersHash = null;
+        
+        // Função para gerar hash simples dos dados
+        function generateDataHash(data) {
+            return JSON.stringify(data).length + '_' + (data.data || data).length;
+        }
+        
         // Registra listeners para sincronização de dados relacionados a pedidos
         window.DataSyncService.addListener('orders', (data) => {
-            console.log('📋 Pedidos sincronizados na página de pedidos:', data.length);
+            console.log('📋 Pedidos sincronizados na página de pedidos:', (data.data || data).length);
             
-            // Recarrega a lista de pedidos se a função existir
-            if (typeof loadOrders === 'function') {
-                loadOrders();
+            // Gera hash dos novos dados
+            const newHash = generateDataHash(data);
+            
+            // Só recarrega se os dados realmente mudaram
+            if (lastOrdersHash !== newHash) {
+                console.log('📋 Dados de pedidos mudaram, recarregando...');
+                lastOrdersHash = newHash;
+                
+                // Recarrega a lista de pedidos se a função existir
+                if (typeof loadOrders === 'function') {
+                    loadOrders();
+                }
+            } else {
+                console.log('📋 Dados de pedidos não mudaram, mantendo estado atual');
             }
             
             // Atualiza contadores se existirem
             const orderCount = document.querySelector('.order-count');
             if (orderCount) {
-                orderCount.textContent = data.length;
+                orderCount.textContent = (data.data || data).length;
             }
         });
 
