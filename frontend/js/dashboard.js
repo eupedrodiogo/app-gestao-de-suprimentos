@@ -413,29 +413,29 @@ function loadDashboardData() {
 
 async function loadKPIData() {
     try {
-        // Simulate API call - replace with real API endpoints
-        const mockData = {
-            products: { total: 156, change: 12.5, trend: 'up' },
-            suppliers: { total: 23, change: 8.3, trend: 'up' },
-            quotes: { total: 45, change: -2.1, trend: 'down' },
-            orders: { total: 89, change: 15.7, trend: 'up' },
-            lowStock: 8,
-            outOfStock: 3,
-            totalValue: 125430.50,
-            avgOrderValue: 1408.20
+        // Buscar dados reais da API
+        const response = await fetch('/api/dashboard');
+        const data = await response.json();
+        
+        // Calcular tendências (simuladas por enquanto - podem ser implementadas no backend futuramente)
+        const trends = {
+            products: { change: 12.5, trend: 'up' },
+            suppliers: { change: 8.3, trend: 'up' },
+            quotes: { change: -2.1, trend: 'down' },
+            orders: { change: 15.7, trend: 'up' }
         };
 
-        // Update KPI cards
-        updateKPICard('total-products', mockData.products.total, mockData.products.change, mockData.products.trend);
-        updateKPICard('total-suppliers', mockData.suppliers.total, mockData.suppliers.change, mockData.suppliers.trend);
-        updateKPICard('total-quotes', mockData.quotes.total, mockData.quotes.change, mockData.quotes.trend);
-        updateKPICard('total-orders', mockData.orders.total, mockData.orders.change, mockData.orders.trend);
+        // Update KPI cards com dados reais
+        updateKPICard('total-products', data.totalProdutos, trends.products.change, trends.products.trend);
+        updateKPICard('total-suppliers', data.totalFornecedores, trends.suppliers.change, trends.suppliers.trend);
+        updateKPICard('total-quotes', data.cotacoesPendentes, trends.quotes.change, trends.quotes.trend);
+        updateKPICard('total-orders', data.pedidosAndamento, trends.orders.change, trends.orders.trend);
 
         // Update additional metrics
-        document.getElementById('low-stock-count').textContent = mockData.lowStock;
-        document.getElementById('out-of-stock-count').textContent = mockData.outOfStock;
-        document.getElementById('total-value').textContent = `R$ ${mockData.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-        document.getElementById('avg-order-value').textContent = `R$ ${mockData.avgOrderValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        document.getElementById('low-stock-count').textContent = data.produtosEstoqueBaixo;
+        document.getElementById('out-of-stock-count').textContent = data.cotacoesPendentes;
+        document.getElementById('total-value').textContent = `R$ ${(data.valorTotalEstoque || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        document.getElementById('avg-order-value').textContent = `R$ ${((data.valorTotalPedidos || 0) / Math.max(data.pedidosAndamento, 1)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
         // Load operational metrics
         loadOperationalMetrics();
